@@ -72,12 +72,12 @@ const Navbar = () => {
                   <li>
                     <NavigationMenuLink asChild>
                       <Link
-                        to="#"
+                        to="/resources/self-study"
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                       >
-                        <div className="text-sm font-medium leading-none text-stare-navy">Resume Templates</div>
+                        <div className="text-sm font-medium leading-none text-stare-navy">Self Study</div>
                         <p className="line-clamp-2 text-sm leading-snug text-slate-500">
-                          Professional templates for product roles
+                          Books, courses, and resources for independent learning
                         </p>
                       </Link>
                     </NavigationMenuLink>
@@ -85,25 +85,25 @@ const Navbar = () => {
                   <li>
                     <NavigationMenuLink asChild>
                       <Link
-                        to="#"
+                        to="/resources/participate"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
+                      >
+                        <div className="text-sm font-medium leading-none text-stare-navy">Participate</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-slate-500">
+                          Join case challenges to build your portfolio
+                        </p>
+                      </Link>
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink asChild>
+                      <Link
+                        to="/resources/portfolio"
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                       >
                         <div className="text-sm font-medium leading-none text-stare-navy">Portfolio Examples</div>
                         <p className="line-clamp-2 text-sm leading-snug text-slate-500">
                           Showcase your work effectively
-                        </p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        to="#"
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
-                      >
-                        <div className="text-sm font-medium leading-none text-stare-navy">Interview Prep</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-slate-500">
-                          Prepare for product manager interviews
                         </p>
                       </Link>
                     </NavigationMenuLink>
@@ -154,7 +154,7 @@ const Navbar = () => {
               <ul className="flex flex-col gap-4">
                 <li className="border-b border-slate-100 pb-2">
                   <div className="flex items-center justify-between">
-                    <Link to="#resources" className="text-stare-navy font-medium py-2" onClick={toggleMenu}>
+                    <Link to="/resources" className="text-stare-navy font-medium py-2" onClick={toggleMenu}>
                       Resources
                     </Link>
                     <ChevronDown className="h-4 w-4 text-slate-400" />
@@ -163,10 +163,13 @@ const Navbar = () => {
                     <Link to="/case-studies" className="text-stare-gray text-sm py-1" onClick={toggleMenu}>
                       Case Studies
                     </Link>
-                    <Link to="#" className="text-stare-gray text-sm py-1" onClick={toggleMenu}>
-                      Resume Templates
+                    <Link to="/resources/self-study" className="text-stare-gray text-sm py-1" onClick={toggleMenu}>
+                      Self Study
                     </Link>
-                    <Link to="#" className="text-stare-gray text-sm py-1" onClick={toggleMenu}>
+                    <Link to="/resources/participate" className="text-stare-gray text-sm py-1" onClick={toggleMenu}>
+                      Participate
+                    </Link>
+                    <Link to="/resources/portfolio" className="text-stare-gray text-sm py-1" onClick={toggleMenu}>
                       Portfolio Examples
                     </Link>
                   </div>

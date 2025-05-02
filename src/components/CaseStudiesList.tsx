@@ -1,466 +1,358 @@
-
-import React, { useState, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from '@/components/ui/tabs';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { 
-  BookOpen, 
-  ArrowRight,
-  Filter,
-  Search,
-  CheckSquare,
-  ListFilter,
-} from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { caseStudiesData, getUniqueCategories, getUniqueCompanies } from '@/data/caseStudiesData';
-import { CaseStudy, CaseStudyObjective, CaseStudiesFilters } from '@/types/caseStudy';
-import { toast } from 'sonner';
+import { Slider } from '@/components/ui/slider';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { CaseStudy, CaseStudiesFilters, CaseStudyObjective } from '@/types/caseStudy';
+import { Toaster, toast } from 'sonner';
 
 const CaseStudiesList = () => {
-  // State for search and filters
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  
-  // Filter states
-  const [filters, setFilters] = useState<CaseStudiesFilters>({
-    categories: [],
-    companies: [],
-    markets: [],
-    likesRange: 'All',
-    objectives: [],
-    searchQuery: ''
-  });
+  const initialCaseStudies: CaseStudy[] = [
+    {
+      id: '1',
+      title: 'Revolutionizing E-commerce with AI-Powered Personalization',
+      isNew: true,
+      likes: 234,
+      category: 'E-commerce',
+      company: 'Shopify',
+      market: 'B2C',
+      objective: ['Acquisition', 'Personalization'],
+      description: 'Shopify uses AI to personalize the shopping experience, increasing customer engagement and sales.',
+      image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGUtY29tbWVyY2V8ZW58MHx8fHx8MA=='
+    },
+    {
+      id: '2',
+      title: 'Enhancing User Engagement Through Gamification',
+      isNew: false,
+      likes: 189,
+      category: 'Social Media',
+      company: 'Facebook',
+      market: 'B2C',
+      objective: ['Engagement', 'Gamification'],
+      description: 'Facebook implemented gamification strategies to boost user engagement and time spent on the platform.',
+      image: 'https://images.unsplash.com/photo-1517694712202-14f9da678177?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c29jaWFsJTIwbWVkaWF8ZW58MHx8fHx8MA=='
+    },
+    {
+      id: '3',
+      title: 'Driving B2B Sales with Targeted Content Marketing',
+      isNew: false,
+      likes: 312,
+      category: 'Marketing',
+      company: 'HubSpot',
+      creator: 'John Doe',
+      market: 'B2B',
+      objective: ['Acquisition', 'Conversion'],
+      description: 'HubSpot utilized targeted content marketing to attract and convert B2B leads, resulting in increased sales.',
+      image: 'https://images.unsplash.com/photo-1497034825429-c343dd07bca9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWFya2V0aW5nfGVufDB8fHx8MA=='
+    },
+    {
+      id: '4',
+      title: 'Optimizing Mobile App Onboarding for Higher Retention',
+      isNew: false,
+      likes: 95,
+      category: 'Mobile Apps',
+      company: 'Duolingo',
+      market: 'B2C',
+      objective: ['Onboarding', 'Retention'],
+      description: 'Duolingo improved its mobile app onboarding process, leading to higher user retention rates.',
+      image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bW9iaWxlJTIwYXBwfGVufDB8fHx8MA=='
+    },
+    {
+      id: '5',
+      title: 'Expanding Market Reach Through Strategic Partnerships',
+      isNew: false,
+      likes: 267,
+      category: 'Business Development',
+      company: 'Amazon',
+      market: 'B2C & B2B',
+      objective: ['Growth', 'GTM'],
+      description: 'Amazon expanded its market reach by forming strategic partnerships with key players in various industries.',
+      image: 'https://images.unsplash.com/photo-1505051579675-539cb2189043?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGJ1c2luZXNzJTIwZGV2ZWxvcG1lbnR8ZW58MHx8fHx8MA=='
+    },
+    {
+      id: '6',
+      title: 'Improving Customer Satisfaction with Personalized Support',
+      isNew: false,
+      likes: 145,
+      category: 'Customer Service',
+      company: 'Zendesk',
+      market: 'B2B',
+      objective: ['Engagement', 'Retention'],
+      description: 'Zendesk enhanced customer satisfaction by providing personalized support experiences.',
+      image: 'https://images.unsplash.com/photo-1543269664-745ab67984a7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y3VzdG9tZXIlMjBzZXJ2aWNlfGVufDB8fHx8MA=='
+    },
+  ];
 
-  // Get unique values for filter options
-  const categories = useMemo(() => getUniqueCategories(), []);
-  const companies = useMemo(() => getUniqueCompanies(), []);
-  const objectives: CaseStudyObjective[] = [
+  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>(initialCaseStudies);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
+  const [selectedMarkets, setSelectedMarkets] = useState<('B2C' | 'B2B' | 'B2C & B2B')[]>([]);
+  const [likesRange, setLikesRange] = useState<number[]>([0, 500]);
+  const [selectedObjectives, setSelectedObjectives] = useState<CaseStudyObjective[]>([]);
+
+  const categories = [...new Set(initialCaseStudies.map(cs => cs.category))];
+  const companies = [...new Set(initialCaseStudies.map(cs => cs.company))];
+
+  useEffect(() => {
+    applyFilters();
+  }, [searchQuery, selectedCategories, selectedCompanies, selectedMarkets, likesRange, selectedObjectives]);
+
+  const applyFilters = () => {
+    let filteredCaseStudies = [...initialCaseStudies];
+
+    if (searchQuery) {
+      filteredCaseStudies = filteredCaseStudies.filter(cs =>
+        cs.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        cs.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    if (selectedCategories.length > 0) {
+      filteredCaseStudies = filteredCaseStudies.filter(cs =>
+        selectedCategories.includes(cs.category)
+      );
+    }
+
+    if (selectedCompanies.length > 0) {
+      filteredCaseStudies = filteredCaseStudies.filter(cs =>
+        selectedCompanies.includes(cs.company)
+      );
+    }
+
+    if (selectedMarkets.length > 0) {
+      filteredCaseStudies = filteredCaseStudies.filter(cs =>
+        selectedMarkets.includes(cs.market)
+      );
+    }
+
+    filteredCaseStudies = filteredCaseStudies.filter(cs =>
+      cs.likes >= likesRange[0] && cs.likes <= likesRange[1]
+    );
+
+    if (selectedObjectives.length > 0) {
+      filteredCaseStudies = filteredCaseStudies.filter(cs =>
+        cs.objective.some(objective => selectedObjectives.includes(objective))
+      );
+    }
+
+    setCaseStudies(filteredCaseStudies);
+  };
+
+  const handleCategoryChange = (category: string) => {
+    if (selectedCategories.includes(category)) {
+      setSelectedCategories(selectedCategories.filter(c => c !== category));
+    } else {
+      setSelectedCategories([...selectedCategories, category]);
+    }
+  };
+
+  const handleCompanyChange = (company: string) => {
+    if (selectedCompanies.includes(company)) {
+      setSelectedCompanies(selectedCompanies.filter(c => c !== company));
+    } else {
+      setSelectedCompanies([...selectedCompanies, company]);
+    }
+  };
+
+  const handleMarketChange = (market: 'B2C' | 'B2B' | 'B2C & B2B') => {
+    if (selectedMarkets.includes(market)) {
+      setSelectedMarkets(selectedMarkets.filter(m => m !== market));
+    } else {
+      setSelectedMarkets([...selectedMarkets, market]);
+    }
+  };
+
+  const handleObjectiveChange = (objective: CaseStudyObjective) => {
+    if (selectedObjectives.includes(objective)) {
+      setSelectedObjectives(selectedObjectives.filter(o => o !== objective));
+    } else {
+      setSelectedObjectives([...selectedObjectives, objective]);
+    }
+  };
+
+  const handleLikesRangeChange = (value: number[]) => {
+    setLikesRange(value);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const objectiveOptions: CaseStudyObjective[] = [
     'Acquisition', 'Activation', 'Adoption', 'Conversion', 'Engagement',
     'First Time Experience', 'Gamification', 'Growth', 'GTM', 'Monetization',
     'MVP', 'Notification', 'Onboarding', 'Personalization'
   ];
 
-  // Handler for filter changes
-  const handleFilterChange = (key: keyof CaseStudiesFilters, value: any) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-  };
-
-  // Toggle selection in array filters
-  const toggleArrayFilter = (key: 'categories' | 'companies' | 'markets' | 'objectives', value: string) => {
-    setFilters(prev => {
-      const currentValues = prev[key] as string[];
-      return {
-        ...prev,
-        [key]: currentValues.includes(value) 
-          ? currentValues.filter(item => item !== value)
-          : [...currentValues, value]
-      };
-    });
-  };
-
-  // Handle search input
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    setFilters(prev => ({ ...prev, searchQuery: query }));
-  };
-
-  // Clear all filters
-  const clearFilters = () => {
-    setFilters({
-      categories: [],
-      companies: [],
-      markets: [],
-      likesRange: 'All',
-      objectives: [],
-      searchQuery: ''
-    });
-    setSearchQuery('');
-  };
-
-  // Handle "Request Case Studies" button click
-  const handleRequestCaseStudies = () => {
-    toast.success("Request submitted! We'll review your request soon.");
-  };
-
-  // Filter case studies based on selected filters
-  const filteredCaseStudies = useMemo(() => {
-    return caseStudiesData.filter(study => {
-      // Search query filter
-      const matchesSearch = 
-        filters.searchQuery === '' || 
-        study.title.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
-        study.company.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
-        (study.creator && study.creator.toLowerCase().includes(filters.searchQuery.toLowerCase()));
-      
-      // Categories filter
-      const matchesCategory = 
-        filters.categories.length === 0 || 
-        filters.categories.includes(study.category);
-      
-      // Companies filter
-      const matchesCompany = 
-        filters.companies.length === 0 || 
-        filters.companies.includes(study.company);
-      
-      // Markets filter
-      const matchesMarket = 
-        filters.markets.length === 0 || 
-        filters.markets.includes(study.market);
-      
-      // Likes range filter
-      const matchesLikesRange = (() => {
-        switch(filters.likesRange) {
-          case 'More than 100':
-            return study.likes > 100;
-          case 'Between 50 to 100':
-            return study.likes >= 50 && study.likes <= 100;
-          case 'Less than 50':
-            return study.likes < 50;
-          default: // 'All'
-            return true;
-        }
-      })();
-      
-      // Objectives filter
-      const matchesObjectives = 
-        filters.objectives.length === 0 || 
-        study.objective.some(obj => filters.objectives.includes(obj));
-      
-      return matchesSearch && 
-             matchesCategory && 
-             matchesCompany && 
-             matchesMarket && 
-             matchesLikesRange && 
-             matchesObjectives;
-    });
-  }, [filters]);
-
-  // Calculate active filters count
-  const activeFiltersCount = 
-    filters.categories.length +
-    filters.companies.length +
-    filters.markets.length +
-    (filters.likesRange !== 'All' ? 1 : 0) +
-    filters.objectives.length;
-  
   return (
-    <>
-      {/* Header Section */}
-      <section className="bg-slate-50 py-12 md:py-16">
-        <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-3xl md:text-5xl font-display font-bold text-stare-navy mb-4">
-              Case Studies
-            </h1>
-            <p className="text-lg text-slate-600 mb-6">
-              You now have access to 900+ case studies of digital products, offering invaluable learning experiences and in-depth knowledge
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Filters and Search */}
-      <section className="py-8 border-b">
-        <div className="container">
-          <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-6">
-            <div className="relative w-full md:w-96">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
-              <Input 
-                type="text" 
-                placeholder="Type company name or creator name here to search" 
-                className="pl-10" 
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
-            </div>
-            
-            <div className="flex items-center gap-2 w-full md:w-auto">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="flex gap-2 items-center">
-                    <Filter size={16} />
-                    Filters
-                    {activeFiltersCount > 0 && (
-                      <Badge variant="secondary" className="ml-1">{activeFiltersCount}</Badge>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80 md:w-96">
-                  <div className="grid gap-4">
-                    <div className="space-y-2">
-                      <h4 className="font-medium leading-none">Active Filters</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {activeFiltersCount > 0 ? (
-                          <>
-                            {filters.categories.map(cat => (
-                              <Badge key={cat} variant="outline" className="flex gap-1">
-                                {cat}
-                                <button 
-                                  onClick={() => toggleArrayFilter('categories', cat)}
-                                  className="ml-1 hover:text-red-500"
-                                >
-                                  ×
-                                </button>
-                              </Badge>
-                            ))}
-                            {filters.companies.map(comp => (
-                              <Badge key={comp} variant="outline" className="flex gap-1">
-                                {comp}
-                                <button 
-                                  onClick={() => toggleArrayFilter('companies', comp)}
-                                  className="ml-1 hover:text-red-500"
-                                >
-                                  ×
-                                </button>
-                              </Badge>
-                            ))}
-                            {filters.markets.map(market => (
-                              <Badge key={market} variant="outline" className="flex gap-1">
-                                {market}
-                                <button 
-                                  onClick={() => toggleArrayFilter('markets', market)}
-                                  className="ml-1 hover:text-red-500"
-                                >
-                                  ×
-                                </button>
-                              </Badge>
-                            ))}
-                            {filters.likesRange !== 'All' && (
-                              <Badge variant="outline" className="flex gap-1">
-                                {filters.likesRange}
-                                <button 
-                                  onClick={() => handleFilterChange('likesRange', 'All')}
-                                  className="ml-1 hover:text-red-500"
-                                >
-                                  ×
-                                </button>
-                              </Badge>
-                            )}
-                            {filters.objectives.map(obj => (
-                              <Badge key={obj} variant="outline" className="flex gap-1">
-                                {obj}
-                                <button 
-                                  onClick={() => toggleArrayFilter('objectives', obj)}
-                                  className="ml-1 hover:text-red-500"
-                                >
-                                  ×
-                                </button>
-                              </Badge>
-                            ))}
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={clearFilters}
-                              className="text-xs"
-                            >
-                              Clear All
-                            </Button>
-                          </>
-                        ) : (
-                          <span className="text-sm text-slate-500">No active filters</span>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <h4 className="font-medium leading-none">Likes</h4>
-                      <div className="flex flex-col gap-2">
-                        {['All', 'More than 100', 'Between 50 to 100', 'Less than 50'].map((range) => (
-                          <div key={range} className="flex items-center space-x-2">
-                            <input
-                              type="radio"
-                              id={`likes-${range}`}
-                              checked={filters.likesRange === range}
-                              onChange={() => handleFilterChange('likesRange', range)}
-                              className="h-4 w-4 text-stare-teal"
-                            />
-                            <label htmlFor={`likes-${range}`} className="text-sm">{range}</label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <h4 className="font-medium leading-none">Market</h4>
-                      <div className="grid grid-cols-1 gap-2">
-                        {['B2C', 'B2B', 'B2C & B2B'].map((market) => (
-                          <div key={market} className="flex items-center space-x-2">
-                            <Checkbox 
-                              id={`market-${market}`}
-                              checked={filters.markets.includes(market)}
-                              onCheckedChange={() => toggleArrayFilter('markets', market)}
-                            />
-                            <Label htmlFor={`market-${market}`} className="text-sm">{market}</Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <h4 className="font-medium leading-none">Objectives</h4>
-                      <div className="grid grid-cols-2 gap-2">
-                        {objectives.map((objective) => (
-                          <div key={objective} className="flex items-center space-x-2">
-                            <Checkbox 
-                              id={`objective-${objective}`}
-                              checked={filters.objectives.includes(objective)}
-                              onCheckedChange={() => toggleArrayFilter('objectives', objective)}
-                            />
-                            <Label htmlFor={`objective-${objective}`} className="text-sm">{objective}</Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-
-              {/* Category Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline">
-                    Categories {filters.categories.length > 0 && `(${filters.categories.length})`}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
-                  <DropdownMenuLabel>Select Categories</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {categories.map((category) => (
-                    <DropdownMenuCheckboxItem
-                      key={category}
-                      checked={filters.categories.includes(category)}
-                      onCheckedChange={() => toggleArrayFilter('categories', category)}
-                    >
-                      {category}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* Company Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline">
-                    Companies {filters.companies.length > 0 && `(${filters.companies.length})`}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
-                  <DropdownMenuLabel>Select Companies</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {companies.map((company) => (
-                    <DropdownMenuCheckboxItem
-                      key={company}
-                      checked={filters.companies.includes(company)}
-                      onCheckedChange={() => toggleArrayFilter('companies', company)}
-                    >
-                      {company}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <Button onClick={handleRequestCaseStudies}>
-                Request Case Studies
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Case Studies Grid */}
-      <section className="py-12">
-        <div className="container">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">
-              {filteredCaseStudies.length} Case Studies Found
-            </h2>
-            {activeFiltersCount > 0 && (
-              <Button variant="ghost" onClick={clearFilters} className="text-sm">
-                Clear All Filters
-              </Button>
-            )}
-          </div>
-          
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {filteredCaseStudies.length > 0 ? (
-              filteredCaseStudies.map((study) => (
-                <Card key={study.id} className="overflow-hidden border-none shadow-md card-hover">
-                  <div className="relative h-48 overflow-hidden">
-                    <img 
-                      src={study.image} 
-                      alt={study.title}
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      {study.isNew && (
-                        <span className="bg-stare-teal text-white text-xs font-semibold px-3 py-1 rounded-full">
-                          New
-                        </span>
-                      )}
-                    </div>
-                    <span className="absolute top-4 right-4 bg-white/90 text-stare-navy text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                      </svg>
-                      Likes: {study.likes}
-                    </span>
-                  </div>
-                  <CardContent className="pt-6">
-                    <div className="text-sm font-medium text-stare-teal mb-2 flex items-center gap-2">
-                      <BookOpen size={14} />
-                      {study.category}
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2 text-stare-navy hover:text-stare-teal transition-colors">
-                      <a href="#">{study.title}</a>
-                    </h3>
-                    <p className="text-slate-600 mb-4 text-sm line-clamp-2">
-                      {study.description}
-                    </p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded">
-                        {study.company}
-                      </span>
-                      <Button variant="link" className="px-0 text-stare-teal flex items-center gap-1">
-                        Read Case Study
-                        <ArrowRight size={14} />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            ) : (
-              <div className="col-span-full text-center py-12">
-                <p className="text-lg text-slate-500">No case studies found matching your filters.</p>
-                <Button 
-                  variant="outline" 
-                  className="mt-4"
-                  onClick={clearFilters}
-                >
-                  Clear all filters
-                </Button>
+    <section className="py-12">
+      <Toaster position="top-center" />
+      <div className="container">
+        <h1 className="text-3xl font-bold mb-6 text-stare-navy">Explore Case Studies</h1>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <aside className="md:col-span-1">
+            <div className="bg-white rounded-md shadow-md p-4 sticky top-20">
+              <h2 className="text-xl font-semibold mb-4 text-stare-navy">Filters</h2>
+              <div className="mb-4">
+                <Label htmlFor="search" className="block text-sm font-medium text-gray-700">Search</Label>
+                <Input
+                  type="text"
+                  id="search"
+                  placeholder="Search by title or description"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="mt-1"
+                />
               </div>
-            )}
+
+              <div className="mb-4">
+                <Label className="block text-sm font-medium text-gray-700">Categories</Label>
+                <ScrollArea className="h-[200px] rounded-md border p-1">
+                  <div className="flex flex-col space-y-1">
+                    {categories.map(category => (
+                      <div key={category} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`category-${category}`}
+                          checked={selectedCategories.includes(category)}
+                          onCheckedChange={() => handleCategoryChange(category)}
+                        />
+                        <Label htmlFor={`category-${category}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          {category}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+
+              <div className="mb-4">
+                <Label className="block text-sm font-medium text-gray-700">Companies</Label>
+                <ScrollArea className="h-[200px] rounded-md border p-1">
+                  <div className="flex flex-col space-y-1">
+                    {companies.map(company => (
+                      <div key={company} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`company-${company}`}
+                          checked={selectedCompanies.includes(company)}
+                          onCheckedChange={() => handleCompanyChange(company)}
+                        />
+                        <Label htmlFor={`company-${company}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          {company}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+
+              <div className="mb-4">
+                <Label className="block text-sm font-medium text-gray-700">Markets</Label>
+                <div className="flex flex-col space-y-1">
+                  {['B2C', 'B2B', 'B2C & B2B'].map(market => (
+                    <div key={market} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`market-${market}`}
+                        checked={selectedMarkets.includes(market as 'B2C' | 'B2B' | 'B2C & B2B')}
+                        onCheckedChange={() => handleMarketChange(market as 'B2C' | 'B2B' | 'B2C & B2B')}
+                      />
+                      <Label htmlFor={`market-${market}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        {market}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <Label className="block text-sm font-medium text-gray-700">Likes Range</Label>
+                <Slider
+                  defaultValue={likesRange}
+                  max={500}
+                  step={10}
+                  onValueChange={handleLikesRangeChange}
+                />
+                <div className="text-sm text-gray-500 mt-1">
+                  Range: {likesRange[0]} - {likesRange[1]}
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <Label className="block text-sm font-medium text-gray-700">Objectives</Label>
+                <ScrollArea className="h-[200px] rounded-md border p-1">
+                  <div className="flex flex-col space-y-1">
+                    {objectiveOptions.map(objective => (
+                      <div key={objective} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`objective-${objective}`}
+                          checked={selectedObjectives.includes(objective)}
+                          onCheckedChange={() => handleObjectiveChange(objective)}
+                        />
+                        <Label htmlFor={`objective-${objective}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          {objective}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+            </div>
+          </aside>
+          <div className="md:col-span-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {caseStudies.length === 0 ? (
+                <div className="text-center text-gray-500">No case studies found matching your criteria.</div>
+              ) : (
+                caseStudies.map(caseStudy => (
+                  <Card key={caseStudy.id} className="bg-white rounded-md shadow-md overflow-hidden">
+                    <img
+                      src={caseStudy.image}
+                      alt={caseStudy.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-xl font-semibold text-stare-navy">{caseStudy.title}</h3>
+                        {caseStudy.isNew && <Badge variant="secondary">New</Badge>}
+                      </div>
+                      <div className="flex items-center space-x-2 mb-3">
+                        {caseStudy.objective.map(objective => (
+                          <Badge key={objective} variant="outline">{objective}</Badge>
+                        ))}
+                      </div>
+                      <p className="text-gray-600 mb-4">{caseStudy.description}</p>
+                      <div className="flex justify-between items-center">
+                        <div className="text-gray-500">
+                          <span className="font-medium">Category:</span> {caseStudy.category}
+                        </div>
+                        <div className="text-gray-500">
+                          <span className="font-medium">Likes:</span> {caseStudy.likes}
+                        </div>
+                      </div>
+                      <div className="text-gray-500">
+                        <span className="font-medium">Company:</span> {caseStudy.company}
+                      </div>
+                      {caseStudy.creator && (
+                        <div className="text-gray-500">
+                          <span className="font-medium">Creator:</span> {caseStudy.creator}
+                        </div>
+                      )}
+                      <div className="text-gray-500">
+                        <span className="font-medium">Market:</span> {caseStudy.market}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
           </div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 };
 
