@@ -126,16 +126,21 @@ const Navbar = () => {
                 About
               </Link>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link to="/pricing" className="text-stare-gray hover:text-stare-navy font-medium transition-colors px-4 py-2 flex">
+                Pricing
+              </Link>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
 
         {/* Desktop Auth Buttons */}
         <div className="hidden md:flex items-center gap-4">
-          <Button size="sm" variant="outline" className="font-medium">
-            Sign In
+          <Button size="sm" variant="outline" className="font-medium" asChild>
+            <Link to="/sign-in">Sign In</Link>
           </Button>
-          <Button size="sm" className="bg-stare-teal hover:bg-stare-teal/90 text-white font-medium">
-            Join Now
+          <Button size="sm" className="bg-stare-teal hover:bg-stare-teal/90 text-white font-medium" asChild>
+            <Link to="/sign-up">Join Now</Link>
           </Button>
         </div>
 
@@ -189,13 +194,18 @@ const Navbar = () => {
                     About
                   </Link>
                 </li>
+                <li>
+                  <Link to="/pricing" className="text-stare-gray hover:text-stare-navy font-medium transition-colors block py-2" onClick={toggleMenu}>
+                    Pricing
+                  </Link>
+                </li>
               </ul>
               <div className="flex flex-col gap-3 pt-3 border-t border-slate-200">
-                <Button size="sm" variant="outline" className="font-medium w-full">
-                  Sign In
+                <Button size="sm" variant="outline" className="font-medium w-full" asChild onClick={toggleMenu}>
+                  <Link to="/sign-in">Sign In</Link>
                 </Button>
-                <Button size="sm" className="bg-stare-teal hover:bg-stare-teal/90 text-white font-medium w-full">
-                  Join Now
+                <Button size="sm" className="bg-stare-teal hover:bg-stare-teal/90 text-white font-medium w-full" asChild onClick={toggleMenu}>
+                  <Link to="/sign-up">Join Now</Link>
                 </Button>
               </div>
             </div>
