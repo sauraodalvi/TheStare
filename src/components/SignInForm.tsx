@@ -72,7 +72,7 @@ const SignInForm = () => {
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold text-stare-navy">Sign In</CardTitle>
           <CardDescription>
-            Enter your email and password to access your account
+            Enter your email and password to access your premium account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -136,7 +136,7 @@ const SignInForm = () => {
         </CardContent>
         <CardFooter className="flex flex-col space-y-4 text-center">
           <div className="text-sm text-slate-500">
-            Don't have an account yet? <Link to="/sign-up" className="text-stare-teal hover:underline">Sign Up</Link>
+            Don't have an account? <Link to="/pricing" className="text-stare-teal hover:underline">Subscribe to get access</Link>
           </div>
           <div className="text-sm text-slate-500">
             <Link to="/forgot-password" className="text-stare-teal hover:underline">Forgot Password?</Link>

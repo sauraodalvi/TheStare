@@ -17,9 +17,15 @@ const PricingSection = () => {
   };
   
   const handlePaidPlanClick = () => {
-    navigate('/sign-up');
-    toast.info("Sign up to continue", {
-      description: "Create an account to access premium features.",
+    // Store the selected plan in session storage
+    sessionStorage.setItem('selectedPlan', billingCycle === 'yearly' ? 'yearly_premium' : 'monthly_premium');
+    sessionStorage.setItem('planPrice', billingCycle === 'yearly' ? '$90/month' : '$110/month');
+    
+    // Navigate to sign up page with query param
+    navigate('/sign-up?plan=premium');
+    
+    toast.info("Complete signup to subscribe", {
+      description: "Create your account to start accessing all premium features.",
     });
   };
   

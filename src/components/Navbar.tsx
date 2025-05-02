@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -16,9 +17,24 @@ import {
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleJoinNowClick = () => {
+    navigate('/pricing');
+  };
+  
+  const handleSignInClick = () => {
+    toast.error("This is a premium feature", {
+      description: "Only paid users can sign in. Please subscribe to a plan first.",
+      action: {
+        label: "View Plans",
+        onClick: () => navigate('/pricing'),
+      },
+    });
   };
 
   // Add scroll effect
@@ -136,11 +152,11 @@ const Navbar = () => {
 
         {/* Desktop Auth Buttons */}
         <div className="hidden md:flex items-center gap-4">
-          <Button size="sm" variant="outline" className="font-medium" asChild>
-            <Link to="/sign-in">Sign In</Link>
+          <Button size="sm" variant="outline" className="font-medium" onClick={handleSignInClick}>
+            Sign In
           </Button>
-          <Button size="sm" className="bg-stare-teal hover:bg-stare-teal/90 text-white font-medium" asChild>
-            <Link to="/sign-up">Join Now</Link>
+          <Button size="sm" className="bg-stare-teal hover:bg-stare-teal/90 text-white font-medium" onClick={handleJoinNowClick}>
+            Join Now
           </Button>
         </div>
 
@@ -201,11 +217,11 @@ const Navbar = () => {
                 </li>
               </ul>
               <div className="flex flex-col gap-3 pt-3 border-t border-slate-200">
-                <Button size="sm" variant="outline" className="font-medium w-full" asChild onClick={toggleMenu}>
-                  <Link to="/sign-in">Sign In</Link>
+                <Button size="sm" variant="outline" className="font-medium w-full" onClick={(e) => { toggleMenu(); handleSignInClick(); }}>
+                  Sign In
                 </Button>
-                <Button size="sm" className="bg-stare-teal hover:bg-stare-teal/90 text-white font-medium w-full" asChild onClick={toggleMenu}>
-                  <Link to="/sign-up">Join Now</Link>
+                <Button size="sm" className="bg-stare-teal hover:bg-stare-teal/90 text-white font-medium w-full" onClick={(e) => { toggleMenu(); handleJoinNowClick(); }}>
+                  Join Now
                 </Button>
               </div>
             </div>
