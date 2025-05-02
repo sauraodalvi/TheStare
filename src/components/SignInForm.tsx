@@ -56,13 +56,12 @@ const SignInForm = () => {
       setIsLoading(false);
       
       // In a real app, this would be an API call to authenticate
-      toast.error("This is a premium feature. Please subscribe to continue.", {
-        description: "Only paid users can sign in to access premium features.",
-        action: {
-          label: "View Plans",
-          onClick: () => navigate('/pricing'),
-        },
+      toast.success("Signed in successfully!", {
+        description: "Welcome back to TheStare",
       });
+      
+      // Redirect to home page after successful sign in
+      navigate('/');
     }, 1500);
   };
 
@@ -72,7 +71,7 @@ const SignInForm = () => {
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold text-stare-navy">Sign In</CardTitle>
           <CardDescription>
-            Enter your email and password to access your premium account
+            Enter your email and password to access your account
           </CardDescription>
         </CardHeader>
         <CardContent>
