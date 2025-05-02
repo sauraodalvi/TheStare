@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CaseStudy, CaseStudiesFilters, CaseStudyObjective } from '@/types/caseStudy';
 import { Toaster, toast } from 'sonner';
+import { caseStudiesData } from '@/data/caseStudiesData';
 
 const CaseStudiesList = () => {
   const initialCaseStudies: CaseStudy[] = [
@@ -59,7 +60,7 @@ const CaseStudiesList = () => {
       market: 'B2C',
       objective: ['Onboarding', 'Retention'],
       description: 'Duolingo improved its mobile app onboarding process, leading to higher user retention rates.',
-      image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bW9iaWxlJTIwYXBwfGVufDB8fHx8MA=='
+      image: 'https://images.unsplash.com/photo-1550751579675-539cb2189043?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bW9iaWxlJTIwYXBwfGVufDB8fHx8MA=='
     },
     {
       id: '5',
@@ -87,7 +88,7 @@ const CaseStudiesList = () => {
     },
   ];
 
-  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>(initialCaseStudies);
+  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>(caseStudiesData);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
@@ -95,8 +96,8 @@ const CaseStudiesList = () => {
   const [likesRange, setLikesRange] = useState<number[]>([0, 500]);
   const [selectedObjectives, setSelectedObjectives] = useState<CaseStudyObjective[]>([]);
 
-  const categories = [...new Set(initialCaseStudies.map(cs => cs.category))];
-  const companies = [...new Set(initialCaseStudies.map(cs => cs.company))];
+  const categories = [...new Set(caseStudiesData.map(cs => cs.category))];
+  const companies = [...new Set(caseStudiesData.map(cs => cs.company))];
 
   useEffect(() => {
     applyFilters();
@@ -186,7 +187,7 @@ const CaseStudiesList = () => {
   const objectiveOptions: CaseStudyObjective[] = [
     'Acquisition', 'Activation', 'Adoption', 'Conversion', 'Engagement',
     'First Time Experience', 'Gamification', 'Growth', 'GTM', 'Monetization',
-    'MVP', 'Notification', 'Onboarding', 'Personalization'
+    'MVP', 'Notification', 'Onboarding', 'Personalization', 'Retention'
   ];
 
   return (

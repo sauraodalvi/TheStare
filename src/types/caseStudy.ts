@@ -27,7 +27,8 @@ export type CaseStudyObjective =
   | 'MVP'
   | 'Notification'
   | 'Onboarding'
-  | 'Personalization';
+  | 'Personalization'
+  | 'Retention';  // Added Retention to the valid objectives
 
 export interface CaseStudiesFilters {
   categories: string[];
