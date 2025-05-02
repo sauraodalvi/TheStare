@@ -42,14 +42,14 @@ const Resources = () => {
               Learn from comprehensive case studies, professional resume templates, and impressive portfolio examples tailored for product managers.
             </p>
           </div>
-          <Button 
-            variant="outline" 
-            className="shrink-0 border-stare-teal text-stare-teal hover:bg-stare-teal/10"
-            as={Link}
-            to="/case-studies"
-          >
-            View Case Studies <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <Link to="/case-studies">
+            <Button 
+              variant="outline" 
+              className="shrink-0 border-stare-teal text-stare-teal hover:bg-stare-teal/10"
+            >
+              View Case Studies <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -71,9 +71,11 @@ const Resources = () => {
                   <Link to={resource.link}>{resource.title}</Link>
                 </h3>
                 <div className="flex justify-between items-center">
-                  <Button variant="link" className="px-0 text-stare-teal" as={Link} to={resource.link}>
-                    Read More
-                  </Button>
+                  <Link to={resource.link} className="text-stare-teal">
+                    <Button variant="link" className="px-0 text-stare-teal">
+                      Read More
+                    </Button>
+                  </Link>
                   <div className="flex items-center gap-1">
                     <span className="text-sm text-slate-500">124 saves</span>
                   </div>
