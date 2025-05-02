@@ -8,6 +8,7 @@ import JobBoard from '@/components/JobBoard';
 import Referrals from '@/components/Referrals';
 import About from '@/components/About';
 import Footer from '@/components/Footer';
+import { Link } from 'react-router-dom';
 
 const Index = () => {
   return (

@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Resources = () => {
   const resources = [
@@ -10,19 +11,22 @@ const Resources = () => {
       category: "Case Study",
       title: "Product Strategy for Marketplace Apps",
       image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&auto=format&fit=crop",
-      popularity: "Popular"
+      popularity: "Popular",
+      link: "/case-studies"
     },
     {
       category: "Resume Template",
       title: "Senior PM Resume with 5+ Experience",
       image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=500&auto=format&fit=crop",
-      popularity: "New"
+      popularity: "New",
+      link: "#"
     },
     {
       category: "Portfolio",
       title: "UX-Focused Product Manager Portfolio",
       image: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=500&auto=format&fit=crop",
-      popularity: "Featured"
+      popularity: "Featured",
+      link: "#"
     }
   ];
 
@@ -38,8 +42,13 @@ const Resources = () => {
               Learn from comprehensive case studies, professional resume templates, and impressive portfolio examples tailored for product managers.
             </p>
           </div>
-          <Button variant="outline" className="shrink-0 border-stare-teal text-stare-teal hover:bg-stare-teal/10">
-            View All Resources <ArrowRight className="ml-2 h-4 w-4" />
+          <Button 
+            variant="outline" 
+            className="shrink-0 border-stare-teal text-stare-teal hover:bg-stare-teal/10"
+            as={Link}
+            to="/case-studies"
+          >
+            View Case Studies <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
 
@@ -59,10 +68,12 @@ const Resources = () => {
               <CardContent className="pt-6">
                 <div className="text-sm font-medium text-stare-teal mb-2">{resource.category}</div>
                 <h3 className="text-xl font-semibold mb-4 text-stare-navy hover:text-stare-teal transition-colors">
-                  <a href="#">{resource.title}</a>
+                  <Link to={resource.link}>{resource.title}</Link>
                 </h3>
                 <div className="flex justify-between items-center">
-                  <Button variant="link" className="px-0 text-stare-teal">Read More</Button>
+                  <Button variant="link" className="px-0 text-stare-teal" as={Link} to={resource.link}>
+                    Read More
+                  </Button>
                   <div className="flex items-center gap-1">
                     <span className="text-sm text-slate-500">124 saves</span>
                   </div>
