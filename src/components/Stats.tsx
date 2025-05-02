@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Book, Briefcase, FileText, Article } from 'lucide-react';
+import { Book, Briefcase, FileText, FileSpreadsheet } from 'lucide-react';
 
 const Stats = () => {
   const stats = [
@@ -27,7 +27,7 @@ const Stats = () => {
       number: '40+',
       title: 'Articles',
       description: 'Browse product-related articles to ace your interviews and discover intriguing insights into product management',
-      icon: Article
+      icon: FileSpreadsheet
     }
   ];
 
