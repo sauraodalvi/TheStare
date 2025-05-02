@@ -122,7 +122,7 @@ const Navbar = () => {
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Link to="#about" className="text-stare-gray hover:text-stare-navy font-medium transition-colors px-4 py-2 flex">
+              <Link to="/about" className="text-stare-gray hover:text-stare-navy font-medium transition-colors px-4 py-2 flex">
                 About
               </Link>
             </NavigationMenuItem>
@@ -182,7 +182,7 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to="#about" className="text-stare-gray hover:text-stare-navy font-medium transition-colors block py-2" onClick={toggleMenu}>
+                  <Link to="/about" className="text-stare-gray hover:text-stare-navy font-medium transition-colors block py-2" onClick={toggleMenu}>
                     About
                   </Link>
                 </li>
