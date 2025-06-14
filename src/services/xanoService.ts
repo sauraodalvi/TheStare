@@ -21,7 +21,7 @@ export class XanoService {
 
   static async getCaseStudies(): Promise<CaseStudy[]> {
     try {
-      const data = await this.makeRequest<CaseStudy[]>('/case_studies');
+      const data = await XanoService.makeRequest<CaseStudy[]>('/case_studies');
       return data || [];
     } catch (error) {
       console.error('Error fetching case studies:', error);
@@ -31,7 +31,7 @@ export class XanoService {
 
   static async getCaseStudy(id: number): Promise<CaseStudy> {
     try {
-      const data = await this.makeRequest<CaseStudy>(`/case_studies/${id}`);
+      const data = await XanoService.makeRequest<CaseStudy>(`/case_studies/${id}`);
       return data;
     } catch (error) {
       console.error('Error fetching case study:', error);

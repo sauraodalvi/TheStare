@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -19,7 +18,6 @@ const CaseStudiesList = () => {
   const [selectedMarkets, setSelectedMarkets] = useState<string[]>([]);
   const [likesRange, setLikesRange] = useState<number[]>([0, 500]);
   const [selectedObjectives, setSelectedObjectives] = useState<string[]>([]);
-  const [filteredCaseStudies, setFilteredCaseStudies] = useState<CaseStudy[]>([]);
 
   const { data: caseStudies = [], isLoading, error } = useQuery({
     queryKey: ['caseStudies'],
@@ -39,11 +37,7 @@ const CaseStudiesList = () => {
     }
   }, [error]);
 
-  useEffect(() => {
-    applyFilters();
-  }, [caseStudies, searchQuery, selectedCategories, selectedCompanies, selectedMarkets, likesRange, selectedObjectives]);
-
-  const applyFilters = () => {
+  const filteredCaseStudies = useMemo(() => {
     let filtered = [...caseStudies];
 
     if (searchQuery) {
@@ -81,8 +75,8 @@ const CaseStudiesList = () => {
       );
     }
 
-    setFilteredCaseStudies(filtered);
-  };
+    return filtered;
+  }, [caseStudies, searchQuery, selectedCategories, selectedCompanies, selectedMarkets, likesRange, selectedObjectives]);
 
   const handleCategoryChange = (category: string) => {
     if (selectedCategories.includes(category)) {
