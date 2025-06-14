@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -18,10 +18,12 @@ const CaseStudiesList = () => {
   const [selectedMarkets, setSelectedMarkets] = useState<string[]>([]);
   const [likesRange, setLikesRange] = useState<number[]>([0, 500]);
   const [selectedObjectives, setSelectedObjectives] = useState<string[]>([]);
+  const hasShownError = useRef(false);
 
   const { data: caseStudies = [], isLoading, error } = useQuery({
     queryKey: ['caseStudies'],
     queryFn: XanoService.getCaseStudies,
+    retry: 1,
   });
 
   const categories = [...new Set(caseStudies.flatMap(cs => cs.Category || []))];
@@ -30,9 +32,11 @@ const CaseStudiesList = () => {
   const objectives = [...new Set(caseStudies.flatMap(cs => cs.Objective || []))];
 
   useEffect(() => {
-    if (error) {
+    if (error && !hasShownError.current) {
+      hasShownError.current = true;
+      console.log('API Error details:', error);
       toast.error('Failed to load case studies', {
-        description: 'Please check your connection and try again.'
+        description: 'The case studies endpoint is not available. Please check your Xano API configuration.'
       });
     }
   }, [error]);
@@ -124,6 +128,20 @@ const CaseStudiesList = () => {
         <div className="container">
           <h1 className="text-3xl font-bold mb-6 text-stare-navy">Explore Case Studies</h1>
           <div className="text-center">Loading case studies...</div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="py-12">
+        <div className="container">
+          <h1 className="text-3xl font-bold mb-6 text-stare-navy">Explore Case Studies</h1>
+          <div className="text-center text-red-600">
+            <p>Unable to load case studies at this time.</p>
+            <p className="text-sm text-gray-500 mt-2">Please check your Xano API configuration.</p>
+          </div>
         </div>
       </section>
     );
