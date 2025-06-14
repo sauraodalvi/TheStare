@@ -1,40 +1,39 @@
 
 export interface CaseStudy {
-  id: string;
-  title: string;
-  isNew: boolean;
-  likes: number;
-  category: string;
-  company: string;
-  creator?: string;
-  market: 'B2C' | 'B2B' | 'B2C & B2B';
-  objective: CaseStudyObjective[];
-  description: string;
-  image: string;
+  id: number;
+  created_at: string;
+  Name: string;
+  Company: string;
+  Organizer: string;
+  Objective: string[];
+  Creators_Tag: string;
+  PDF: string[];
+  Likes: number;
+  Logo: string[];
+  Category: string[];
+  Market: string;
+  Sort: number;
+  Type: string[];
+  Image_Tags_Extra: string[];
+  Likes_Filter_Formula: string;
+  New_Image_Tags_Formula: string;
+  Publish: string;
+  New_Image_Tag: string[];
+  Likes_Filter: string[];
+  SEO_Index: number;
+  SEO_Slug: string;
+  SEO_Title: string;
+  Title: string;
+  Free: string;
 }
 
-export type CaseStudyObjective = 
-  | 'Acquisition'
-  | 'Activation'
-  | 'Adoption'
-  | 'Conversion'
-  | 'Engagement'
-  | 'First Time Experience'
-  | 'Gamification'
-  | 'Growth'
-  | 'GTM'
-  | 'Monetization'
-  | 'MVP'
-  | 'Notification'
-  | 'Onboarding'
-  | 'Personalization'
-  | 'Retention';  // Added Retention to the valid objectives
+export type CaseStudyObjective = string;
 
 export interface CaseStudiesFilters {
   categories: string[];
   companies: string[];
-  markets: ('B2C' | 'B2B' | 'B2C & B2B')[];
+  markets: string[];
   likesRange: 'All' | 'More than 100' | 'Between 50 to 100' | 'Less than 50';
-  objectives: CaseStudyObjective[];
+  objectives: string[];
   searchQuery: string;
 }
