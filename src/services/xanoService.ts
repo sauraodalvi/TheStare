@@ -5,7 +5,7 @@ const XANO_API_KEY = 'eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwiemlwIj
 
 export class XanoService {
   private static async makeRequest<T>(endpoint: string): Promise<T> {
-    const response = await fetch(`https://xano.com/api:${XANO_API_KEY}${endpoint}`, {
+    const response = await fetch(`https://x8ki-letl-twmt.n7.xano.io/api:${XANO_API_KEY}${endpoint}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
