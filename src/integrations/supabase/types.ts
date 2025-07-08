@@ -92,6 +92,36 @@ export type Database = {
         }
         Relationships: []
       }
+      case_studies: {
+        Row: {
+          company_name: string
+          created_at: string
+          creator: string
+          id: string
+          logo_url: string | null
+          pdf_url: string | null
+          title: string
+        }
+        Insert: {
+          company_name: string
+          created_at?: string
+          creator: string
+          id?: string
+          logo_url?: string | null
+          pdf_url?: string | null
+          title: string
+        }
+        Update: {
+          company_name?: string
+          created_at?: string
+          creator?: string
+          id?: string
+          logo_url?: string | null
+          pdf_url?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

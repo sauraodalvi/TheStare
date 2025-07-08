@@ -7,9 +7,13 @@ import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 import { CaseStudy, CaseStudiesFilters } from '@/types/caseStudy';
 import { toast } from 'sonner';
 import { XanoService } from '@/services/xanoService';
+import CaseStudyModal from './CaseStudyModal';
+import CaseStudySubmissionForm from './CaseStudySubmissionForm';
 
 const CaseStudiesList = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -18,6 +22,9 @@ const CaseStudiesList = () => {
   const [selectedMarkets, setSelectedMarkets] = useState<string[]>([]);
   const [likesRange, setLikesRange] = useState<number[]>([0, 500]);
   const [selectedObjectives, setSelectedObjectives] = useState<string[]>([]);
+  const [selectedCaseStudy, setSelectedCaseStudy] = useState<CaseStudy | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showSubmissionForm, setShowSubmissionForm] = useState(false);
   const hasShownError = useRef(false);
 
   const { data: caseStudies = [], isLoading, error } = useQuery({
@@ -82,6 +89,16 @@ const CaseStudiesList = () => {
     return filtered;
   }, [caseStudies, searchQuery, selectedCategories, selectedCompanies, selectedMarkets, likesRange, selectedObjectives]);
 
+  const handleCaseStudyClick = (caseStudy: CaseStudy) => {
+    setSelectedCaseStudy(caseStudy);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedCaseStudy(null);
+  };
+
   const handleCategoryChange = (category: string) => {
     if (selectedCategories.includes(category)) {
       setSelectedCategories(selectedCategories.filter(c => c !== category));
@@ -122,6 +139,22 @@ const CaseStudiesList = () => {
     setSearchQuery(e.target.value);
   };
 
+  if (showSubmissionForm) {
+    return (
+      <section className="py-12">
+        <div className="container">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold text-stare-navy">Submit Case Study</h1>
+            <Button variant="outline" onClick={() => setShowSubmissionForm(false)}>
+              Back to Browse
+            </Button>
+          </div>
+          <CaseStudySubmissionForm />
+        </div>
+      </section>
+    );
+  }
+
   if (isLoading) {
     return (
       <section className="py-12">
@@ -150,7 +183,14 @@ const CaseStudiesList = () => {
   return (
     <section className="py-12">
       <div className="container">
-        <h1 className="text-3xl font-bold mb-6 text-stare-navy">Explore Case Studies</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-stare-navy">Explore Case Studies</h1>
+          <Button onClick={() => setShowSubmissionForm(true)} className="bg-stare-navy hover:bg-stare-navy/90">
+            <Plus className="mr-2 h-4 w-4" />
+            Submit Case Study
+          </Button>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <aside className="md:col-span-1">
             <div className="bg-white rounded-md shadow-md p-4 sticky top-20">
@@ -271,7 +311,11 @@ const CaseStudiesList = () => {
                 </div>
               ) : (
                 filteredCaseStudies.map(caseStudy => (
-                  <Card key={caseStudy.id} className="bg-white rounded-md shadow-md overflow-hidden">
+                  <Card 
+                    key={caseStudy.id} 
+                    className="bg-white rounded-md shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+                    onClick={() => handleCaseStudyClick(caseStudy)}
+                  >
                     {caseStudy.Logo && caseStudy.Logo[0] && (
                       <img
                         src={caseStudy.Logo[0]}
@@ -324,6 +368,12 @@ const CaseStudiesList = () => {
             </div>
           </div>
         </div>
+
+        <CaseStudyModal
+          caseStudy={selectedCaseStudy}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
       </div>
     </section>
   );
