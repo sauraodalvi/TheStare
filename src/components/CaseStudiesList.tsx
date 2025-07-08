@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { CaseStudy, CaseStudiesFilters } from '@/types/caseStudy';
 import { toast } from 'sonner';
-import { XanoService } from '@/services/xanoService';
+import { SupabaseService } from '@/services/supabaseService';
 import CaseStudyModal from './CaseStudyModal';
 import CaseStudySubmissionForm from './CaseStudySubmissionForm';
 
@@ -29,9 +29,13 @@ const CaseStudiesList = () => {
 
   const { data: caseStudies = [], isLoading, error } = useQuery({
     queryKey: ['caseStudies'],
-    queryFn: XanoService.getCaseStudies,
+    queryFn: SupabaseService.getCaseStudies,
     retry: 1,
   });
+
+  console.log('Case studies data:', caseStudies);
+  console.log('Loading state:', isLoading);
+  console.log('Error state:', error);
 
   const categories = [...new Set(caseStudies.flatMap(cs => cs.Category || []))];
   const companies = [...new Set(caseStudies.map(cs => cs.Company).filter(Boolean))];
@@ -43,7 +47,7 @@ const CaseStudiesList = () => {
       hasShownError.current = true;
       console.log('API Error details:', error);
       toast.error('Failed to load case studies', {
-        description: 'The case studies endpoint is not available. Please check your Xano API configuration.'
+        description: 'There was an error loading case studies from the database.'
       });
     }
   }, [error]);
@@ -173,7 +177,10 @@ const CaseStudiesList = () => {
           <h1 className="text-3xl font-bold mb-6 text-stare-navy">Explore Case Studies</h1>
           <div className="text-center text-red-600">
             <p>Unable to load case studies at this time.</p>
-            <p className="text-sm text-gray-500 mt-2">Please check your Xano API configuration.</p>
+            <p className="text-sm text-gray-500 mt-2">Please check your database connection.</p>
+            <Button onClick={() => window.location.reload()} className="mt-4">
+              Retry
+            </Button>
           </div>
         </div>
       </section>
@@ -189,6 +196,12 @@ const CaseStudiesList = () => {
             <Plus className="mr-2 h-4 w-4" />
             Submit Case Study
           </Button>
+        </div>
+        
+        <div className="mb-4 p-4 bg-gray-100 rounded-md">
+          <p className="text-sm text-gray-600">
+            Debug: Found {caseStudies.length} case studies, showing {filteredCaseStudies.length} after filters
+          </p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -307,7 +320,7 @@ const CaseStudiesList = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredCaseStudies.length === 0 ? (
                 <div className="text-center text-gray-500 col-span-2">
-                  {isLoading ? 'Loading...' : 'No case studies found matching your criteria.'}
+                  {isLoading ? 'Loading...' : caseStudies.length === 0 ? 'No case studies found in the database.' : 'No case studies found matching your criteria.'}
                 </div>
               ) : (
                 filteredCaseStudies.map(caseStudy => (
