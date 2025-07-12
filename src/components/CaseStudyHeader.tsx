@@ -48,31 +48,21 @@ const CaseStudyHeader = ({
   onSortChange,
   onSubmitClick
 }: CaseStudyHeaderProps) => {
-  const getSortLabel = (value: SortOption) => {
-    switch (value) {
-      case 'most-liked': return 'Most Liked';
-      case 'most-recent': return 'Most Recent';
-      case 'a-z': return 'A-Z';
-      case 'z-a': return 'Z-A';
-      default: return 'Most Liked';
-    }
-  };
-
   return (
     <div className="space-y-6">
-      {/* Search Bar */}
-      <div className="relative max-w-2xl">
+      {/* Full Width Search Bar */}
+      <div className="relative w-full">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
         <Input
           type="text"
           placeholder="Search by title, creator, or company..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-11 h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+          className="pl-11 h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full"
         />
       </div>
 
-      {/* Filter Row */}
+      {/* Filters Row */}
       <div className="flex flex-wrap items-center gap-3">
         <FilterDropdown
           title="Category"

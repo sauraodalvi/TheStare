@@ -5,11 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Upload, Loader2, X } from 'lucide-react';
+import { Upload, Loader2, Building } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { GoogleDriveService } from '@/services/googleDriveService';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import FilterDropdown from './FilterDropdown';
 
 interface CaseStudySubmissionModalProps {
   isOpen: boolean;
@@ -23,17 +23,18 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
     company: '',
     creator: '',
     category: [] as string[],
-    market: '',
-    objective: [] as string[],
-    isFree: true
+    market: [] as string[],
+    objective: [] as string[]
   });
   const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [confirmChecked, setConfirmChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const categories = ['Marketing', 'Sales', 'Finance', 'Technology', 'HR', 'Operations', 'Design', 'Strategy'];
-  const markets = ['B2B', 'B2C', 'E-commerce', 'SaaS', 'Healthcare', 'Education', 'Finance', 'Real Estate'];
-  const objectives = ['Lead Generation', 'Brand Awareness', 'Customer Retention', 'Cost Reduction', 'Revenue Growth', 'Process Improvement'];
+  const categories = ['Marketing', 'Sales', 'Finance', 'Technology', 'HR', 'Operations', 'Design', 'Strategy', 'E-commerce', 'Product'];
+  const markets = ['B2B', 'B2C', 'E-commerce', 'SaaS', 'Healthcare', 'Education', 'Finance', 'Real Estate', 'Fintech', 'EdTech'];
+  const objectives = ['Lead Generation', 'Brand Awareness', 'Customer Retention', 'Cost Reduction', 'Revenue Growth', 'Process Improvement', 'User Engagement', 'Market Expansion'];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -42,28 +43,15 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
     }));
   };
 
-  const handleCategoryChange = (category: string) => {
-    setFormData(prev => ({
-      ...prev,
-      category: prev.category.includes(category)
-        ? prev.category.filter(c => c !== category)
-        : [...prev.category, category]
-    }));
-  };
-
-  const handleObjectiveChange = (objective: string) => {
-    setFormData(prev => ({
-      ...prev,
-      objective: prev.objective.includes(objective)
-        ? prev.objective.filter(o => o !== objective)
-        : [...prev.objective, objective]
-    }));
-  };
-
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type.startsWith('image/')) {
       setLogoFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setLogoPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     } else {
       toast.error('Please select a valid image file');
     }
@@ -93,27 +81,59 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
     return urlData.publicUrl;
   };
 
+  const validateForm = () => {
+    if (!formData.title.trim()) {
+      toast.error('Title is required');
+      return false;
+    }
+    if (!formData.creator.trim()) {
+      toast.error('Creator name is required');
+      return false;
+    }
+    if (!formData.company.trim()) {
+      toast.error('Company name is required');
+      return false;
+    }
+    if (formData.category.length === 0) {
+      toast.error('Please select at least one category');
+      return false;
+    }
+    if (formData.market.length === 0) {
+      toast.error('Please select at least one market');
+      return false;
+    }
+    if (formData.objective.length === 0) {
+      toast.error('Please select at least one objective');
+      return false;
+    }
+    if (!pdfFile) {
+      toast.error('PDF upload is required');
+      return false;
+    }
+    if (!confirmChecked) {
+      toast.error('Please confirm that the information is correct');
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.title || !formData.creator || !formData.company) {
-      toast.error('Please fill in all required fields');
-      return;
-    }
-
-    if (!logoFile || !pdfFile) {
-      toast.error('Please upload both logo and PDF files');
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
     
     try {
-      // Upload logo to Supabase Storage
-      const logoUrl = await uploadLogo(logoFile);
+      let logoUrl = '';
+      
+      // Upload logo if provided
+      if (logoFile) {
+        logoUrl = await uploadLogo(logoFile);
+      }
       
       // Upload PDF to Google Drive
-      const pdfUrl = await GoogleDriveService.uploadPDF(pdfFile);
+      const pdfUrl = await GoogleDriveService.uploadPDF(pdfFile!);
       
       // Save to database
       const { error: insertError } = await supabase
@@ -124,17 +144,17 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
           company: formData.company,
           logo_url: logoUrl,
           pdf_url: pdfUrl,
-          Free: formData.isFree,
+          Free: true, // Always free for user submissions
           likes: 0,
           publish: 'Yes',
           category: formData.category,
-          market: formData.market,
+          market: formData.market.join(', '), // Store as comma-separated string
           objective: formData.objective
         });
 
       if (insertError) throw insertError;
 
-      toast.success('✅ Case study submitted successfully!');
+      toast.success('✅ Case study submitted successfully and will be reviewed shortly!');
       
       // Reset form
       setFormData({ 
@@ -142,12 +162,13 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
         creator: '', 
         company: '', 
         category: [], 
-        market: '', 
-        objective: [], 
-        isFree: true 
+        market: [], 
+        objective: [] 
       });
       setLogoFile(null);
+      setLogoPreview(null);
       setPdfFile(null);
+      setConfirmChecked(false);
       
       onSuccess?.();
       onClose();
@@ -168,31 +189,35 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="title" className="text-sm font-medium">Title *</Label>
-              <Input
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                placeholder="Case study title"
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="creator" className="text-sm font-medium">Creator Name *</Label>
-              <Input
-                id="creator"
-                name="creator"
-                value={formData.creator}
-                onChange={handleInputChange}
-                placeholder="Your name"
-                required
-              />
-            </div>
+          {/* Title */}
+          <div>
+            <Label htmlFor="title" className="text-sm font-medium">Title *</Label>
+            <Input
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              placeholder="Enter case study title"
+              required
+              className="mt-1"
+            />
           </div>
 
+          {/* Creator Name */}
+          <div>
+            <Label htmlFor="creator" className="text-sm font-medium">Creator Name *</Label>
+            <Input
+              id="creator"
+              name="creator"
+              value={formData.creator}
+              onChange={handleInputChange}
+              placeholder="Your name"
+              required
+              className="mt-1"
+            />
+          </div>
+
+          {/* Company Name */}
           <div>
             <Label htmlFor="company" className="text-sm font-medium">Company Name *</Label>
             <Input
@@ -202,99 +227,103 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
               onChange={handleInputChange}
               placeholder="Company name"
               required
+              className="mt-1"
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label className="text-sm font-medium">Category</Label>
-              <div className="mt-2 space-y-2 max-h-32 overflow-y-auto border rounded-md p-2">
-                {categories.map(category => (
-                  <div key={category} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`category-${category}`}
-                      checked={formData.category.includes(category)}
-                      onCheckedChange={() => handleCategoryChange(category)}
-                    />
-                    <Label htmlFor={`category-${category}`} className="text-sm">
-                      {category}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="market" className="text-sm font-medium">Market</Label>
-              <Select value={formData.market} onValueChange={(value) => setFormData(prev => ({ ...prev, market: value }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select market" />
-                </SelectTrigger>
-                <SelectContent>
-                  {markets.map(market => (
-                    <SelectItem key={market} value={market}>{market}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
+          {/* Category Multi-Select */}
           <div>
-            <Label className="text-sm font-medium">Objectives</Label>
-            <div className="mt-2 space-y-2 max-h-32 overflow-y-auto border rounded-md p-2">
-              {objectives.map(objective => (
-                <div key={objective} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`objective-${objective}`}
-                    checked={formData.objective.includes(objective)}
-                    onCheckedChange={() => handleObjectiveChange(objective)}
-                  />
-                  <Label htmlFor={`objective-${objective}`} className="text-sm">
-                    {objective}
-                  </Label>
-                </div>
-              ))}
+            <Label className="text-sm font-medium">Category *</Label>
+            <div className="mt-1">
+              <FilterDropdown
+                title="Select Categories"
+                options={categories}
+                selectedOptions={formData.category}
+                onSelectionChange={(categories) => setFormData(prev => ({ ...prev, category: categories }))}
+                placeholder="Search categories..."
+              />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="logo" className="text-sm font-medium">Company Logo *</Label>
+          {/* Market Multi-Select */}
+          <div>
+            <Label className="text-sm font-medium">Market *</Label>
+            <div className="mt-1">
+              <FilterDropdown
+                title="Select Markets"
+                options={markets}
+                selectedOptions={formData.market}
+                onSelectionChange={(markets) => setFormData(prev => ({ ...prev, market: markets }))}
+                placeholder="Search markets..."
+              />
+            </div>
+          </div>
+
+          {/* Objective Multi-Select */}
+          <div>
+            <Label className="text-sm font-medium">Objective *</Label>
+            <div className="mt-1">
+              <FilterDropdown
+                title="Select Objectives"
+                options={objectives}
+                selectedOptions={formData.objective}
+                onSelectionChange={(objectives) => setFormData(prev => ({ ...prev, objective: objectives }))}
+                placeholder="Search objectives..."
+              />
+            </div>
+          </div>
+
+          {/* Company Logo Upload */}
+          <div>
+            <Label htmlFor="logo" className="text-sm font-medium">Company Logo (Optional)</Label>
+            <div className="mt-1 flex items-center gap-4">
               <Input
                 id="logo"
                 type="file"
                 accept="image/*"
                 onChange={handleLogoUpload}
-                className="cursor-pointer"
+                className="cursor-pointer flex-1"
               />
-              {logoFile && (
-                <p className="text-sm text-green-600 mt-1">✓ {logoFile.name}</p>
+              {logoPreview ? (
+                <div className="w-12 h-12 rounded-lg border-2 border-gray-200 bg-white flex items-center justify-center overflow-hidden">
+                  <img src={logoPreview} alt="Logo preview" className="w-full h-full object-contain" />
+                </div>
+              ) : (
+                <div className="w-12 h-12 rounded-lg border-2 border-gray-200 bg-white flex items-center justify-center">
+                  <Building className="w-6 h-6 text-gray-400" />
+                </div>
               )}
             </div>
-            
-            <div>
-              <Label htmlFor="pdf" className="text-sm font-medium">Case Study PDF *</Label>
-              <Input
-                id="pdf"
-                type="file"
-                accept=".pdf"
-                onChange={handlePdfUpload}
-                className="cursor-pointer"
-              />
-              {pdfFile && (
-                <p className="text-sm text-green-600 mt-1">✓ {pdfFile.name}</p>
-              )}
-            </div>
+            {!logoFile && (
+              <p className="text-sm text-amber-600 mt-1">⚠️ No logo uploaded - a placeholder will be shown</p>
+            )}
           </div>
 
+          {/* PDF Upload */}
+          <div>
+            <Label htmlFor="pdf" className="text-sm font-medium">PDF Upload *</Label>
+            <Input
+              id="pdf"
+              type="file"
+              accept=".pdf"
+              onChange={handlePdfUpload}
+              className="cursor-pointer mt-1"
+              required
+            />
+            {pdfFile && (
+              <p className="text-sm text-green-600 mt-1">✓ {pdfFile.name}</p>
+            )}
+          </div>
+
+          {/* Confirmation Checkbox */}
           <div className="flex items-center space-x-2">
             <Checkbox
-              id="isFree"
-              checked={formData.isFree}
-              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isFree: !!checked }))}
+              id="confirm"
+              checked={confirmChecked}
+              onCheckedChange={(checked) => setConfirmChecked(!!checked)}
             />
-            <Label htmlFor="isFree" className="text-sm">
-              Make this case study free for all users
+            <Label htmlFor="confirm" className="text-sm">
+              ✅ I confirm the above information is correct and complete *
             </Label>
           </div>
 

@@ -148,7 +148,6 @@ const CaseStudiesList = () => {
 
   const handleSubmissionSuccess = () => {
     refetch();
-    toast.success('Case study submitted successfully!');
   };
 
   if (isLoading) {
@@ -254,6 +253,7 @@ const CaseStudiesList = () => {
           </div>
         ) : (
           <>
+            {/* Mobile: 1 column, Tablet: 2 columns, Desktop: 3-4 columns */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {paginatedData.map(caseStudy => (
                 <CaseStudyCard 

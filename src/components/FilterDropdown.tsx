@@ -30,11 +30,18 @@ const FilterDropdown = ({
   );
 
   const handleOptionToggle = (option: string) => {
+    let newSelection;
     if (selectedOptions.includes(option)) {
-      onSelectionChange(selectedOptions.filter(item => item !== option));
+      newSelection = selectedOptions.filter(item => item !== option);
     } else {
-      onSelectionChange([...selectedOptions, option]);
+      newSelection = [...selectedOptions, option];
     }
+    onSelectionChange(newSelection);
+    
+    // Close dropdown after selection (like Softr)
+    setTimeout(() => {
+      setIsOpen(false);
+    }, 150);
   };
 
   const handleClearAll = () => {
@@ -59,20 +66,20 @@ const FilterDropdown = ({
           <ChevronDown className="h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-0" align="start">
-        <div className="p-3 border-b">
+      <PopoverContent className="w-64 p-0 z-50 bg-white shadow-lg border" align="start">
+        <div className="p-3 border-b bg-white">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
             <Input
               placeholder={placeholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 h-9"
+              className="pl-8 h-9 bg-white"
             />
           </div>
         </div>
         
-        <div className="max-h-60 overflow-y-auto p-2">
+        <div className="max-h-60 overflow-y-auto p-2 bg-white">
           {filteredOptions.length === 0 ? (
             <div className="text-sm text-gray-500 text-center py-4">
               No options found
@@ -95,7 +102,7 @@ const FilterDropdown = ({
         </div>
         
         {selectedOptions.length > 0 && (
-          <div className="border-t p-2">
+          <div className="border-t p-2 bg-white">
             <Button
               variant="ghost"
               size="sm"
