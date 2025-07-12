@@ -81,15 +81,18 @@ const CaseStudySubmissionForm = () => {
       // Upload PDF to Google Drive
       const pdfUrl = await GoogleDriveService.uploadPDF(pdfFile);
       
-      // Save to database using the existing case_studies table
+      // Save to database using the existing airtable_data table
       const { error: insertError } = await supabase
-        .from('case_studies')
+        .from('airtable_data')
         .insert({
-          title: formData.title,
-          creator: formData.creator,
-          company_name: formData.company,
+          name: formData.title,
+          organizer: formData.creator,
+          company: formData.company,
           logo_url: logoUrl,
-          pdf_url: pdfUrl
+          pdf_url: pdfUrl,
+          Free: true, // Default to free
+          likes: 0, // Default to 0 likes
+          publish: 'Yes' // Default to published
         });
 
       if (insertError) throw insertError;
