@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, Building, User, Target, ExternalLink, X, Loader2 } from 'lucide-react';
+import { Heart, Building, User, Target, ExternalLink, X, Loader2, Crown } from 'lucide-react';
 import { CaseStudy } from '@/types/caseStudy';
 
 interface CaseStudyModalProps {
@@ -40,43 +40,54 @@ const CaseStudyModal = ({ caseStudy, isOpen, onClose }: CaseStudyModalProps) => 
     obj && obj.trim() !== ''
   ).slice(0, 3);
 
+  const logoUrl = caseStudy.Logo && caseStudy.Logo[0] ? caseStudy.Logo[0] : null;
+  const isPremium = caseStudy.Free === 'No';
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl max-h-[95vh] w-[95vw] p-0 overflow-hidden">
+      <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full p-0 overflow-hidden">
         {/* Header */}
-        <DialogHeader className="p-4 sm:p-6 border-b bg-white sticky top-0 z-10">
+        <DialogHeader className="p-4 sm:p-6 border-b bg-white sticky top-0 z-10 shadow-sm">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-4 flex-1 min-w-0">
-              {caseStudy.Logo && caseStudy.Logo[0] ? (
+              {logoUrl ? (
                 <img
-                  src={caseStudy.Logo[0]}
+                  src={logoUrl}
                   alt={`${caseStudy.Company} logo`}
-                  className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover flex-shrink-0 border"
+                  className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl object-cover flex-shrink-0 border-2 border-gray-200"
                   onError={(e) => {
-                    e.currentTarget.src = 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=100&auto=format&fit=crop&q=60';
+                    e.currentTarget.style.display = 'none';
                   }}
                 />
               ) : (
-                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 border">
-                  <Building className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center flex-shrink-0 border-2 border-gray-200">
+                  <Building className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />
                 </div>
               )}
               
               <div className="flex-1 min-w-0">
-                <DialogTitle className="text-lg sm:text-2xl font-bold text-stare-navy mb-2 pr-8 leading-tight">
-                  {caseStudy.Title || caseStudy.Name}
-                </DialogTitle>
+                <div className="flex items-start gap-2 mb-2">
+                  <DialogTitle className="text-lg sm:text-2xl font-bold text-gray-900 leading-tight flex-1">
+                    {caseStudy.Title || caseStudy.Name}
+                  </DialogTitle>
+                  {isPremium && (
+                    <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-white border-0 flex items-center gap-1">
+                      <Crown className="w-3 h-3" />
+                      Premium
+                    </Badge>
+                  )}
+                </div>
                 
-                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm text-gray-600 mb-3">
-                  <div className="flex items-center gap-1">
+                <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-sm text-gray-600 mb-3">
+                  <div className="flex items-center gap-1.5">
                     <Building className="w-4 h-4" />
                     <span className="font-medium">{caseStudy.Company}</span>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     <User className="w-4 h-4" />
                     <span>by {caseStudy.Organizer}</span>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     <Heart className="w-4 h-4 text-red-500" />
                     <span className="font-medium">{caseStudy.Likes || 0} likes</span>
                   </div>
@@ -84,12 +95,12 @@ const CaseStudyModal = ({ caseStudy, isOpen, onClose }: CaseStudyModalProps) => 
 
                 <div className="flex flex-wrap gap-2">
                   {cleanCategories.map((category, index) => (
-                    <Badge key={index} variant="secondary" className="bg-blue-50 text-blue-700 border-0">
+                    <Badge key={index} variant="secondary" className="bg-blue-50 text-blue-700 border-0 text-xs">
                       {category}
                     </Badge>
                   ))}
                   {cleanObjectives.map((objective, index) => (
-                    <Badge key={index} variant="outline" className="border-stare-teal text-stare-teal">
+                    <Badge key={index} variant="outline" className="border-green-200 text-green-700 text-xs">
                       <Target className="w-3 h-3 mr-1" />
                       {objective}
                     </Badge>
@@ -102,7 +113,7 @@ const CaseStudyModal = ({ caseStudy, isOpen, onClose }: CaseStudyModalProps) => 
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="absolute right-2 top-2 sm:right-4 sm:top-4 z-10"
+              className="absolute right-2 top-2 sm:right-4 sm:top-4 z-10 h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white shadow-sm"
             >
               <X className="w-4 h-4" />
             </Button>
@@ -115,12 +126,12 @@ const CaseStudyModal = ({ caseStudy, isOpen, onClose }: CaseStudyModalProps) => 
             <div className="h-full flex flex-col">
               {/* PDF Controls */}
               <div className="p-3 sm:p-4 bg-white border-b flex justify-between items-center">
-                <div>
+                <div className="flex-1">
                   <h3 className="font-semibold text-gray-800 text-sm sm:text-base">Case Study PDF</h3>
-                  <p className="text-xs text-gray-500 hidden sm:block">
+                  <p className="text-xs text-gray-500 hidden sm:block mt-1">
                     Have your own story? 
                     <button 
-                      className="text-stare-navy hover:underline ml-1"
+                      className="text-blue-600 hover:text-blue-800 hover:underline ml-1 font-medium"
                       onClick={() => {/* Add submission logic */}}
                     >
                       Submit a case study!
@@ -131,7 +142,7 @@ const CaseStudyModal = ({ caseStudy, isOpen, onClose }: CaseStudyModalProps) => 
                   onClick={openPdfInNewTab}
                   size="sm"
                   variant="outline"
-                  className="text-xs sm:text-sm"
+                  className="text-xs sm:text-sm shrink-0 ml-3"
                 >
                   <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   <span className="hidden sm:inline">Open in New Tab</span>
@@ -143,9 +154,9 @@ const CaseStudyModal = ({ caseStudy, isOpen, onClose }: CaseStudyModalProps) => 
               <div className="flex-1 min-h-0 relative">
                 {isPdfLoading && (
                   <div className="absolute inset-0 flex items-center justify-center bg-white z-10">
-                    <div className="flex flex-col items-center gap-2">
-                      <Loader2 className="w-8 h-8 animate-spin text-stare-navy" />
-                      <p className="text-sm text-gray-600">Loading PDF...</p>
+                    <div className="flex flex-col items-center gap-3">
+                      <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                      <p className="text-sm text-gray-600 font-medium">Loading PDF...</p>
                     </div>
                   </div>
                 )}
@@ -153,7 +164,7 @@ const CaseStudyModal = ({ caseStudy, isOpen, onClose }: CaseStudyModalProps) => 
                   src={getPdfEmbedUrl(caseStudy.PDF[0])}
                   className="w-full h-full border-0"
                   title="Case Study PDF"
-                  style={{ minHeight: '60vh' }}
+                  style={{ minHeight: 'calc(100vh - 200px)' }}
                   onLoad={() => setIsPdfLoading(false)}
                   onError={() => setIsPdfLoading(false)}
                 />
@@ -168,6 +179,7 @@ const CaseStudyModal = ({ caseStudy, isOpen, onClose }: CaseStudyModalProps) => 
                 <Button 
                   variant="outline" 
                   size="sm"
+                  className="text-blue-600 border-blue-200 hover:bg-blue-50"
                   onClick={() => {/* Add submission logic */}}
                 >
                   Submit Your Case Study
