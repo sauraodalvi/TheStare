@@ -11,6 +11,8 @@ import CaseStudyCard from './CaseStudyCard';
 import CaseStudyFilters from './CaseStudyFilters';
 import CaseStudyModal from './CaseStudyModal';
 import CaseStudySubmissionForm from './CaseStudySubmissionForm';
+import CaseStudyFilterChips from './CaseStudyFilterChips';
+import CaseStudySorting, { SortOption } from './CaseStudySorting';
 
 const CaseStudiesList = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,6 +24,7 @@ const CaseStudiesList = () => {
   const [selectedCaseStudy, setSelectedCaseStudy] = useState<CaseStudy | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showSubmissionForm, setShowSubmissionForm] = useState(false);
+  const [sortBy, setSortBy] = useState<SortOption>('most-liked');
   const hasShownError = useRef(false);
 
   const { data: caseStudies = [], isLoading, error } = useQuery({
@@ -34,10 +37,10 @@ const CaseStudiesList = () => {
   console.log('Loading state:', isLoading);
   console.log('Error state:', error);
 
-  const categories = [...new Set(caseStudies.flatMap(cs => cs.Category || []))];
+  const categories = [...new Set(caseStudies.flatMap(cs => cs.Category || []).filter(cat => cat && cat !== 'All'))];
   const companies = [...new Set(caseStudies.map(cs => cs.Company).filter(Boolean))];
   const markets = [...new Set(caseStudies.map(cs => cs.Market).filter(Boolean))];
-  const objectives = [...new Set(caseStudies.flatMap(cs => cs.Objective || []))];
+  const objectives = [...new Set(caseStudies.flatMap(cs => cs.Objective || []).filter(obj => obj && obj.trim() !== ''))];
 
   useEffect(() => {
     if (error && !hasShownError.current) {
@@ -49,16 +52,21 @@ const CaseStudiesList = () => {
     }
   }, [error]);
 
-  const filteredCaseStudies = useMemo(() => {
+  const filteredAndSortedCaseStudies = useMemo(() => {
     let filtered = [...caseStudies];
 
+    // Apply search filter
     if (searchQuery) {
+      const query = searchQuery.toLowerCase();
       filtered = filtered.filter(cs =>
-        cs.Title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cs.Name?.toLowerCase().includes(searchQuery.toLowerCase())
+        cs.Title?.toLowerCase().includes(query) ||
+        cs.Name?.toLowerCase().includes(query) ||
+        cs.Company?.toLowerCase().includes(query) ||
+        cs.Organizer?.toLowerCase().includes(query)
       );
     }
 
+    // Apply other filters
     if (selectedCategories.length > 0) {
       filtered = filtered.filter(cs =>
         cs.Category?.some(cat => selectedCategories.includes(cat))
@@ -87,24 +95,43 @@ const CaseStudiesList = () => {
       );
     }
 
+    // Apply sorting
+    switch (sortBy) {
+      case 'most-liked':
+        filtered.sort((a, b) => (b.Likes || 0) - (a.Likes || 0));
+        break;
+      case 'most-recent':
+        filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        break;
+      case 'a-z':
+        filtered.sort((a, b) => (a.Title || a.Name || '').localeCompare(b.Title || b.Name || ''));
+        break;
+      case 'z-a':
+        filtered.sort((a, b) => (b.Title || b.Name || '').localeCompare(a.Title || a.Name || ''));
+        break;
+      default:
+        break;
+    }
+
     return filtered;
-  }, [caseStudies, searchQuery, selectedCategories, selectedCompanies, selectedMarkets, likesRange, selectedObjectives]);
+  }, [caseStudies, searchQuery, selectedCategories, selectedCompanies, selectedMarkets, likesRange, selectedObjectives, sortBy]);
 
   const {
     paginatedData,
     hasMore,
     loadMore,
     reset,
-    totalItems
+    totalItems,
+    isLoadingMore
   } = usePagination({
-    data: filteredCaseStudies,
+    data: filteredAndSortedCaseStudies,
     itemsPerPage: 30
   });
 
   // Reset pagination when filters change
   useEffect(() => {
     reset();
-  }, [searchQuery, selectedCategories, selectedCompanies, selectedMarkets, likesRange, selectedObjectives, reset]);
+  }, [searchQuery, selectedCategories, selectedCompanies, selectedMarkets, likesRange, selectedObjectives, sortBy, reset]);
 
   const handleCaseStudyClick = (caseStudy: CaseStudy) => {
     setSelectedCaseStudy(caseStudy);
@@ -154,6 +181,15 @@ const CaseStudiesList = () => {
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
+  };
+
+  const handleClearAllFilters = () => {
+    setSearchQuery('');
+    setSelectedCategories([]);
+    setSelectedCompanies([]);
+    setSelectedMarkets([]);
+    setSelectedObjectives([]);
+    setLikesRange([0, 500]);
   };
 
   if (showSubmissionForm) {
@@ -247,13 +283,55 @@ const CaseStudiesList = () => {
           </aside>
           
           <div className="lg:col-span-3">
-            {filteredCaseStudies.length === 0 ? (
+            {/* Filter Chips */}
+            <CaseStudyFilterChips
+              selectedCategories={selectedCategories}
+              selectedCompanies={selectedCompanies}
+              selectedMarkets={selectedMarkets}
+              selectedObjectives={selectedObjectives}
+              searchQuery={searchQuery}
+              onRemoveCategory={handleCategoryChange}
+              onRemoveCompany={handleCompanyChange}
+              onRemoveMarket={handleMarketChange}
+              onRemoveObjective={handleObjectiveChange}
+              onClearSearch={() => setSearchQuery('')}
+              onClearAll={handleClearAllFilters}
+            />
+
+            {/* Sorting */}
+            <div className="flex justify-between items-center mb-6">
+              <div className="text-sm text-gray-600">
+                {filteredAndSortedCaseStudies.length === 0 && caseStudies.length > 0 ? (
+                  <span>No results match your filters</span>
+                ) : (
+                  <span>{filteredAndSortedCaseStudies.length} case studies found</span>
+                )}
+              </div>
+              <CaseStudySorting value={sortBy} onChange={setSortBy} />
+            </div>
+
+            {filteredAndSortedCaseStudies.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">
-                  {isLoading ? 'Loading...' : caseStudies.length === 0 ? 'No case studies found in the database.' : 'No case studies match your search criteria.'}
-                </p>
-                {filteredCaseStudies.length === 0 && caseStudies.length > 0 && (
-                  <p className="text-gray-400 text-sm mt-2">Try adjusting your filters or search terms.</p>
+                {caseStudies.length === 0 ? (
+                  <div>
+                    <p className="text-gray-500 text-lg mb-4">No case studies found in the database.</p>
+                    <Button onClick={() => setShowSubmissionForm(true)}>
+                      Submit the First Case Study
+                    </Button>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-gray-500 text-lg mb-2">No results found</p>
+                    <p className="text-gray-400 text-sm mb-4">Try changing filters or submit your own case study.</p>
+                    <div className="flex gap-2 justify-center">
+                      <Button variant="outline" onClick={handleClearAllFilters}>
+                        Clear Filters
+                      </Button>
+                      <Button onClick={() => setShowSubmissionForm(true)}>
+                        Submit Case Study
+                      </Button>
+                    </div>
+                  </div>
                 )}
               </div>
             ) : (
@@ -275,8 +353,16 @@ const CaseStudiesList = () => {
                       variant="outline"
                       size="lg"
                       className="px-8"
+                      disabled={isLoadingMore}
                     >
-                      Show More
+                      {isLoadingMore ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Loading more...
+                        </>
+                      ) : (
+                        'Show More'
+                      )}
                     </Button>
                   </div>
                 )}

@@ -11,17 +11,21 @@ interface CaseStudyCardProps {
 }
 
 const CaseStudyCard = ({ caseStudy, onClick }: CaseStudyCardProps) => {
+  const cleanCategories = (caseStudy.Category || []).filter(cat => 
+    cat && cat !== 'All' && cat.trim() !== ''
+  ).slice(0, 2);
+
   return (
     <Card 
-      className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-gray-200 overflow-hidden"
+      className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-gray-200 overflow-hidden h-full flex flex-col"
       onClick={() => onClick(caseStudy)}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-4 flex flex-col h-full">
         <div className="flex items-start gap-3 mb-3">
           {caseStudy.Logo && caseStudy.Logo[0] ? (
             <img
               src={caseStudy.Logo[0]}
-              alt={caseStudy.Company}
+              alt={`${caseStudy.Company} logo`}
               className="w-12 h-12 rounded-lg object-cover flex-shrink-0 border"
               onError={(e) => {
                 e.currentTarget.src = 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=100&auto=format&fit=crop&q=60';
@@ -33,18 +37,21 @@ const CaseStudyCard = ({ caseStudy, onClick }: CaseStudyCardProps) => {
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-900 text-sm leading-tight mb-1 line-clamp-2">
+            <h3 className="font-bold text-gray-900 text-sm leading-tight mb-1 line-clamp-2">
               {caseStudy.Title || caseStudy.Name}
             </h3>
-            <p className="text-sm text-gray-600 mb-2">
-              {caseStudy.Organizer}
+            <p className="text-sm text-gray-600 mb-1">
+              {caseStudy.Company}
+            </p>
+            <p className="text-xs text-gray-500">
+              by {caseStudy.Organizer}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mt-auto">
           <div className="flex flex-wrap gap-1">
-            {caseStudy.Category && caseStudy.Category.slice(0, 2).map((category, index) => (
+            {cleanCategories.map((category, index) => (
               <Badge 
                 key={index} 
                 variant="secondary" 
@@ -57,7 +64,7 @@ const CaseStudyCard = ({ caseStudy, onClick }: CaseStudyCardProps) => {
           
           <div className="flex items-center gap-1 text-sm text-gray-500">
             <Heart className="w-4 h-4" />
-            <span>{caseStudy.Likes}</span>
+            <span>{caseStudy.Likes || 0}</span>
           </div>
         </div>
       </CardContent>
