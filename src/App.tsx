@@ -15,7 +15,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Pricing from "./pages/Pricing";
 
-const App = () => {
+const App: React.FC = () => {
   // Create QueryClient inside the component to ensure proper React context
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
