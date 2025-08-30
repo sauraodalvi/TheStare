@@ -2,9 +2,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 import { Plus, Search } from 'lucide-react';
 import FilterDropdown from './FilterDropdown';
+import SortDropdown from './SortDropdown';
 import { SortOption } from './CaseStudySorting';
 
 interface CaseStudyHeaderProps {
@@ -101,17 +102,7 @@ const CaseStudyHeader = ({
 
         {/* Right side - Sorting and Submit */}
         <div className="flex items-center gap-3 shrink-0">
-          <Select value={sortBy} onValueChange={onSortChange}>
-            <SelectTrigger className="w-40">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="most-liked">Most Liked</SelectItem>
-              <SelectItem value="most-recent">Most Recent</SelectItem>
-              <SelectItem value="a-z">A-Z</SelectItem>
-              <SelectItem value="z-a">Z-A</SelectItem>
-            </SelectContent>
-          </Select>
+          <SortDropdown value={sortBy} onChange={onSortChange} />
           
           <Button 
             onClick={onSubmitClick}

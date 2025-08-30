@@ -13,19 +13,41 @@ export function usePagination<T>({ data, itemsPerPage }: UsePaginationProps<T>) 
   const paginatedData = useMemo(() => {
     const startIndex = 0;
     const endIndex = currentPage * itemsPerPage;
-    return data.slice(startIndex, endIndex);
+    const result = data.slice(startIndex, endIndex);
+    console.log('Pagination data:', { 
+      currentPage, 
+      itemsPerPage, 
+      totalData: data.length, 
+      startIndex, 
+      endIndex, 
+      resultLength: result.length 
+    });
+    return result;
   }, [data, currentPage, itemsPerPage]);
 
   const hasMore = currentPage * itemsPerPage < data.length;
+  console.log('HasMore calculation:', { 
+    currentPage, 
+    itemsPerPage, 
+    totalData: data.length, 
+    hasMore: currentPage * itemsPerPage < data.length 
+  });
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
   const loadMore = async () => {
+    console.log('LoadMore called:', { hasMore, isLoadingMore, currentPage, itemsPerPage, dataLength: data.length });
     if (hasMore && !isLoadingMore) {
       setIsLoadingMore(true);
       // Simulate loading delay for better UX
       await new Promise(resolve => setTimeout(resolve, 500));
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage(prev => {
+        const newPage = prev + 1;
+        console.log('Setting new page:', newPage);
+        return newPage;
+      });
       setIsLoadingMore(false);
+    } else {
+      console.log('LoadMore blocked:', { hasMore, isLoadingMore });
     }
   };
 
