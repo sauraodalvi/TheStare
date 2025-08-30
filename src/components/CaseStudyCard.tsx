@@ -16,6 +16,11 @@ const CaseStudyCard = ({ caseStudy, onClick }: CaseStudyCardProps) => {
   ).slice(0, 1); // Show only first category
 
   const logoUrl = caseStudy.Logo && caseStudy.Logo[0] ? caseStudy.Logo[0] : null;
+  console.log('CaseStudyCard logo data:', { 
+    Logo: caseStudy.Logo, 
+    logoUrl, 
+    company: caseStudy.Company 
+  });
 
   return (
     <Card 

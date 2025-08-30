@@ -25,33 +25,41 @@ export class SupabaseService {
       }
 
       // Map the data to CaseStudy format with better data cleaning
-      const mappedData: CaseStudy[] = data.map((item: any) => ({
-        id: item.id,
-        created_at: item.created_at || new Date().toISOString(),
-        Name: item.name || 'Untitled Case Study',
-        Title: item.name || 'Untitled Case Study',
-        Company: item.company || 'Unknown Company',
-        Organizer: item.organizer || 'Unknown Organizer',
-        Objective: SupabaseService.cleanArrayField(item.objective),
-        Creators_Tag: item.creators_tag || '',
-        PDF: item.google_drive_pdf_path ? [item.google_drive_pdf_path] : (item.pdf ? [item.pdf] : []),
-        Likes: typeof item.likes === 'number' ? item.likes : 0,
-        Logo: item.google_drive_logo_path ? [item.google_drive_logo_path] : (item.logo ? [item.logo] : []),
-        Category: SupabaseService.cleanArrayField(item.category),
-        Market: item.market || 'General Market',
-        Sort: item.sort_field || 0,
-        Type: SupabaseService.cleanArrayField(item.type_field),
-        Image_Tags_Extra: SupabaseService.cleanArrayField(item.image_tags_extra),
-        Likes_Filter_Formula: item.likes_filter_formula || '',
-        New_Image_Tags_Formula: '',
-        Publish: item.publish || 'Yes',
-        New_Image_Tag: SupabaseService.cleanArrayField(item.new_image_tag),
-        Likes_Filter: SupabaseService.cleanArrayField(item.likes_filter),
-        SEO_Index: 0,
-        SEO_Slug: '',
-        SEO_Title: '',
-        Free: item.free !== false ? 'Yes' : 'No' // Use lowercase field name
-      }));
+      const mappedData: CaseStudy[] = data.map((item: any) => {
+        console.log('Raw item logo data:', {
+          google_drive_logo_path: item.google_drive_logo_path,
+          logo: item.logo,
+          name: item.name
+        });
+        
+        return {
+          id: item.id,
+          created_at: item.created_at || new Date().toISOString(),
+          Name: item.name || 'Untitled Case Study',
+          Title: item.name || 'Untitled Case Study',
+          Company: item.company || 'Unknown Company',
+          Organizer: item.organizer || 'Unknown Organizer',
+          Objective: SupabaseService.cleanArrayField(item.objective),
+          Creators_Tag: item.creators_tag || '',
+          PDF: item.google_drive_pdf_path ? [item.google_drive_pdf_path] : (item.pdf ? [item.pdf] : []),
+          Likes: typeof item.likes === 'number' ? item.likes : 0,
+          Logo: item.google_drive_logo_path ? [item.google_drive_logo_path] : (item.logo ? [item.logo] : []),
+          Category: SupabaseService.cleanArrayField(item.category),
+          Market: item.market || 'General Market',
+          Sort: item.sort_field || 0,
+          Type: SupabaseService.cleanArrayField(item.type_field),
+          Image_Tags_Extra: SupabaseService.cleanArrayField(item.image_tags_extra),
+          Likes_Filter_Formula: item.likes_filter_formula || '',
+          New_Image_Tags_Formula: '',
+          Publish: item.publish || 'Yes',
+          New_Image_Tag: SupabaseService.cleanArrayField(item.new_image_tag),
+          Likes_Filter: SupabaseService.cleanArrayField(item.likes_filter),
+          SEO_Index: 0,
+          SEO_Slug: '',
+          SEO_Title: '',
+          Free: item.free !== false ? 'Yes' : 'No' // Use lowercase field name
+        };
+      });
 
       console.log('Mapped case studies:', mappedData);
       return mappedData;
