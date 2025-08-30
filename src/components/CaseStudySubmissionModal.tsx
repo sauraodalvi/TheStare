@@ -139,6 +139,7 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
       const { error: insertError } = await supabase
         .from('airtable_data')
         .insert({
+          airtable_id: `user_submission_${Date.now()}`,
           name: formData.title,
           organizer: formData.creator,
           company: formData.company,
@@ -146,8 +147,8 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
           pdf: pdfUrl,
           Free: true, // Always free for user submissions (note: capital F)
           likes: 0,
-          publish: true,
-          category: formData.category, // Store as JSON array
+          publish: 'Yes', // String value as expected by schema
+          category: formData.category, // JSON array
           market: formData.market.join(', '),
           objective: formData.objective.join(', ')
         });
