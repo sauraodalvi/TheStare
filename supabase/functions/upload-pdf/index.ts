@@ -19,6 +19,7 @@ serve(async (req) => {
 
     const formData = await req.formData()
     const file = formData.get('file') as File
+    const fileType = formData.get('type') as string // 'pdf' or 'logo'
 
     if (!file) {
       return new Response('No file provided', { status: 400, headers: corsHeaders })
@@ -105,16 +106,20 @@ serve(async (req) => {
 
     // Upload file to Google Drive
     const fileBytes = await file.arrayBuffer()
-    const fileName = `case-study-${Date.now()}.pdf`
+    
+    // Determine folder and filename based on file type
+    const isPdf = fileType === 'pdf' || file.type === 'application/pdf'
+    const folderId = isPdf ? '1NedyZm9HIJqKZGmY19zReyysSvZtgPE6' : '1eruGLtCGGu3PeXrFqKYPMB_tg4KgsXOC'
+    const fileName = isPdf ? `case-study-${Date.now()}.pdf` : `logo-${Date.now()}-${file.name}`
 
     const metadata = {
       name: fileName,
-      parents: ['1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'] // Replace with your folder ID
+      parents: [folderId]
     }
 
     const form = new FormData()
     form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }))
-    form.append('file', new Blob([fileBytes], { type: 'application/pdf' }))
+    form.append('file', new Blob([fileBytes], { type: file.type }))
 
     const uploadResponse = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
       method: 'POST',

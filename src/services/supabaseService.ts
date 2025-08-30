@@ -3,14 +3,21 @@ import { supabase } from '@/integrations/supabase/client';
 import { CaseStudy } from '@/types/caseStudy';
 
 export class SupabaseService {
-  static async getCaseStudies(): Promise<CaseStudy[]> {
+  static async getCaseStudies(isAuthenticated = false): Promise<CaseStudy[]> {
     console.log('Fetching case studies from case_studies table...');
     
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('case_studies')
         .select('*')
-        .order('likes', { ascending: false }); // Default sort by likes
+        .eq('publish', true); // Only show published case studies
+      
+      // If user is not authenticated, only show free case studies
+      if (!isAuthenticated) {
+        query = query.eq('free', true);
+      }
+      
+      const { data, error } = await query.order('likes', { ascending: false });
 
       if (error) {
         console.error('Supabase error:', error);

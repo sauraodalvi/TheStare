@@ -62,48 +62,45 @@ const CaseStudyHeader = ({
         />
       </div>
 
-      {/* Filters Row */}
-      <div className="flex flex-wrap items-center gap-3">
-        <FilterDropdown
-          title="Category"
-          options={categories}
-          selectedOptions={selectedCategories}
-          onSelectionChange={onCategoryChange}
-          placeholder="Search categories..."
-        />
-        
-        <FilterDropdown
-          title="Company"
-          options={companies}
-          selectedOptions={selectedCompanies}
-          onSelectionChange={onCompanyChange}
-          placeholder="Search companies..."
-        />
-        
-        <FilterDropdown
-          title="Market"
-          options={markets}
-          selectedOptions={selectedMarkets}
-          onSelectionChange={onMarketChange}
-          placeholder="Search markets..."
-        />
-        
-        <FilterDropdown
-          title="Objective"
-          options={objectives}
-          selectedOptions={selectedObjectives}
-          onSelectionChange={onObjectiveChange}
-          placeholder="Search objectives..."
-        />
-      </div>
-
-      {/* Results and Actions Row */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="text-lg font-medium text-gray-900">
-          {totalResults} case studies found
+      {/* Filters and Actions Row */}
+      <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+        {/* Left side - Filters */}
+        <div className="flex flex-wrap items-center gap-3 flex-1">
+          <FilterDropdown
+            title="Category"
+            options={categories}
+            selectedOptions={selectedCategories}
+            onSelectionChange={onCategoryChange}
+            placeholder="Search categories..."
+          />
+          
+          <FilterDropdown
+            title="Company"
+            options={companies}
+            selectedOptions={selectedCompanies}
+            onSelectionChange={onCompanyChange}
+            placeholder="Search companies..."
+          />
+          
+          <FilterDropdown
+            title="Market"
+            options={markets}
+            selectedOptions={selectedMarkets}
+            onSelectionChange={onMarketChange}
+            placeholder="Search markets..."
+          />
+          
+          <FilterDropdown
+            title="Objective"
+            options={objectives}
+            selectedOptions={selectedObjectives}
+            onSelectionChange={onObjectiveChange}
+            placeholder="Search objectives..."
+          />
         </div>
-        
-        <div className="flex items-center gap-3">
+
+        {/* Right side - Sorting and Submit */}
+        <div className="flex items-center gap-3 shrink-0">
           <Select value={sortBy} onValueChange={onSortChange}>
             <SelectTrigger className="w-40">
               <SelectValue />
@@ -124,6 +121,11 @@ const CaseStudyHeader = ({
             Submit Case Study
           </Button>
         </div>
+      </div>
+
+      {/* Results Count */}
+      <div className="text-lg font-medium text-gray-900">
+        {totalResults} case studies found
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react';
 import { CaseStudy } from '@/types/caseStudy';
 import { toast } from 'sonner';
 import { SupabaseService } from '@/services/supabaseService';
+import { useAuth } from '@/hooks/useAuth';
 import { usePagination } from '@/hooks/usePagination';
 import CaseStudyCard from './CaseStudyCard';
 import CaseStudyModal from './CaseStudyModal';

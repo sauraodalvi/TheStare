@@ -66,19 +66,20 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
     }
   };
 
-  const uploadLogo = async (file: File): Promise<string> => {
-    const fileName = `${Date.now()}-${file.name}`;
-    const { data, error } = await supabase.storage
-      .from('company-logos')
-      .upload(fileName, file);
+  const uploadFile = async (file: File, type: 'pdf' | 'logo'): Promise<string> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
 
-    if (error) throw error;
+    const response = await supabase.functions.invoke('upload-pdf', {
+      body: formData,
+    });
 
-    const { data: urlData } = supabase.storage
-      .from('company-logos')
-      .getPublicUrl(data.path);
+    if (response.error) {
+      throw new Error(`Failed to upload ${type}: ${response.error.message}`);
+    }
 
-    return urlData.publicUrl;
+    return response.data.shareUrl;
   };
 
   const validateForm = () => {
@@ -129,11 +130,11 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
       
       // Upload logo if provided
       if (logoFile) {
-        logoUrl = await uploadLogo(logoFile);
+        logoUrl = await uploadFile(logoFile, 'logo');
       }
       
       // Upload PDF to Google Drive
-      const pdfUrl = await GoogleDriveService.uploadPDF(pdfFile!);
+      const pdfUrl = await uploadFile(pdfFile!, 'pdf');
       
       // Save to database
       const { error: insertError } = await supabase
@@ -142,7 +143,7 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
           name: formData.title,
           organizer: formData.creator,
           company: formData.company,
-          google_drive_logo_path: logoUrl,
+          google_drive_logo_thumbnail: logoUrl,
           google_drive_pdf_path: pdfUrl,
           free: true, // Always free for user submissions (lowercase)
           likes: 0,
