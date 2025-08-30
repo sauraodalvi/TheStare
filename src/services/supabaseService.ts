@@ -27,7 +27,7 @@ export class SupabaseService {
       // Map the data to CaseStudy format with better data cleaning
       const mappedData: CaseStudy[] = data.map((item: any) => {
         console.log('Raw item logo data:', {
-          google_drive_logo_path: item.google_drive_logo_path,
+          google_drive_logo_thumbnail: item.google_drive_logo_thumbnail,
           logo: item.logo,
           name: item.name
         });
@@ -43,7 +43,7 @@ export class SupabaseService {
           Creators_Tag: item.creators_tag || '',
           PDF: item.google_drive_pdf_path ? [item.google_drive_pdf_path] : (item.pdf ? [item.pdf] : []),
           Likes: typeof item.likes === 'number' ? item.likes : 0,
-          Logo: item.google_drive_logo_path ? [item.google_drive_logo_path] : (item.logo ? [item.logo] : []),
+          Logo: item.google_drive_logo_thumbnail ? [item.google_drive_logo_thumbnail] : (item.logo ? [item.logo] : []),
           Category: SupabaseService.cleanArrayField(item.category),
           Market: item.market || 'General Market',
           Sort: item.sort_field || 0,
