@@ -8,7 +8,7 @@ export class SupabaseService {
     
     try {
       const { data, error } = await supabase
-        .from('airtable_data')
+        .from('case_studies')
         .select('*')
         .order('likes', { ascending: false }); // Default sort by likes
 
@@ -17,10 +17,10 @@ export class SupabaseService {
         throw new Error(`Failed to fetch case studies: ${error.message}`);
       }
 
-      console.log('Raw data from airtable_data:', data);
+      console.log('Raw data from case_studies:', data);
 
       if (!data || data.length === 0) {
-        console.log('No data found in airtable_data table');
+        console.log('No data found in case_studies table');
         return [];
       }
 
@@ -50,7 +50,7 @@ export class SupabaseService {
         SEO_Index: 0,
         SEO_Slug: '',
         SEO_Title: '',
-        Free: item.Free !== false ? 'Yes' : 'No' // Default to free unless explicitly set to false
+        Free: item.free !== false ? 'Yes' : 'No' // Use lowercase field name
       }));
 
       console.log('Mapped case studies:', mappedData);

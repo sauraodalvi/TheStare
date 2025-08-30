@@ -7,91 +7,97 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "13.0.4"
   }
   public: {
     Tables: {
-      airtable_data: {
+      case_studies: {
         Row: {
-          airtable_id: string | null
-          category: Json | null
+          airtable_logo_path: string | null
+          airtable_pdf_path: string | null
+          category: string | null
           company: string | null
-          created_at: string | null
           creators_tag: string | null
-          Free: boolean | null
-          id: number
-          image_tags_extra: Json | null
+          free: boolean | null
+          google_drive_logo_path: string | null
+          google_drive_pdf_path: string | null
+          image_tags_extra: string | null
           likes: number | null
-          likes_filter: Json | null
+          likes_filter: string | null
           likes_filter_formula: string | null
           logo: string | null
-          logo_url: string | null
           market: string | null
           name: string | null
-          new_image_tag: Json | null
-          objective: Json | null
+          new_image_tag: string | null
+          objective: string | null
           organizer: string | null
           pdf: string | null
-          pdf_url: string | null
-          publish: string | null
-          sort_field: number | null
-          type_field: Json | null
-          updated_at: string | null
+          publish: boolean | null
+          seo_description: string | null
+          seo_index: boolean | null
+          seo_slug: string | null
+          seo_title: string | null
+          sort_order: number | null
+          type: string | null
         }
         Insert: {
-          airtable_id?: string | null
-          category?: Json | null
+          airtable_logo_path?: string | null
+          airtable_pdf_path?: string | null
+          category?: string | null
           company?: string | null
-          created_at?: string | null
           creators_tag?: string | null
-          Free?: boolean | null
-          id?: number
-          image_tags_extra?: Json | null
+          free?: boolean | null
+          google_drive_logo_path?: string | null
+          google_drive_pdf_path?: string | null
+          image_tags_extra?: string | null
           likes?: number | null
-          likes_filter?: Json | null
+          likes_filter?: string | null
           likes_filter_formula?: string | null
           logo?: string | null
-          logo_url?: string | null
           market?: string | null
           name?: string | null
-          new_image_tag?: Json | null
-          objective?: Json | null
+          new_image_tag?: string | null
+          objective?: string | null
           organizer?: string | null
           pdf?: string | null
-          pdf_url?: string | null
-          publish?: string | null
-          sort_field?: number | null
-          type_field?: Json | null
-          updated_at?: string | null
+          publish?: boolean | null
+          seo_description?: string | null
+          seo_index?: boolean | null
+          seo_slug?: string | null
+          seo_title?: string | null
+          sort_order?: number | null
+          type?: string | null
         }
         Update: {
-          airtable_id?: string | null
-          category?: Json | null
+          airtable_logo_path?: string | null
+          airtable_pdf_path?: string | null
+          category?: string | null
           company?: string | null
-          created_at?: string | null
           creators_tag?: string | null
-          Free?: boolean | null
-          id?: number
-          image_tags_extra?: Json | null
+          free?: boolean | null
+          google_drive_logo_path?: string | null
+          google_drive_pdf_path?: string | null
+          image_tags_extra?: string | null
           likes?: number | null
-          likes_filter?: Json | null
+          likes_filter?: string | null
           likes_filter_formula?: string | null
           logo?: string | null
-          logo_url?: string | null
           market?: string | null
           name?: string | null
-          new_image_tag?: Json | null
-          objective?: Json | null
+          new_image_tag?: string | null
+          objective?: string | null
           organizer?: string | null
           pdf?: string | null
-          pdf_url?: string | null
-          publish?: string | null
-          sort_field?: number | null
-          type_field?: Json | null
-          updated_at?: string | null
+          publish?: boolean | null
+          seo_description?: string | null
+          seo_index?: boolean | null
+          seo_slug?: string | null
+          seo_title?: string | null
+          sort_order?: number | null
+          type?: string | null
         }
         Relationships: []
       }
