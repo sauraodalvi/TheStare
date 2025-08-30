@@ -16,6 +16,7 @@ import CaseStudyHeader from './CaseStudyHeader';
 import { SortOption } from './CaseStudySorting';
 
 const CaseStudiesList = () => {
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
@@ -28,8 +29,8 @@ const CaseStudiesList = () => {
   const hasShownError = useRef(false);
 
   const { data: caseStudies = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['caseStudies'],
-    queryFn: SupabaseService.getCaseStudies,
+    queryKey: ['caseStudies', !!user],
+    queryFn: () => SupabaseService.getCaseStudies(!!user),
     retry: 1,
   });
 
