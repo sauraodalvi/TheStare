@@ -4,11 +4,11 @@ import { CaseStudy } from '@/types/caseStudy';
 
 export class SupabaseService {
   static async getCaseStudies(): Promise<CaseStudy[]> {
-    console.log('Fetching case studies from airtable_data table...');
+    console.log('Fetching case studies from case_studies table...');
     
     try {
       const { data, error } = await supabase
-        .from('airtable_data')
+        .from('case_studies')
         .select('*')
         .order('likes', { ascending: false }); // Default sort by likes
 
@@ -17,10 +17,10 @@ export class SupabaseService {
         throw new Error(`Failed to fetch case studies: ${error.message}`);
       }
 
-      console.log('Raw data from airtable_data:', data);
+      console.log('Raw data from case_studies:', data);
 
       if (!data || data.length === 0) {
-        console.log('No data found in airtable_data table');
+        console.log('No data found in case_studies table');
         return [];
       }
 

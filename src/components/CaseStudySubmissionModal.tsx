@@ -137,24 +137,24 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
       
       // Save to database
       const { error: insertError } = await supabase
-        .from('airtable_data')
+        .from('case_studies')
         .insert({
           name: formData.title,
           organizer: formData.creator,
           company: formData.company,
-          logo_url: logoUrl,
-          pdf_url: pdfUrl,
-          Free: true, // Always free for user submissions
+          logo: logoUrl,
+          pdf: pdfUrl,
+          free: true, // Always free for user submissions
           likes: 0,
-          publish: 'Yes',
-          category: formData.category,
-          market: formData.market.join(', '), // Store as comma-separated string
-          objective: formData.objective
+          publish: true,
+          category: formData.category.join(', '), // Store as comma-separated string
+          market: formData.market.join(', '),
+          objective: formData.objective.join(', ')
         });
 
       if (insertError) throw insertError;
 
-      toast.success('✅ Case study submitted successfully and will be reviewed shortly!');
+      toast.success('Case study submitted successfully and will be reviewed shortly!');
       
       // Reset form
       setFormData({ 
@@ -295,7 +295,7 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
               )}
             </div>
             {!logoFile && (
-              <p className="text-sm text-amber-600 mt-1">⚠️ No logo uploaded - a placeholder will be shown</p>
+              <p className="text-sm text-amber-600 mt-1">No logo uploaded - a placeholder will be shown</p>
             )}
           </div>
 
@@ -311,7 +311,7 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
               required
             />
             {pdfFile && (
-              <p className="text-sm text-green-600 mt-1">✓ {pdfFile.name}</p>
+              <p className="text-sm text-green-600 mt-1">{pdfFile.name}</p>
             )}
           </div>
 
@@ -323,7 +323,7 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
               onCheckedChange={(checked) => setConfirmChecked(!!checked)}
             />
             <Label htmlFor="confirm" className="text-sm">
-              ✅ I confirm the above information is correct and complete *
+              I confirm the above information is correct and complete *
             </Label>
           </div>
 

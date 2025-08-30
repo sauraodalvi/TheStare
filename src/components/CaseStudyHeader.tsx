@@ -100,7 +100,7 @@ const CaseStudyHeader = ({
       {/* Results and Actions Row */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="text-lg font-medium text-gray-900">
-          📄 {totalResults} case studies found
+          {totalResults} case studies found
         </div>
         
         <div className="flex items-center gap-3">
