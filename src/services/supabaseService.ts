@@ -17,10 +17,10 @@ export class SupabaseService {
         throw new Error(`Failed to fetch case studies: ${error.message}`);
       }
 
-      console.log('Raw data from case_studies:', data);
+      console.log('Raw data from airtable_data:', data);
 
       if (!data || data.length === 0) {
-        console.log('No data found in case_studies table');
+        console.log('No data found in airtable_data table');
         return [];
       }
 

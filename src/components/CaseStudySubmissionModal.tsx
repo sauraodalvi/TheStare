@@ -146,7 +146,7 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
           pdf: pdfUrl,
           Free: true, // Always free for user submissions (note: capital F)
           likes: 0,
-          publish: 'Yes',
+          publish: true,
           category: formData.category, // Store as JSON array
           market: formData.market.join(', '),
           objective: formData.objective.join(', ')
