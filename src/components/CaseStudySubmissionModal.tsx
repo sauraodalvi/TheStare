@@ -142,8 +142,8 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
           name: formData.title,
           organizer: formData.creator,
           company: formData.company,
-          logo: logoUrl,
-          pdf: pdfUrl,
+          google_drive_logo_path: logoUrl,
+          google_drive_pdf_path: pdfUrl,
           free: true, // Always free for user submissions (lowercase)
           likes: 0,
           publish: true, // Boolean value as expected by schema

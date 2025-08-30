@@ -88,8 +88,8 @@ const CaseStudySubmissionForm = () => {
           name: formData.title,
           organizer: formData.creator,
           company: formData.company,
-          logo: logoUrl,
-          pdf: pdfUrl,
+          google_drive_logo_path: logoUrl,
+          google_drive_pdf_path: pdfUrl,
           free: true, // Default to free (lowercase)
           likes: 0, // Default to 0 likes
           publish: true // Boolean value
