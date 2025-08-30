@@ -137,17 +137,17 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
       
       // Save to database
       const { error: insertError } = await supabase
-        .from('case_studies')
+        .from('airtable_data')
         .insert({
           name: formData.title,
           organizer: formData.creator,
           company: formData.company,
           logo: logoUrl,
           pdf: pdfUrl,
-          free: true, // Always free for user submissions
+          Free: true, // Always free for user submissions (note: capital F)
           likes: 0,
-          publish: true,
-          category: formData.category.join(', '), // Store as comma-separated string
+          publish: 'Yes',
+          category: formData.category, // Store as JSON array
           market: formData.market.join(', '),
           objective: formData.objective.join(', ')
         });

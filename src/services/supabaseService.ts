@@ -8,7 +8,7 @@ export class SupabaseService {
     
     try {
       const { data, error } = await supabase
-        .from('case_studies')
+        .from('airtable_data')
         .select('*')
         .order('likes', { ascending: false }); // Default sort by likes
 
