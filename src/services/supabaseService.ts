@@ -34,15 +34,26 @@ export class SupabaseService {
       }
 
       // Map the data to CaseStudy format with better data cleaning
-      const mappedData: CaseStudy[] = data.map((item: any) => {
+      const mappedData: CaseStudy[] = data.map((item: any, index: number) => {
         console.log('Raw item logo data:', {
           google_drive_logo_thumbnail: item.google_drive_logo_thumbnail,
           logo: item.logo,
           name: item.name
         });
         
+        // Generate a stable unique ID using name + company + index as fallback
+        const uniqueString = item.name && item.company 
+          ? `${item.name}-${item.company}`.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()
+          : `case-study-${index}`;
+        
+        // Convert string to numeric ID (simple hash)
+        const uniqueId = Math.abs(uniqueString.split('').reduce((a, b) => {
+          a = ((a << 5) - a) + b.charCodeAt(0);
+          return a & a;
+        }, 0)) || index + 1;
+        
         return {
-          id: item.id,
+          id: uniqueId,
           created_at: item.created_at || new Date().toISOString(),
           Name: item.name || 'Untitled Case Study',
           Title: item.name || 'Untitled Case Study',
@@ -51,22 +62,22 @@ export class SupabaseService {
           Objective: SupabaseService.cleanArrayField(item.objective),
           Creators_Tag: item.creators_tag || '',
           PDF: item.google_drive_pdf_path ? [item.google_drive_pdf_path] : (item.pdf ? [item.pdf] : []),
-          Likes: typeof item.likes === 'number' ? item.likes : 0,
+          Likes: item.likes !== null && item.likes !== undefined ? Number(item.likes) : 0,
           Logo: item.google_drive_logo_thumbnail ? [item.google_drive_logo_thumbnail] : (item.logo ? [item.logo] : []),
           Category: SupabaseService.cleanArrayField(item.category),
           Market: item.market || 'General Market',
-          Sort: item.sort_field || 0,
-          Type: SupabaseService.cleanArrayField(item.type_field),
+          Sort: item.sort_order || item.sort_field || 0,
+          Type: SupabaseService.cleanArrayField(item.type || item.type_field),
           Image_Tags_Extra: SupabaseService.cleanArrayField(item.image_tags_extra),
           Likes_Filter_Formula: item.likes_filter_formula || '',
           New_Image_Tags_Formula: '',
-          Publish: item.publish || 'Yes',
+          Publish: item.publish !== false ? 'Yes' : 'No',
           New_Image_Tag: SupabaseService.cleanArrayField(item.new_image_tag),
           Likes_Filter: SupabaseService.cleanArrayField(item.likes_filter),
           SEO_Index: 0,
           SEO_Slug: '',
           SEO_Title: '',
-          Free: item.free !== false ? 'Yes' : 'No' // Use lowercase field name
+          Free: item.free !== false ? 'Yes' : 'No'
         };
       });
 
