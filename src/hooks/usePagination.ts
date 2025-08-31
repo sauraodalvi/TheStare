@@ -34,12 +34,10 @@ export function usePagination<T>({ data, itemsPerPage }: UsePaginationProps<T>) 
   });
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
-  const loadMore = async () => {
+  const loadMore = () => {
     console.log('LoadMore called:', { hasMore, isLoadingMore, currentPage, itemsPerPage, dataLength: data.length });
     if (hasMore && !isLoadingMore) {
       setIsLoadingMore(true);
-      // Simulate loading delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 500));
       setCurrentPage(prev => {
         const newPage = prev + 1;
         console.log('Setting new page:', newPage);

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { CaseStudy } from '@/types/caseStudy';
@@ -17,6 +17,7 @@ import { SortOption } from './CaseStudySorting';
 
 const CaseStudiesList = () => {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
@@ -119,12 +120,30 @@ const CaseStudiesList = () => {
     hasMore,
     loadMore,
     reset,
+    currentPage,
+    totalPages,
     totalItems,
     isLoadingMore
   } = usePagination({
     data: filteredAndSortedCaseStudies,
     itemsPerPage: 30
   });
+
+  console.log('Pagination state:', { 
+    currentPage, 
+    totalItems, 
+    paginatedDataLength: paginatedData.length, 
+    hasMore,
+    isAuthenticated: !!user 
+  });
+
+  // Reset pagination when authentication state changes
+  useEffect(() => {
+    console.log('Authentication state changed, resetting pagination');
+    reset();
+    // Invalidate and refetch case studies when auth state changes
+    queryClient.invalidateQueries({ queryKey: ['caseStudies'] });
+  }, [!!user, queryClient, reset]);
 
   // Reset pagination when filters change
   useEffect(() => {
@@ -267,6 +286,12 @@ const CaseStudiesList = () => {
               ))}
             </div>
             
+            {/* Pagination info for debugging */}
+            <div className="text-center mt-4 text-sm text-muted-foreground">
+              Showing {paginatedData.length} of {totalItems} case studies
+              {user ? ' (authenticated)' : ' (free only)'}
+            </div>
+
             {hasMore && (
               <div className="text-center mt-12">
                 <Button 
@@ -285,6 +310,12 @@ const CaseStudiesList = () => {
                     'Show More'
                   )}
                 </Button>
+              </div>
+            )}
+
+            {!hasMore && totalItems > 0 && (
+              <div className="text-center mt-8 text-sm text-muted-foreground">
+                All case studies loaded
               </div>
             )}
           </>
