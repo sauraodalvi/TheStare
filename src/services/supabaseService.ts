@@ -4,6 +4,8 @@ import { CaseStudy } from '@/types/caseStudy';
 
 export class SupabaseService {
   static async getCaseStudies(isAuthenticated = false): Promise<CaseStudy[]> {
+    console.log('=== SupabaseService.getCaseStudies Debug ===');
+    console.log('isAuthenticated parameter:', isAuthenticated);
     console.log('Fetching case studies from case_studies table...');
     
     try {
@@ -12,12 +14,17 @@ export class SupabaseService {
         .select('*')
         .eq('publish', true); // Only show published case studies
       
+      console.log('Base query conditions: publish=true');
+      
       // If user is not authenticated, only show free case studies  
       if (!isAuthenticated) {
         query = query.eq('free', true);
+        console.log('User NOT authenticated: Adding free=true filter');
+      } else {
+        console.log('User IS authenticated: Showing all published case studies');
       }
       
-      console.log('Query conditions:', { isAuthenticated, query: query.toString() });
+      console.log('Final query:', query);
       
       const { data, error } = await query.order('likes', { ascending: false });
 
@@ -26,7 +33,8 @@ export class SupabaseService {
         throw new Error(`Failed to fetch case studies: ${error.message}`);
       }
 
-      console.log('Raw data from case_studies:', data);
+      console.log('Raw data from case_studies:', data?.length, 'records');
+      console.log('Sample of first 3 records:', data?.slice(0, 3));
 
       if (!data || data.length === 0) {
         console.log('No data found in case_studies table');

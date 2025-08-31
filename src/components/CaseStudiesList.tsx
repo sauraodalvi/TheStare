@@ -34,7 +34,8 @@ const CaseStudiesList = () => {
     retry: 1,
   });
 
-  console.log('Case studies data:', caseStudies);
+  console.log('Authentication state:', { user: !!user, userId: user?.id });
+  console.log('Case studies data length:', caseStudies.length);
   console.log('Loading state:', isLoading);
   console.log('Error state:', error);
 
