@@ -12,10 +12,12 @@ export class SupabaseService {
         .select('*')
         .eq('publish', true); // Only show published case studies
       
-      // If user is not authenticated, only show free case studies
+      // If user is not authenticated, only show free case studies  
       if (!isAuthenticated) {
         query = query.eq('free', true);
       }
+      
+      console.log('Query conditions:', { isAuthenticated, query: query.toString() });
       
       const { data, error } = await query.order('likes', { ascending: false });
 
