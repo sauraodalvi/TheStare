@@ -286,11 +286,6 @@ const CaseStudiesList = () => {
               ))}
             </div>
             
-            {/* Pagination info for debugging */}
-            <div className="text-center mt-4 text-sm text-muted-foreground">
-              Showing {paginatedData.length} of {totalItems} case studies
-              {user ? ' (authenticated)' : ' (free only)'}
-            </div>
 
             {hasMore && (
               <div className="text-center mt-12">
@@ -313,11 +308,6 @@ const CaseStudiesList = () => {
               </div>
             )}
 
-            {!hasMore && totalItems > 0 && (
-              <div className="text-center mt-8 text-sm text-muted-foreground">
-                All case studies loaded
-              </div>
-            )}
           </>
         )}
 

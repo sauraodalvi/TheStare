@@ -34,10 +34,13 @@ export function usePagination<T>({ data, itemsPerPage }: UsePaginationProps<T>) 
   });
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
-  // Reset loading state when page changes
+  // Reset loading state after a delay to allow proper state updates
   useEffect(() => {
     if (isLoadingMore) {
-      setIsLoadingMore(false);
+      const timer = setTimeout(() => {
+        setIsLoadingMore(false);
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, [currentPage, isLoadingMore]);
 
