@@ -1,5 +1,5 @@
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 interface UsePaginationProps<T> {
   data: T[];
@@ -34,6 +34,13 @@ export function usePagination<T>({ data, itemsPerPage }: UsePaginationProps<T>) 
   });
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
+  // Reset loading state when page changes
+  useEffect(() => {
+    if (isLoadingMore) {
+      setIsLoadingMore(false);
+    }
+  }, [currentPage, isLoadingMore]);
+
   const loadMore = () => {
     console.log('LoadMore called:', { hasMore, isLoadingMore, currentPage, itemsPerPage, dataLength: data.length });
     if (hasMore && !isLoadingMore) {
@@ -43,7 +50,6 @@ export function usePagination<T>({ data, itemsPerPage }: UsePaginationProps<T>) 
         console.log('Setting new page:', newPage);
         return newPage;
       });
-      setIsLoadingMore(false);
     } else {
       console.log('LoadMore blocked:', { hasMore, isLoadingMore });
     }
