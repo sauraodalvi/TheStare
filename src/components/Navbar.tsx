@@ -104,6 +104,19 @@ const Navbar = () => {
                   <li>
                     <NavigationMenuLink asChild>
                       <Link
+                        to="/resources/courses"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted focus:bg-muted"
+                      >
+                        <div className="text-sm font-medium leading-none text-foreground">Courses</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          Free video courses and sessions from top PMs
+                        </p>
+                      </Link>
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink asChild>
+                      <Link
                         to="/resources/participate"
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted focus:bg-muted"
                       >
@@ -190,6 +203,9 @@ const Navbar = () => {
                     </Link>
                     <Link to="/resources/self-study" className="text-muted-foreground hover:text-foreground text-sm py-1 transition-colors" onClick={toggleMenu}>
                       Self Study
+                    </Link>
+                    <Link to="/resources/courses" className="text-muted-foreground hover:text-foreground text-sm py-1 transition-colors" onClick={toggleMenu}>
+                      Courses
                     </Link>
                     <Link to="/resources/participate" className="text-muted-foreground hover:text-foreground text-sm py-1 transition-colors" onClick={toggleMenu}>
                       Participate

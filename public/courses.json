@@ -1,0 +1,302 @@
+{
+  "header": {
+    "title": "Learn Product Management",
+    "subtitle": "Hand-picked beginner and intermediate courses, plus free sessions from top PMs."
+  },
+  "beginnerCourses": [
+    {
+      "title": "Product Management Course (Hindi)",
+      "credits": "King Sidharth",
+      "url": "https://www.youtube.com/watch?v=_5LXIsxV08A&list=PLbwADCh48-fW_6N1a_aCt1Ixisrb8VwoK"
+    },
+    {
+      "title": "Product Management Interview Prep",
+      "credits": "Exponent",
+      "url": "https://www.youtube.com/watch?v=jEpwNaHjD68&list=PLrtCHHeadkHr8ro-vTg1CAdDuwrVmXS4y"
+    },
+    {
+      "title": "Introduction to Product Management",
+      "credits": "Balakrishnan Ravi",
+      "url": "https://www.youtube.com/watch?v=ravLfnYuqmA&list=PLZkpiiuDw2b9kda_9r12PWxunQHcRBhW6"
+    },
+    {
+      "title": "Product Management 101",
+      "credits": "PM Diego Granados",
+      "url": "https://www.youtube.com/watch?v=dJmg4ODH0YY&list=PLcMv0LrPMqFXE-S81xGd0H0r49cxko4AV"
+    }
+  ],
+  "intermediateCourses": [
+    {
+      "title": "Technology for Product Managers",
+      "credits": "HelloPM",
+      "url": "https://www.youtube.com/watch?v=1bDvIDjbGZs&list=PLJE844cffEGNvjkMqyqgdj_DJ9al55kbK"
+    },
+    {
+      "title": "Everything You Need To Become a Product Manager",
+      "credits": "Yudi J",
+      "url": "https://www.youtube.com/watch?v=fqcSl6930KM&list=PLIG26yC5t1Du-Fvgo8pnwwmTfwlREGlXK"
+    },
+    {
+      "title": "Sessions on Product Management",
+      "credits": "The Swag Wala PM",
+      "url": "https://www.youtube.com/watch?v=IGJ5id-jty0&list=PLYS-T6kriqV5DQ7B5oX4nYvHAmP2pbMcv"
+    },
+    {
+      "title": "Learn UX at ₹0 in Hindi",
+      "credits": "Ansh Mehra",
+      "url": "https://www.youtube.com/watch?v=Y40J_DomBu4&list=PLlHtucAD9KT2VKBwCZooIvDAiJQZ0Hrur"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 1,
+      "category": "Introduction",
+      "title": "What I *actually* do as a Product Manager",
+      "speaker": "Chloe Shih",
+      "role": "PM at Discord",
+      "credits": "Chloe Shih PM at Discord",
+      "url": "https://www.youtube.com/watch?v=Dnh0jP-GA0o",
+      "embed": "https://www.youtube.com/embed/Dnh0jP-GA0o"
+    },
+    {
+      "id": 2,
+      "category": "Introduction",
+      "title": "I went to a Product Manager's house",
+      "speaker": "Kritagya Nayyar",
+      "role": "PM at RazorPay",
+      "credits": "Kritagya Nayyar PM at RazorPay",
+      "url": "https://www.youtube.com/watch?v=e-82qLmjrHE",
+      "embed": "https://www.youtube.com/embed/e-82qLmjrHE"
+    },
+    {
+      "id": 3,
+      "category": "Introduction",
+      "title": "How I Became a Product Manager with NO Experience",
+      "speaker": "Harshita Y.",
+      "role": "PM at Coda",
+      "credits": "Harshita Y. PM at Coda",
+      "url": "https://www.youtube.com/watch?v=zGyx7nRqyg4",
+      "embed": "https://www.youtube.com/embed/zGyx7nRqyg4"
+    },
+    {
+      "id": 4,
+      "category": "Introduction",
+      "title": "All About Product Manager Career, Salaries and Skills",
+      "speaker": "Shravan Tickoo",
+      "role": "Group PM at Bhanzu",
+      "credits": "Shravan Tickoo Group PM at Bhanzu",
+      "url": "https://www.youtube.com/watch?v=tanunejWWWs",
+      "embed": "https://www.youtube.com/embed/tanunejWWWs"
+    },
+    {
+      "id": 5,
+      "category": "PM 101",
+      "title": "Project vs Program vs Product Management Explained",
+      "speaker": "Diego Granados",
+      "role": "SPM at PayPal",
+      "credits": "Diego Granados SPM at PayPal",
+      "url": "https://www.youtube.com/watch?v=1uDHPTchzVg",
+      "embed": "https://www.youtube.com/embed/1uDHPTchzVg"
+    },
+    {
+      "id": 6,
+      "category": "PM 101",
+      "title": "20 Years of Product Management in 25 Minutes",
+      "speaker": "David Wascha",
+      "role": "Advisor and CPO",
+      "credits": "David Wascha Advisor and CPO",
+      "url": "https://www.youtube.com/watch?v=i69U0lvi89c",
+      "embed": "https://www.youtube.com/embed/i69U0lvi89c"
+    },
+    {
+      "id": 7,
+      "category": "PM 101",
+      "title": "The Art of Product Management",
+      "speaker": "Sachin Rekhi",
+      "role": "Founder & CEO at Notejoy",
+      "credits": "Sachin Rekhi Founder & CEO at Notejoy",
+      "url": "https://www.youtube.com/watch?v=huTSPanUlQM",
+      "embed": "https://www.youtube.com/embed/huTSPanUlQM"
+    },
+    {
+      "id": 8,
+      "category": "Documentation",
+      "title": "Essentials of a Product Specification Document",
+      "speaker": "Khushboo Saraf",
+      "role": "SPM at Amazon",
+      "credits": "Khushboo Saraf SPM at Amazon",
+      "url": "https://www.youtube.com/watch?v=Nq5BG1HMSX8",
+      "embed": "https://www.youtube.com/embed/Nq5BG1HMSX8"
+    },
+    {
+      "id": 9,
+      "category": "Documentation",
+      "title": "Writing a Product Requirement Document (PRD)",
+      "speaker": "King Sidhart",
+      "role": "Head of Product & Design at Growth School",
+      "credits": "King Sidhart Head of Product & Design at Growth School",
+      "url": "https://www.youtube.com/watch?v=SfN5eSri0_4",
+      "embed": "https://www.youtube.com/embed/SfN5eSri0_4"
+    },
+    {
+      "id": 10,
+      "category": "Documentation",
+      "title": "How to Create a Product Vision",
+      "speaker": "Tansik Koyuncu",
+      "role": "PM at Dropbox",
+      "credits": "Tansik Koyuncu PM at Dropbox",
+      "url": "https://www.youtube.com/watch?v=rYd2PN4EUOY",
+      "embed": "https://www.youtube.com/embed/rYd2PN4EUOY"
+    },
+    {
+      "id": 11,
+      "category": "Growth",
+      "title": "How to Get Your First Customers",
+      "speaker": "Y Combinator",
+      "role": "Startup Accelerator",
+      "credits": "Y Combinator Youtube Channel",
+      "url": "https://www.youtube.com/watch?v=hyYCn_kAngI",
+      "embed": "https://www.youtube.com/embed/hyYCn_kAngI"
+    },
+    {
+      "id": 12,
+      "category": "Growth",
+      "title": "50 Founders Share How They Got Their First Customers",
+      "speaker": "Y Combinator",
+      "role": "Startup Accelerator",
+      "credits": "Y Combinator Youtube Channel",
+      "url": "https://www.youtube.com/watch?v=NZp5j5hvn9I",
+      "embed": "https://www.youtube.com/embed/NZp5j5hvn9I"
+    },
+    {
+      "id": 13,
+      "category": "Growth",
+      "title": "How Successful Startups Got Their First 1000 Customers",
+      "speaker": "My First Million",
+      "role": "Business Podcast",
+      "credits": "My First Million Youtube Channel",
+      "url": "https://www.youtube.com/watch?v=KfSSplX2Lpk",
+      "embed": "https://www.youtube.com/embed/KfSSplX2Lpk"
+    },
+    {
+      "id": 14,
+      "category": "Design",
+      "title": "How Do Product Managers and UX Designers Work Together?",
+      "speaker": "Joshua Fechter",
+      "role": "Co-founder at Product HQ",
+      "credits": "Joshua Fechter Co-founder at Product HQ",
+      "url": "https://www.youtube.com/watch?v=35WzgKFXDRA",
+      "embed": "https://www.youtube.com/embed/35WzgKFXDRA"
+    },
+    {
+      "id": 15,
+      "category": "Design",
+      "title": "UX Design for Product Managers",
+      "speaker": "Dan Olsen",
+      "role": "PM Trainer, Author, and Speaker",
+      "credits": "Dan Olsen PM Trainer, Author, and Speaker",
+      "url": "https://www.youtube.com/watch?v=8LOGEecY1iE",
+      "embed": "https://www.youtube.com/embed/8LOGEecY1iE"
+    },
+    {
+      "id": 16,
+      "category": "Design",
+      "title": "How To Create Your First Wireframe",
+      "speaker": "CareerFoundry",
+      "role": "Education Platform",
+      "credits": "CareerFoundry Youtube Channel",
+      "url": "https://www.youtube.com/watch?v=qpH7-KFWZRI",
+      "embed": "https://www.youtube.com/embed/qpH7-KFWZRI"
+    },
+    {
+      "id": 17,
+      "category": "Technology",
+      "title": "Technology for Product Managers",
+      "speaker": "Ankit Shukla",
+      "role": "Founder at HelloPM",
+      "credits": "Ankit Shukla Founder at HelloPM",
+      "url": "https://www.youtube.com/playlist?list=PLJE844cffEGNvjkMqyqgdj_DJ9al55kbK",
+      "embed": "https://www.youtube.com/embed/videoseries?list=PLJE844cffEGNvjkMqyqgdj_DJ9al55kbK"
+    },
+    {
+      "id": 18,
+      "category": "Technology",
+      "title": "Tech 101 for Product Managers",
+      "speaker": "NextLeap Product",
+      "role": "Education Platform",
+      "credits": "NextLeap Product Youtube Channel",
+      "url": "https://www.youtube.com/watch?v=IaboArip0H0",
+      "embed": "https://www.youtube.com/embed/IaboArip0H0"
+    },
+    {
+      "id": 19,
+      "category": "Side Projects",
+      "title": "Six Side Projects to get your Product Manager career on track",
+      "speaker": "Bart Jaworski",
+      "role": "SPM at The Stepstone Group",
+      "credits": "Bart Jaworski SPM at The Stepstone Group",
+      "url": "https://www.youtube.com/watch?v=x88Dl48WGMg",
+      "embed": "https://www.youtube.com/embed/x88Dl48WGMg"
+    },
+    {
+      "id": 20,
+      "category": "Side Projects",
+      "title": "Side projects to break into Product Management!",
+      "speaker": "Diego Granados",
+      "role": "SPM at PayPal",
+      "credits": "Diego Granados SPM at PayPal",
+      "url": "https://www.youtube.com/watch?v=RIvVePDWeTI",
+      "embed": "https://www.youtube.com/embed/RIvVePDWeTI"
+    },
+    {
+      "id": 21,
+      "category": "Resume",
+      "title": "Product Manager RESUME fixes to get you interviews",
+      "speaker": "Dianna Yau",
+      "role": "PM at Stripe",
+      "credits": "Dianna Yau PM at Stripe",
+      "url": "https://www.youtube.com/watch?v=tJODMtTjv9A",
+      "embed": "https://www.youtube.com/embed/tJODMtTjv9A"
+    },
+    {
+      "id": 22,
+      "category": "Resume",
+      "title": "Resume tips that got me my first Product Manager job",
+      "speaker": "Chloe Shih",
+      "role": "PM at Discord",
+      "credits": "Chloe Shih PM at Discord",
+      "url": "https://www.youtube.com/watch?v=3aWHJdS59Qk",
+      "embed": "https://www.youtube.com/embed/3aWHJdS59Qk"
+    },
+    {
+      "id": 23,
+      "category": "Interview Prep",
+      "title": "Cracking PM Interviews: Decoding the Product Manager Interview Rounds",
+      "speaker": "Sugat Nayak",
+      "role": "PM at Meta",
+      "credits": "Sugat Nayak PM at Meta",
+      "url": "https://www.youtube.com/watch?v=qX0jZSaFfec",
+      "embed": "https://www.youtube.com/embed/qX0jZSaFfec"
+    },
+    {
+      "id": 24,
+      "category": "Interview Prep",
+      "title": "The Top 10 Product Manager Interview Questions",
+      "speaker": "Exponent",
+      "role": "Education Platform",
+      "credits": "Exponent Youtube Channel",
+      "url": "https://www.youtube.com/watch?v=m-qyEDwB1tw",
+      "embed": "https://www.youtube.com/embed/m-qyEDwB1tw"
+    },
+    {
+      "id": 25,
+      "category": "Interview Prep",
+      "title": "How to Solve a Product Manager Case Study in 4 Simple Steps",
+      "speaker": "Product Gym",
+      "role": "Education Platform",
+      "credits": "Product Gym Youtube Channel",
+      "url": "https://www.youtube.com/watch?v=1SEUWWNXksk",
+      "embed": "https://www.youtube.com/embed/1SEUWWNXksk"
+    }
+  ]
+}
