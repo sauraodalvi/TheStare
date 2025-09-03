@@ -24,60 +24,60 @@ const CaseStudyCard = ({ caseStudy, onClick }: CaseStudyCardProps) => {
 
   return (
     <Card 
-      className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-200 overflow-hidden h-full flex flex-col group"
+      className="bg-card hover:shadow-lg transition-all duration-300 cursor-pointer border border-border overflow-hidden h-full flex flex-col group"
       onClick={() => onClick(caseStudy)}
     >
-      <CardContent className="p-5 flex flex-col h-full">
+      <CardContent className="p-4 sm:p-5 flex flex-col h-full">
         {/* Company Logo and Title Row */}
-        <div className="flex items-start gap-4 mb-3">
+        <div className="flex items-start gap-3 sm:gap-4 mb-3">
           {logoUrl ? (
-            <div className="w-12 h-12 rounded-lg bg-white border-2 border-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-background border-2 border-border flex items-center justify-center flex-shrink-0 overflow-hidden">
               <img
                 src={logoUrl}
                 alt={`${caseStudy.Company} logo`}
                 className="w-full h-full object-contain"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
-                  e.currentTarget.parentElement!.innerHTML = '<div class="w-6 h-6 text-gray-400"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path></svg></div>';
+                  e.currentTarget.parentElement!.innerHTML = '<div class="w-6 h-6 text-muted-foreground"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path></svg></div>';
                 }}
               />
             </div>
           ) : (
-            <div className="w-12 h-12 rounded-lg bg-white border-2 border-gray-200 flex items-center justify-center flex-shrink-0">
-              <Building className="w-6 h-6 text-gray-400" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-background border-2 border-border flex items-center justify-center flex-shrink-0">
+              <Building className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground" />
             </div>
           )}
           
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-900 text-base leading-tight mb-1 line-clamp-2 group-hover:text-blue-900 transition-colors">
+            <h3 className="font-semibold text-foreground text-sm sm:text-base leading-tight mb-1 line-clamp-2 group-hover:text-primary transition-colors">
               {caseStudy.Title || caseStudy.Name}
             </h3>
           </div>
         </div>
 
         {/* Company Name and Creator Row */}
-        <div className="text-sm text-gray-600 mb-3 space-y-1">
-          <div className="font-medium">{caseStudy.Company}</div>
+        <div className="text-xs sm:text-sm text-muted-foreground mb-3 space-y-1">
+          <div className="font-medium text-foreground">{caseStudy.Company}</div>
           <div>by {caseStudy.Organizer}</div>
         </div>
 
         {/* Category and Likes Row */}
-        <div className="mt-auto flex items-center justify-between">
-          <div className="flex flex-wrap gap-1">
+        <div className="mt-auto flex items-center justify-between gap-2">
+          <div className="flex flex-wrap gap-1 flex-1 min-w-0">
             {cleanCategories.map((category, index) => (
               <Badge 
                 key={index} 
                 variant="secondary" 
-                className="text-xs px-2 py-1 bg-blue-50 text-blue-700 border-0 font-medium rounded-md"
+                className="text-xs px-2 py-1 font-medium rounded-md truncate"
               >
                 {category}
               </Badge>
             ))}
           </div>
           
-          <div className="flex items-center gap-1 text-gray-500">
-            <Heart className="w-4 h-4 text-red-400 fill-red-400" />
-            <span className="text-sm font-medium">{caseStudy.Likes || 0}</span>
+          <div className="flex items-center gap-1 text-muted-foreground flex-shrink-0">
+            <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-red-400 fill-red-400" />
+            <span className="text-xs sm:text-sm font-medium">{caseStudy.Likes || 0}</span>
           </div>
         </div>
       </CardContent>

@@ -275,8 +275,8 @@ const CaseStudiesList = () => {
           </div>
         ) : (
           <>
-            {/* Mobile: 1 column, Tablet: 2 columns, Desktop: 3-4 columns */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {/* Responsive grid: Mobile: 1 column, Tablet: 2 columns, Desktop: 3 columns, Large: 4 columns */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6">
               {paginatedData.map(caseStudy => (
                 <CaseStudyCard 
                   key={caseStudy.id} 

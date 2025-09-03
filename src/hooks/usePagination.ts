@@ -34,15 +34,15 @@ export function usePagination<T>({ data, itemsPerPage }: UsePaginationProps<T>) 
   });
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
-  // Reset loading state after a delay to allow proper state updates
+  // Reset loading state after data has been updated
   useEffect(() => {
-    if (isLoadingMore) {
+    if (isLoadingMore && paginatedData.length > 0) {
       const timer = setTimeout(() => {
         setIsLoadingMore(false);
-      }, 100);
+      }, 300);
       return () => clearTimeout(timer);
     }
-  }, [currentPage, isLoadingMore]);
+  }, [paginatedData.length, isLoadingMore]);
 
   const loadMore = () => {
     console.log('LoadMore called:', { hasMore, isLoadingMore, currentPage, itemsPerPage, dataLength: data.length });

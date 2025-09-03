@@ -5,6 +5,7 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { ThemeToggle } from '@/components/theme-toggle';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -54,7 +55,9 @@ const Navbar = () => {
   return (
     <header className={cn(
       "sticky top-0 z-50 w-full backdrop-blur-md border-b transition-all duration-300",
-      isScrolled ? "bg-white/90 shadow-sm border-slate-200/70" : "bg-white/80 border-slate-200/30"
+      isScrolled 
+        ? "bg-background/90 shadow-sm border-border/70" 
+        : "bg-background/80 border-border/30"
     )}>
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
@@ -151,7 +154,8 @@ const Navbar = () => {
         </NavigationMenu>
 
         {/* Desktop Auth Buttons */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-3">
+          <ThemeToggle />
           <Button size="sm" variant="outline" className="font-medium" onClick={handleSignInClick}>
             Sign In
           </Button>
@@ -170,7 +174,7 @@ const Navbar = () => {
         </button>
 
         {isMenuOpen && (
-          <div className="absolute top-16 left-0 right-0 bg-white border-b border-slate-200 shadow-lg animate-fade-in md:hidden">
+          <div className="absolute top-16 left-0 right-0 bg-background border-b border-border shadow-lg animate-fade-in md:hidden">
             <div className="container py-4 flex flex-col gap-4">
               <ul className="flex flex-col gap-4">
                 <li className="border-b border-slate-100 pb-2">
@@ -217,6 +221,10 @@ const Navbar = () => {
                 </li>
               </ul>
               <div className="flex flex-col gap-3 pt-3 border-t border-slate-200">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-stare-navy">Theme</span>
+                  <ThemeToggle />
+                </div>
                 <Button size="sm" variant="outline" className="font-medium w-full" onClick={(e) => { toggleMenu(); handleSignInClick(); }}>
                   Sign In
                 </Button>
