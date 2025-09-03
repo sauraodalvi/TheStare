@@ -1,7 +1,11 @@
 
-import React from "react";
+import React, { useState } from "react";
+import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/hooks/useAuth";
+import { ThemeProvider } from "@/components/theme-provider";
 import Index from "./pages/Index";
 import CaseStudies from "./pages/CaseStudies";
 import Resources from "./pages/Resources";
@@ -15,23 +19,42 @@ import Pricing from "./pages/Pricing";
 import Portfolio from "./pages/Portfolio";
 
 const App: React.FC = () => {
+  // Create QueryClient inside the component to ensure proper React context
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: 1,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
+
   return (
-    <TooltipProvider>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/case-studies" element={<CaseStudies />} />
-        <Route path="/resources" element={<Resources />} />
-        <Route path="/resources/participate" element={<Participate />} />
-        <Route path="/resources/portfolio" element={<Portfolio />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/sign-in" element={<SignIn />} />
-        <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/pricing" element={<Pricing />} />
-        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </TooltipProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <ThemeProvider defaultTheme="system" storageKey="stare-ui-theme">
+            <TooltipProvider>
+              <Toaster />
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/case-studies" element={<CaseStudies />} />
+                <Route path="/resources" element={<Resources />} />
+                <Route path="/resources/participate" element={<Participate />} />
+                <Route path="/resources/portfolio" element={<Portfolio />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/sign-in" element={<SignIn />} />
+                <Route path="/sign-up" element={<SignUp />} />
+                <Route path="/pricing" element={<Pricing />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </TooltipProvider>
+          </ThemeProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </AuthProvider>
   );
 };
 
