@@ -1,5 +1,5 @@
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 
 interface UsePaginationProps<T> {
   data: T[];
@@ -7,61 +7,33 @@ interface UsePaginationProps<T> {
 }
 
 export function usePagination<T>({ data, itemsPerPage }: UsePaginationProps<T>) {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsToShow, setItemsToShow] = useState(itemsPerPage);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const paginatedData = useMemo(() => {
-    const startIndex = 0;
-    const endIndex = currentPage * itemsPerPage;
-    const result = data.slice(startIndex, endIndex);
-    console.log('Pagination data:', { 
-      currentPage, 
-      itemsPerPage, 
-      totalData: data.length, 
-      startIndex, 
-      endIndex, 
-      resultLength: result.length 
-    });
-    return result;
-  }, [data, currentPage, itemsPerPage]);
+    return data.slice(0, itemsToShow);
+  }, [data, itemsToShow]);
 
-  const hasMore = currentPage * itemsPerPage < data.length;
-  console.log('HasMore calculation:', { 
-    currentPage, 
-    itemsPerPage, 
-    totalData: data.length, 
-    hasMore: currentPage * itemsPerPage < data.length 
-  });
+  const hasMore = itemsToShow < data.length;
+  const currentPage = Math.ceil(itemsToShow / itemsPerPage);
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
-  // Reset loading state after page changes
-  useEffect(() => {
-    if (isLoadingMore) {
-      const timer = setTimeout(() => {
-        setIsLoadingMore(false);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [currentPage, isLoadingMore]);
-
-  const loadMore = () => {
-    console.log('LoadMore called:', { hasMore, isLoadingMore, currentPage, itemsPerPage, dataLength: data.length });
+  const loadMore = useCallback(() => {
     if (hasMore && !isLoadingMore) {
       setIsLoadingMore(true);
-      setCurrentPage(prev => {
-        const newPage = prev + 1;
-        console.log('Setting new page:', newPage);
-        return newPage;
-      });
-    } else {
-      console.log('LoadMore blocked:', { hasMore, isLoadingMore });
+      
+      // Simulate loading delay for better UX
+      setTimeout(() => {
+        setItemsToShow(prev => Math.min(prev + itemsPerPage, data.length));
+        setIsLoadingMore(false);
+      }, 300);
     }
-  };
+  }, [hasMore, isLoadingMore, itemsPerPage, data.length]);
 
-  const reset = () => {
-    setCurrentPage(1);
+  const reset = useCallback(() => {
+    setItemsToShow(itemsPerPage);
     setIsLoadingMore(false);
-  };
+  }, [itemsPerPage]);
 
   return {
     paginatedData,
