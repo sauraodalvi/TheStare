@@ -17,6 +17,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Pricing from "./pages/Pricing";
 import Portfolio from "./pages/Portfolio";
+import SelfStudy from "./pages/SelfStudy";
 
 const App: React.FC = () => {
   // Create QueryClient inside the component to ensure proper React context
@@ -42,6 +43,7 @@ const App: React.FC = () => {
                 <Route path="/resources" element={<Resources />} />
                 <Route path="/resources/participate" element={<Participate />} />
                 <Route path="/resources/portfolio" element={<Portfolio />} />
+                <Route path="/resources/self-study" element={<SelfStudy />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/sign-in" element={<SignIn />} />

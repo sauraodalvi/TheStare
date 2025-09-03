@@ -1,0 +1,100 @@
+{
+  "header": {
+    "title": "Learning should never stop!",
+    "subtitle": "Check out our latest and hottest resources to upskill and get your dream product manager role."
+  },
+  "websiteLearning": [
+    {
+      "name": "StellarPeers",
+      "url": "https://stellarpeers.com",
+      "description": "Connect with product professionals and share insights"
+    },
+    {
+      "name": "Product Hunt",
+      "url": "https://producthunt.com",
+      "description": "Discover new products and trends in the tech industry"
+    },
+    {
+      "name": "Mind the Product",
+      "url": "https://mindtheproduct.com",
+      "description": "Product management insights, articles, and resources"
+    }
+  ],
+  "communityLearning": [
+    {
+      "name": "MindtheProduct",
+      "url": "https://mindtheproduct.com/community",
+      "description": "Feedback, Networking, Jobs"
+    },
+    {
+      "name": "Product Manager HQ",
+      "url": "https://productmanagerhq.com",
+      "description": "Community of product managers sharing experiences"
+    },
+    {
+      "name": "Reddit - Product Management",
+      "url": "https://reddit.com/r/ProductManagement",
+      "description": "Discussion forum for PM topics and career advice"
+    }
+  ],
+  "cohortLearning": [
+    {
+      "name": "Airtribe",
+      "url": "https://airtribe.live",
+      "price": "₹38,000",
+      "description": "Live cohort-based product management course"
+    },
+    {
+      "name": "Reforge",
+      "url": "https://reforge.com",
+      "price": "$1,995",
+      "description": "Advanced courses for experienced product professionals"
+    },
+    {
+      "name": "Product School",
+      "url": "https://productschool.com",
+      "price": "$4,999",
+      "description": "Product management certification programs"
+    }
+  ],
+  "books": [
+    {
+      "name": "Cracking the PM Interview",
+      "url": "https://amazon.com/Cracking-PM-Interview-Product-Technology/dp/0984782818",
+      "description": "Comprehensive guide to landing a PM role.",
+      "image": "https://images-na.ssl-images-amazon.com/images/P/0984782818.01.L.jpg"
+    },
+    {
+      "name": "Inspired",
+      "url": "https://amazon.com/INSPIRED-Create-Tech-Products-Customers/dp/1119387507",
+      "description": "How to create tech products customers love by Marty Cagan.",
+      "image": "https://images-na.ssl-images-amazon.com/images/P/1119387507.01.L.jpg"
+    },
+    {
+      "name": "The Lean Startup",
+      "url": "https://amazon.com/Lean-Startup-Entrepreneurs-Continuous-Innovation/dp/0307887898",
+      "description": "Build-measure-learn methodology for product development.",
+      "image": "https://images-na.ssl-images-amazon.com/images/P/0307887898.01.L.jpg"
+    },
+    {
+      "name": "Hooked",
+      "url": "https://amazon.com/Hooked-How-Build-Habit-Forming-Products/dp/1591847788",
+      "description": "How to build habit-forming products by Nir Eyal.",
+      "image": "https://images-na.ssl-images-amazon.com/images/P/1591847788.01.L.jpg"
+    }
+  ],
+  "footer": {
+    "note": "Image credits to Eran Mendel",
+    "links": [
+      {
+        "name": "Client Portal",
+        "url": "https://portal.thestare.com"
+      },
+      {
+        "name": "Internal Tools",
+        "url": "https://tools.thestare.com"
+      }
+    ],
+    "madeWith": "Softr"
+  }
+}
