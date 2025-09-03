@@ -43,18 +43,18 @@ const CaseStudyFilterChips = ({
   const totalFilters = selectedCategories.length + selectedCompanies.length + selectedMarkets.length + selectedObjectives.length + (searchQuery ? 1 : 0);
 
   return (
-    <div className="flex flex-wrap items-center gap-2 mb-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
-      <div className="flex items-center gap-2 text-sm font-semibold text-blue-800">
+    <div className="flex flex-wrap items-center gap-2 mb-6 p-4 bg-accent/10 rounded-xl border border-accent/20">
+      <div className="flex items-center gap-2 text-sm font-semibold text-accent-foreground">
         <Filter className="w-4 h-4" />
         <span>Active filters ({totalFilters}):</span>
       </div>
       
       {searchQuery && (
-        <Badge variant="secondary" className="flex items-center gap-1.5 bg-white border border-blue-200 text-blue-800 hover:bg-blue-50">
+        <Badge variant="secondary" className="flex items-center gap-1.5">
           <span className="text-xs">Search: "{searchQuery}"</span>
           <button 
             onClick={onClearSearch} 
-            className="ml-1 hover:bg-blue-200 rounded-full p-0.5 transition-colors"
+            className="ml-1 hover:bg-muted rounded-full p-0.5 transition-colors"
           >
             <X className="w-3 h-3" />
           </button>
@@ -62,11 +62,11 @@ const CaseStudyFilterChips = ({
       )}
       
       {selectedCategories.map(category => (
-        <Badge key={category} variant="secondary" className="flex items-center gap-1.5 bg-white border border-blue-200 text-blue-800 hover:bg-blue-50">
+        <Badge key={category} variant="secondary" className="flex items-center gap-1.5">
           <span className="text-xs">{category}</span>
           <button 
             onClick={() => onRemoveCategory(category)} 
-            className="ml-1 hover:bg-blue-200 rounded-full p-0.5 transition-colors"
+            className="ml-1 hover:bg-muted rounded-full p-0.5 transition-colors"
           >
             <X className="w-3 h-3" />
           </button>
@@ -74,11 +74,11 @@ const CaseStudyFilterChips = ({
       ))}
       
       {selectedCompanies.map(company => (
-        <Badge key={company} variant="secondary" className="flex items-center gap-1.5 bg-white border border-blue-200 text-blue-800 hover:bg-blue-50">
+        <Badge key={company} variant="secondary" className="flex items-center gap-1.5">
           <span className="text-xs">{company}</span>
           <button 
             onClick={() => onRemoveCompany(company)} 
-            className="ml-1 hover:bg-blue-200 rounded-full p-0.5 transition-colors"
+            className="ml-1 hover:bg-muted rounded-full p-0.5 transition-colors"
           >
             <X className="w-3 h-3" />
           </button>
@@ -86,11 +86,11 @@ const CaseStudyFilterChips = ({
       ))}
       
       {selectedMarkets.map(market => (
-        <Badge key={market} variant="secondary" className="flex items-center gap-1.5 bg-white border border-blue-200 text-blue-800 hover:bg-blue-50">
+        <Badge key={market} variant="secondary" className="flex items-center gap-1.5">
           <span className="text-xs">{market}</span>
           <button 
             onClick={() => onRemoveMarket(market)} 
-            className="ml-1 hover:bg-blue-200 rounded-full p-0.5 transition-colors"
+            className="ml-1 hover:bg-muted rounded-full p-0.5 transition-colors"
           >
             <X className="w-3 h-3" />
           </button>
@@ -98,11 +98,11 @@ const CaseStudyFilterChips = ({
       ))}
       
       {selectedObjectives.map(objective => (
-        <Badge key={objective} variant="secondary" className="flex items-center gap-1.5 bg-white border border-blue-200 text-blue-800 hover:bg-blue-50">
+        <Badge key={objective} variant="secondary" className="flex items-center gap-1.5">
           <span className="text-xs">{objective}</span>
           <button 
             onClick={() => onRemoveObjective(objective)} 
-            className="ml-1 hover:bg-blue-200 rounded-full p-0.5 transition-colors"
+            className="ml-1 hover:bg-muted rounded-full p-0.5 transition-colors"
           >
             <X className="w-3 h-3" />
           </button>
@@ -113,7 +113,7 @@ const CaseStudyFilterChips = ({
         variant="outline" 
         size="sm" 
         onClick={onClearAll}
-        className="ml-2 text-blue-700 border-blue-300 hover:bg-blue-100 hover:border-blue-400 text-xs px-3 py-1"
+        className="ml-2 text-xs px-3 py-1"
       >
         Clear All
       </Button>

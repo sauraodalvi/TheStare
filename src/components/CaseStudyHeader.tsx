@@ -53,13 +53,13 @@ const CaseStudyHeader = ({
     <div className="space-y-6">
       {/* Full Width Search Bar */}
       <div className="relative w-full">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
         <Input
           type="text"
           placeholder="Search by title, creator, or company..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-11 h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full"
+          className="pl-11 h-12 text-base w-full"
         />
       </div>
 
@@ -106,7 +106,8 @@ const CaseStudyHeader = ({
           
           <Button 
             onClick={onSubmitClick}
-            className="bg-stare-navy hover:bg-stare-navy/90 whitespace-nowrap"
+            variant="brand"
+            className="whitespace-nowrap"
           >
             <Plus className="mr-2 h-4 w-4" />
             Submit Case Study
@@ -115,7 +116,7 @@ const CaseStudyHeader = ({
       </div>
 
       {/* Results Count */}
-      <div className="text-lg font-medium text-gray-900">
+      <div className="text-lg font-medium text-foreground">
         {totalResults} case studies found
       </div>
     </div>

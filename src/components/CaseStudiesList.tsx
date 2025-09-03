@@ -287,23 +287,29 @@ const CaseStudiesList = () => {
             </div>
             
 
-            {hasMore && (
+            {hasMore && !isLoadingMore && (
               <div className="text-center mt-12">
                 <Button 
                   onClick={loadMore}
                   variant="outline"
                   size="lg"
                   className="px-8"
-                  disabled={isLoadingMore}
                 >
-                  {isLoadingMore ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Loading more...
-                    </>
-                  ) : (
-                    'Show More'
-                  )}
+                  Show More
+                </Button>
+              </div>
+            )}
+
+            {isLoadingMore && (
+              <div className="text-center mt-12">
+                <Button 
+                  variant="outline"
+                  size="lg"
+                  className="px-8"
+                  disabled
+                >
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Loading more...
                 </Button>
               </div>
             )}

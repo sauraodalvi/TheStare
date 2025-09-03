@@ -38,45 +38,45 @@ const SortDropdown = ({ value, onChange }: SortDropdownProps) => {
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="justify-between h-10 px-3 min-w-[140px] bg-white border-gray-300 hover:bg-gray-50"
+          className="justify-between h-10 px-3 min-w-[140px]"
         >
           <span className="flex items-center gap-2">
-            <ArrowUpDown className="h-4 w-4 text-gray-500" />
+            <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
             {currentSort?.label || 'Sort by'}
           </span>
           <ChevronDown className="h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-0 z-50 bg-white shadow-lg border" align="start">
-        <div className="p-3 border-b bg-white">
+      <PopoverContent className="w-64 p-0 z-50" align="start">
+        <div className="p-3 border-b">
           <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search sort options..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 h-9 bg-white"
+              className="pl-8 h-9"
             />
           </div>
         </div>
         
-        <div className="max-h-60 overflow-y-auto p-2 bg-white">
+        <div className="max-h-60 overflow-y-auto p-2">
           {filteredOptions.length === 0 ? (
-            <div className="text-sm text-gray-500 text-center py-4">
+            <div className="text-sm text-muted-foreground text-center py-4">
               No options found
             </div>
           ) : (
             filteredOptions.map((option) => (
               <div
                 key={option.value}
-                className={`flex items-center space-x-2 rounded-sm px-2 py-2 hover:bg-gray-100 cursor-pointer ${
-                  value === option.value ? 'bg-blue-50 text-blue-700' : ''
+                className={`flex items-center space-x-2 rounded-sm px-2 py-2 hover:bg-muted cursor-pointer ${
+                  value === option.value ? 'bg-accent text-accent-foreground' : ''
                 }`}
                 onClick={() => handleOptionSelect(option.value)}
               >
                 <span className="text-sm flex-1">{option.label}</span>
                 {value === option.value && (
-                  <Badge variant="secondary" className="bg-blue-100 text-blue-700 text-xs px-1.5 py-0.5">
+                  <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
                     Active
                   </Badge>
                 )}
