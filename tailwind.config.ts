@@ -63,13 +63,13 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-                stare: {
-                    navy: '#0A2342',
-                    teal: '#2CA58D',
-                    light: '#F5F7FA',
-                    accent: '#EF6461',
-                    gray: '#71717A'
-                }
+				stare: {
+					DEFAULT: 'hsl(var(--stare-navy))',
+					navy: 'hsl(var(--stare-navy))',
+					teal: 'hsl(var(--stare-teal))',
+					accent: 'hsl(var(--stare-accent))',
+					gray: 'hsl(var(--stare-gray))'
+				}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

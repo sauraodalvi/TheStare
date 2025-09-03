@@ -176,10 +176,10 @@ const CaseStudiesList = () => {
     return (
       <section className="py-8 px-4">
         <div className="container mx-auto">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-stare-navy">Explore Case Studies</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-foreground">Explore Case Studies</h1>
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-stare-navy" />
-            <span className="ml-2 text-gray-600">Loading case studies...</span>
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <span className="ml-2 text-muted-foreground">Loading case studies...</span>
           </div>
         </div>
       </section>
@@ -190,11 +190,11 @@ const CaseStudiesList = () => {
     return (
       <section className="py-8 px-4">
         <div className="container mx-auto">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-stare-navy">Explore Case Studies</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-foreground">Explore Case Studies</h1>
           <div className="text-center py-12">
-            <div className="text-red-600">
+            <div className="text-destructive">
               <p className="text-lg font-medium">Unable to load case studies</p>
-              <p className="text-sm text-gray-500 mt-2">Please check your database connection.</p>
+              <p className="text-sm text-muted-foreground mt-2">Please check your database connection.</p>
               <Button onClick={() => window.location.reload()} className="mt-4">
                 Retry
               </Button>
@@ -209,8 +209,8 @@ const CaseStudiesList = () => {
     <section className="py-8 px-4">
       <div className="container mx-auto max-w-7xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-stare-navy mb-2">Explore Case Studies</h1>
-          <p className="text-gray-600">Discover inspiring case studies from leading companies</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Explore Case Studies</h1>
+          <p className="text-muted-foreground">Discover inspiring case studies from leading companies</p>
         </div>
         
         <CaseStudyHeader
@@ -253,15 +253,15 @@ const CaseStudiesList = () => {
           <div className="text-center py-12">
             {caseStudies.length === 0 ? (
               <div>
-                <p className="text-gray-500 text-lg mb-4">No case studies found in the database.</p>
+                <p className="text-muted-foreground text-lg mb-4">No case studies found in the database.</p>
                 <Button onClick={() => setShowSubmissionModal(true)}>
                   Submit the First Case Study
                 </Button>
               </div>
             ) : (
               <div>
-                <p className="text-gray-500 text-lg mb-2">No results found</p>
-                <p className="text-gray-400 text-sm mb-4">Try changing filters or submit your own case study.</p>
+                <p className="text-muted-foreground text-lg mb-2">No results found</p>
+                <p className="text-muted-foreground/70 text-sm mb-4">Try changing filters or submit your own case study.</p>
                 <div className="flex gap-2 justify-center">
                   <Button variant="outline" onClick={handleClearAllFilters}>
                     Clear Filters
