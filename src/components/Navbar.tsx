@@ -140,6 +140,19 @@ const Navbar = () => {
                       </Link>
                     </NavigationMenuLink>
                   </li>
+                  <li>
+                    <NavigationMenuLink asChild>
+                      <Link
+                        to="/resources/resume"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted focus:bg-muted"
+                      >
+                        <div className="text-sm font-medium leading-none text-foreground">Resume</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          Real PM resumes and templates
+                        </p>
+                      </Link>
+                    </NavigationMenuLink>
+                  </li>
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
@@ -212,6 +225,9 @@ const Navbar = () => {
                     </Link>
                     <Link to="/resources/portfolio" className="text-muted-foreground hover:text-foreground text-sm py-1 transition-colors" onClick={toggleMenu}>
                       Portfolio Examples
+                    </Link>
+                    <Link to="/resources/resume" className="text-muted-foreground hover:text-foreground text-sm py-1 transition-colors" onClick={toggleMenu}>
+                      Resume
                     </Link>
                   </div>
                 </li>

@@ -1,0 +1,125 @@
+{
+  "title": "Here are real product managers' resumes!",
+  "resumes": [
+    {
+      "id": "diego-granados",
+      "name": "Diego Granados",
+      "designation": "PM",
+      "company": "LinkedIn",
+      "companyLogo": "https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_logo_initials.png",
+      "profileImage": "https://airtable.com/appGWxJypvRfoT2Q1/tbl7slSw43fDGcOFK/recgiNmkT1qNvZWxe/fldOviGz5Xpc5FY4y/attuv05Xhk3QoHHy7",
+      "resumeLink": "https://drive.google.com/file/d/1TDF3ZCacGw9A6EcZ01KpVYcV-DUzyj5m/view?usp=sharing",
+      "previewEmbed": "https://drive.google.com/file/d/1TDF3ZCacGw9A6EcZ01KpVYcV-DUzyj5m/preview",
+      "referenceLink": "https://www.linkedin.com/posts/diegogranadosh_prouctmanagement-resume-activity-6986355775677882368-Bsmo?utm_source=share&utm_medium=member_desktop",
+      "source": "LinkedIn",
+      "featured": true
+    },
+    {
+      "id": "yung-yu-nicolas-lin",
+      "name": "Yung-Yu (Nicolas) Lin",
+      "designation": "PM",
+      "company": "Google",
+      "companyLogo": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
+      "profileImage": "",
+      "resumeLink": "https://drive.google.com/file/d/1TDF3ZCacGw9A6EcZ01KpVYcV-DUzyj5m/view?usp=sharing",
+      "previewEmbed": "https://drive.google.com/file/d/1TDF3ZCacGw9A6EcZ01KpVYcV-DUzyj5m/preview",
+      "referenceLink": "https://igotanoffer.com/blogs/product-manager/product-manager-resume#sample",
+      "source": "Igotanoffer",
+      "featured": false
+    },
+    {
+      "id": "harshita-y",
+      "name": "Harshita Y.",
+      "designation": "PM",
+      "company": "Coda",
+      "companyLogo": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Coda_logo.png",
+      "profileImage": "https://airtable.com/appGWxJypvRfoT2Q1/tbl7slSw43fDGcOFK/recTNMi57ogh4qKoZ/fldOviGz5Xpc5FY4y/attyLgdeW8mTYFrYm",
+      "resumeLink": "https://drive.google.com/file/d/1BXxUnuVOSzDgAMtdikdquqep-OOAWW7X/view?usp=sharing",
+      "previewEmbed": "https://drive.google.com/file/d/1BXxUnuVOSzDgAMtdikdquqep-OOAWW7X/preview",
+      "referenceLink": "https://github.com/harshibar/resume/blob/main/harshibar_resume.jpg",
+      "source": "GitHub",
+      "featured": true
+    },
+    {
+      "id": "shravan-tikoo",
+      "name": "Shravan Tikoo",
+      "designation": "PM",
+      "company": "Byjus",
+      "companyLogo": "https://upload.wikimedia.org/wikipedia/en/5/53/Byju%27s_logo.svg",
+      "profileImage": "https://airtable.com/appGWxJypvRfoT2Q1/tbl7slSw43fDGcOFK/reczhCJ0xkbcxzFGl/fldOviGz5Xpc5FY4y/attXXWzy2k8TDDREn",
+      "resumeLink": "https://drive.google.com/file/d/1PSQsX47n3Vtgq8oBVDOJLjs_SVWQlSZJ/view?usp=sharing",
+      "previewEmbed": "https://drive.google.com/file/d/1PSQsX47n3Vtgq8oBVDOJLjs_SVWQlSZJ/preview",
+      "referenceLink": "https://www.linkedin.com/posts/shravantickoo_sample-resume-for-pm-activity-6924947884693954560-4smy?utm_source=share&utm_medium=member_desktop",
+      "source": "LinkedIn",
+      "featured": false
+    },
+    {
+      "id": "fazi-lavaee",
+      "name": "Fazi Lavaee",
+      "designation": "APM",
+      "company": "Demand Spring",
+      "companyLogo": "",
+      "profileImage": "https://airtable.com/appGWxJypvRfoT2Q1/tbl7slSw43fDGcOFK/recmjny5IYEwz92Zc/fldOviGz5Xpc5FY4y/attGegKGZqALOXaWM",
+      "resumeLink": "https://drive.google.com/file/d/1vPX8a58ElaQw7tqXuT3N59QqhNPA0Fdy/view?usp=sharing",
+      "previewEmbed": "https://drive.google.com/file/d/1vPX8a58ElaQw7tqXuT3N59QqhNPA0Fdy/preview",
+      "referenceLink": "",
+      "source": "DM",
+      "featured": false
+    },
+    {
+      "id": "satvik-bansal",
+      "name": "Satvik Bansal",
+      "designation": "PM",
+      "company": "Groww",
+      "companyLogo": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Groww_logo.png",
+      "profileImage": "https://airtable.com/appGWxJypvRfoT2Q1/tbl7slSw43fDGcOFK/rec0jFrwSaZboI3N3/fldOviGz5Xpc5FY4y/attHFOvEDCl97sp7F",
+      "resumeLink": "https://drive.google.com/file/d/1Kk59geYlJ9doSlXZAZ5W6D9YvJGwY3xd/view?usp=sharing",
+      "previewEmbed": "https://drive.google.com/file/d/1Kk59geYlJ9doSlXZAZ5W6D9YvJGwY3xd/preview",
+      "referenceLink": "https://www.linkedin.com/search/results/content/?keywords=spotify%20resume",
+      "source": "LinkedIn",
+      "featured": true
+    },
+    {
+      "id": "emily-vu",
+      "name": "Emily Vu",
+      "designation": "PM",
+      "company": "Spotify",
+      "companyLogo": "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg",
+      "profileImage": "https://airtable.com/appGWxJypvRfoT2Q1/tbl7slSw43fDGcOFK/recAK5c0nbZmffbLv/fldOviGz5Xpc5FY4y/att2koElvk55PHHI3",
+      "resumeLink": "https://drive.google.com/file/d/1tysqWocvL-htED_1U67OjPUEiO8Sa_Up/view?usp=sharing",
+      "previewEmbed": "https://drive.google.com/file/d/1tysqWocvL-htED_1U67OjPUEiO8Sa_Up/preview",
+      "referenceLink": "https://www.linkedin.com/feed/update/urn:li:activity:6772994386910441472/",
+      "source": "LinkedIn",
+      "featured": false
+    },
+    {
+      "id": "aditya-sharma",
+      "name": "Aditya Sharma",
+      "designation": "CEO",
+      "company": "HiCounselor",
+      "companyLogo": "https://hicounselor.com/favicon.ico",
+      "profileImage": "https://airtable.com/appGWxJypvRfoT2Q1/tbl7slSw43fDGcOFK/reccV7Tj2KVybWpJR/fldOviGz5Xpc5FY4y/attaAnR1voIGWWc6s",
+      "resumeLink": "https://drive.google.com/file/d/1IxBfIE_qOGII2I7E21WTSltj-mMC10Gy/view?usp=share_link",
+      "previewEmbed": "https://drive.google.com/file/d/1IxBfIE_qOGII2I7E21WTSltj-mMC10Gy/preview",
+      "referenceLink": "https://www.linkedin.com/posts/aditya-hicounselor_netflix-creative-resume-activity-6996712197401849856-PHkR",
+      "source": "LinkedIn",
+      "featured": false
+    }
+  ],
+  "templates": [
+    {
+      "name": "Free Resume Template",
+      "author": "Utkarsh Binay (PM at Tesla)",
+      "description": "With this free resume template made with ❤️ you can professionally showcase your actual potential and land the job of your dreams.",
+      "downloadInstructions": "File ➜ Make a copy",
+      "link": "https://docs.google.com/document/d/1zATMbhJolxtY8e_4tasHNH3hxAQosTyD/edit?usp=sharing&ouid=112937161008220108876&rtpof=true&sd=true"
+    },
+    {
+      "name": "Spotify PM Resume Template",
+      "author": "Emily Vu (PM at Spotify)",
+      "description": "Inspired by Spotify's PM resume, available as a Figma template.",
+      "link": "https://saurao.gumroad.com/l/spotify-resume-figma-template",
+      "button": "Buy Now"
+    }
+  ]
+}
