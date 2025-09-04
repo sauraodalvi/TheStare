@@ -17,6 +17,25 @@ const Hero = () => {
                 Join India's premier community for aspiring and experienced product managers. Access curated resources, job opportunities, and an exclusive network.
               </p>
             </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <Button className="bg-stare-navy hover:bg-stare-navy/90 text-white font-medium">
+                Explore Resources
+              </Button>
+              <Button variant="outline" className="border-stare-teal text-stare-teal hover:bg-stare-teal/10 font-medium">
+                Browse Jobs <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="pt-8">
+              <p className="text-sm text-slate-500 font-medium">TRUSTED BY PRODUCT MANAGERS FROM</p>
+              <div className="flex flex-wrap gap-6 items-center mt-3">
+                <img src="https://images.unsplash.com/placeholder.svg?w=80&h=40" alt="Company logo" className="h-6 opacity-70 grayscale hover:opacity-100 hover:grayscale-0 transition-all" />
+                <img src="https://images.unsplash.com/placeholder.svg?w=80&h=40" alt="Company logo" className="h-6 opacity-70 grayscale hover:opacity-100 hover:grayscale-0 transition-all" />
+                <img src="https://images.unsplash.com/placeholder.svg?w=80&h=40" alt="Company logo" className="h-6 opacity-70 grayscale hover:opacity-100 hover:grayscale-0 transition-all" />
+                <img src="https://images.unsplash.com/placeholder.svg?w=80&h=40" alt="Company logo" className="h-6 opacity-70 grayscale hover:opacity-100 hover:grayscale-0 transition-all" />
+              </div>
+            </div>
           </div>
           
           <div className="relative">
