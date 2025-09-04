@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Input } from '@/components/ui/input';
-import { Search, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import ResourceCard from '@/components/ResourceCard';
 import BookCard from '@/components/BookCard';
 
@@ -18,7 +17,6 @@ interface SelfStudyData {
 
 const SelfStudyContent = () => {
   const [data, setData] = useState<SelfStudyData | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -37,31 +35,7 @@ const SelfStudyContent = () => {
     fetchData();
   }, []);
 
-  const filteredData = useMemo(() => {
-    if (!data || !searchQuery.trim()) return data;
-
-    const query = searchQuery.toLowerCase();
-    
-    return {
-      ...data,
-      websiteLearning: data.websiteLearning.filter(
-        item => item.name.toLowerCase().includes(query) || 
-                item.description.toLowerCase().includes(query)
-      ),
-      communityLearning: data.communityLearning.filter(
-        item => item.name.toLowerCase().includes(query) || 
-                item.description.toLowerCase().includes(query)
-      ),
-      cohortLearning: data.cohortLearning.filter(
-        item => item.name.toLowerCase().includes(query) || 
-                (item.description && item.description.toLowerCase().includes(query))
-      ),
-      books: data.books.filter(
-        item => item.name.toLowerCase().includes(query) || 
-                item.description.toLowerCase().includes(query)
-      )
-    };
-  }, [data, searchQuery]);
+  const filteredData = data;
 
   if (loading) {
     return (
@@ -98,20 +72,6 @@ const SelfStudyContent = () => {
   return (
     <section className="section-padding">
       <div className="container">
-        {/* Search Bar */}
-        <div className="max-w-md mx-auto mb-12">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              type="text"
-              placeholder="Search resources..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-12 text-base"
-            />
-          </div>
-        </div>
-
         {/* Navigation Menu */}
         <nav className="flex flex-wrap justify-center gap-4 mb-12">
           <a href="#website-learning" className="px-4 py-2 rounded-lg bg-accent/10 text-accent hover:bg-accent/20 transition-colors font-medium">
@@ -145,9 +105,6 @@ const SelfStudyContent = () => {
                 />
               ))}
             </div>
-            {filteredData.websiteLearning.length === 0 && searchQuery && (
-              <p className="text-muted-foreground text-center py-8">No website learning resources found for "{searchQuery}"</p>
-            )}
           </section>
 
           {/* Community Learning Section */}
@@ -166,9 +123,6 @@ const SelfStudyContent = () => {
                 />
               ))}
             </div>
-            {filteredData.communityLearning.length === 0 && searchQuery && (
-              <p className="text-muted-foreground text-center py-8">No community learning resources found for "{searchQuery}"</p>
-            )}
           </section>
 
           {/* Cohort Learning Section */}
@@ -188,9 +142,6 @@ const SelfStudyContent = () => {
                 />
               ))}
             </div>
-            {filteredData.cohortLearning.length === 0 && searchQuery && (
-              <p className="text-muted-foreground text-center py-8">No cohort learning resources found for "{searchQuery}"</p>
-            )}
           </section>
 
           {/* Books Section */}
@@ -209,9 +160,6 @@ const SelfStudyContent = () => {
                 />
               ))}
             </div>
-            {filteredData.books.length === 0 && searchQuery && (
-              <p className="text-muted-foreground text-center py-8">No books found for "{searchQuery}"</p>
-            )}
           </section>
         </div>
 

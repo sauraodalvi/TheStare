@@ -24,13 +24,12 @@ const SelfStudyHero = () => {
 
   if (!headerData) {
     return (
-      <section className="bg-gradient-to-r from-stare-navy to-stare-navy/90 text-white py-16 md:py-24">
-        <div className="container">
-          <div className="max-w-3xl">
+      <section className="py-8 px-4">
+        <div className="container mx-auto max-w-7xl">
+          <div className="mb-8">
             <div className="animate-pulse">
-              <div className="h-12 bg-white/20 rounded-lg mb-6"></div>
-              <div className="h-6 bg-white/15 rounded-lg mb-4"></div>
-              <div className="h-6 bg-white/15 rounded-lg w-3/4"></div>
+              <div className="h-8 bg-muted rounded-lg mb-4 max-w-md"></div>
+              <div className="h-6 bg-muted rounded-lg mb-2 max-w-2xl"></div>
             </div>
           </div>
         </div>
@@ -39,15 +38,11 @@ const SelfStudyHero = () => {
   }
 
   return (
-    <section className="bg-gradient-to-r from-stare-navy to-stare-navy/90 text-white py-16 md:py-24">
-      <div className="container">
-        <div className="max-w-3xl">
-          <h1 className="text-4xl md:text-5xl font-bold font-display mb-6">
-            {headerData.title}
-          </h1>
-          <p className="text-xl text-white/80 mb-8">
-            {headerData.subtitle}
-          </p>
+    <section className="py-8 px-4">
+      <div className="container mx-auto max-w-7xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">{headerData.title}</h1>
+          <p className="text-muted-foreground">{headerData.subtitle}</p>
         </div>
       </div>
     </section>
