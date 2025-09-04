@@ -27,13 +27,13 @@ const Features = () => {
   ];
 
   return (
-    <section className="section-padding bg-white">
+    <section className="section-padding bg-muted/50">
       <div className="container">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="text-3xl md:text-4xl font-display font-bold mb-4 text-stare-navy">
             Empower Your Product Journey
           </h2>
-          <p className="text-lg text-slate-600">
+          <p className="text-lg text-muted-foreground">
             TheStare.in offers a comprehensive suite of resources tailored to the needs of the product management community.
           </p>
         </div>
@@ -42,14 +42,14 @@ const Features = () => {
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="bg-slate-50 rounded-xl p-6 card-hover"
+              className="bg-muted rounded-xl p-6 card-hover"
               style={{ animationDelay: `${index * 150}ms` }}
             >
               <div className="h-12 w-12 flex items-center justify-center rounded-lg bg-stare-teal/10 text-stare-teal mb-4">
                 {feature.icon}
               </div>
               <h3 className="text-xl font-semibold mb-2 text-stare-navy">{feature.title}</h3>
-              <p className="text-slate-600">{feature.description}</p>
+              <p className="text-muted-foreground">{feature.description}</p>
             </div>
           ))}
         </div>
