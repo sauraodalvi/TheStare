@@ -72,26 +72,10 @@ const SelfStudyContent = () => {
   return (
     <section className="section-padding">
       <div className="container">
-        {/* Navigation Menu */}
-        <nav className="flex flex-wrap justify-center gap-4 mb-12">
-          <a href="#website-learning" className="px-4 py-2 rounded-lg bg-accent/10 text-accent hover:bg-accent/20 transition-colors font-medium">
-            Website Learning
-          </a>
-          <a href="#community-learning" className="px-4 py-2 rounded-lg bg-accent/10 text-accent hover:bg-accent/20 transition-colors font-medium">
-            Community Learning
-          </a>
-          <a href="#cohort-learning" className="px-4 py-2 rounded-lg bg-accent/10 text-accent hover:bg-accent/20 transition-colors font-medium">
-            Cohort Learning
-          </a>
-          <a href="#books" className="px-4 py-2 rounded-lg bg-accent/10 text-accent hover:bg-accent/20 transition-colors font-medium">
-            Books
-          </a>
-        </nav>
-
         <div className="space-y-16">
           {/* Website Learning Section */}
           <section id="website-learning">
-            <h2 className="text-2xl md:text-3xl font-bold font-display mb-8 text-foreground">
+            <h2 className="text-3xl font-bold text-foreground mb-8">
               Website Learning
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -109,7 +93,7 @@ const SelfStudyContent = () => {
 
           {/* Community Learning Section */}
           <section id="community-learning">
-            <h2 className="text-2xl md:text-3xl font-bold font-display mb-8 text-foreground">
+            <h2 className="text-3xl font-bold text-foreground mb-8">
               Community Learning
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -127,7 +111,7 @@ const SelfStudyContent = () => {
 
           {/* Cohort Learning Section */}
           <section id="cohort-learning">
-            <h2 className="text-2xl md:text-3xl font-bold font-display mb-8 text-foreground">
+            <h2 className="text-3xl font-bold text-foreground mb-8">
               Cohort Learning
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -146,7 +130,7 @@ const SelfStudyContent = () => {
 
           {/* Books Section */}
           <section id="books">
-            <h2 className="text-2xl md:text-3xl font-bold font-display mb-8 text-foreground">
+            <h2 className="text-3xl font-bold text-foreground mb-8">
               Books
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
