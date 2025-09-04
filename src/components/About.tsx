@@ -27,7 +27,6 @@ const About = () => {
                 <p className="text-slate-600">Our platform is designed to help PMs at every stage of their career journey through knowledge sharing and networking.</p>
               </div>
             </div>
-            <Button className="bg-stare-navy hover:bg-stare-navy/90">Join Our Community</Button>
           </div>
         </div>
       </div>
