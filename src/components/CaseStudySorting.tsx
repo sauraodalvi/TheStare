@@ -3,7 +3,7 @@ import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowUpDown } from 'lucide-react';
 
-export type SortOption = 'most-liked' | 'most-recent' | 'a-z' | 'z-a';
+export type SortOption = 'api-order' | 'most-liked' | 'most-recent' | 'a-z' | 'z-a';
 
 interface CaseStudySortingProps {
   value: SortOption;
@@ -19,6 +19,7 @@ const CaseStudySorting = ({ value, onChange }: CaseStudySortingProps) => {
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
         <SelectContent>
+          <SelectItem value="api-order">Default</SelectItem>
           <SelectItem value="most-liked">Most Liked</SelectItem>
           <SelectItem value="most-recent">Most Recent</SelectItem>
           <SelectItem value="a-z">A–Z Title</SelectItem>

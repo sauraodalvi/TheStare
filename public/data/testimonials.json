@@ -1,0 +1,88 @@
+{
+  "testimonials": [
+    {
+      "id": 1,
+      "quote": "A fantastic resource with a large collection of product teardowns. Learn and get inspired. An instant bookmark for product managers",
+      "author": "Paweł Huryn",
+      "position": "Author, Product Coach",
+      "publish": true
+    },
+    {
+      "id": 2,
+      "quote": "This is a fantastic platform with a large collection of 500+ product teardowns that will help you crack your next dream role",
+      "author": "Shravan Tickoo",
+      "position": "Group PM",
+      "publish": true
+    },
+    {
+      "id": 3,
+      "quote": "It has hundreds of in-depth product teardown. Every PM should know this website!",
+      "author": "Carl Vellott",
+      "position": "Senior PM",
+      "publish": true
+    },
+    {
+      "id": 4,
+      "quote": "This is a great useful resource!",
+      "author": "Filip Miloszewski",
+      "position": "Co-founder, Board Member",
+      "publish": true
+    },
+    {
+      "id": 5,
+      "quote": "TheStare.in has been instrumental in my PM journey. The case studies are incredibly detailed and practical.",
+      "author": "Priya Sharma",
+      "position": "Senior Product Manager",
+      "publish": true
+    },
+    {
+      "id": 6,
+      "quote": "Amazing collection of resources. Helped me land my first PM role at a unicorn startup!",
+      "author": "Rahul Kumar",
+      "position": "Product Manager",
+      "publish": true
+    },
+    {
+      "id": 7,
+      "quote": "The portfolio examples and resume templates are top-notch. Highly recommend to all aspiring PMs.",
+      "author": "Sneha Patel",
+      "position": "Associate Product Manager",
+      "publish": true
+    },
+    {
+      "id": 8,
+      "quote": "This platform is a goldmine for product managers. The quality of content is exceptional.",
+      "author": "Arjun Singh",
+      "position": "VP Product",
+      "publish": true
+    },
+    {
+      "id": 9,
+      "quote": "Great platform but needs more advanced case studies for senior PMs.",
+      "author": "Anonymous User",
+      "position": "Senior PM",
+      "publish": false
+    },
+    {
+      "id": 10,
+      "quote": "The community aspect could be improved, but the resources are excellent.",
+      "author": "Test User",
+      "position": "Product Manager",
+      "publish": 0
+    },
+    {
+      "id": 11,
+      "quote": "Comprehensive resource library that covers everything from basics to advanced PM concepts. Love it!",
+      "author": "Meera Reddy",
+      "position": "Product Lead",
+      "publish": 1
+    },
+    {
+      "id": 12,
+      "quote": "The case studies helped me understand real-world PM challenges. Perfect for interview preparation.",
+      "author": "Vikash Gupta",
+      "position": "Product Manager",
+      "publish": true
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Heart, Building } from 'lucide-react';
@@ -11,16 +11,63 @@ interface CaseStudyCardProps {
 }
 
 const CaseStudyCard = ({ caseStudy, onClick }: CaseStudyCardProps) => {
-  const cleanCategories = (caseStudy.Category || []).filter(cat => 
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [hasImageError, setHasImageError] = useState(false);
+
+  const cleanCategories = (caseStudy.Category || []).filter(cat =>
     cat && cat !== 'All' && cat.trim() !== ''
   ).slice(0, 1); // Show only first category
 
-  const logoUrl = caseStudy.Logo && caseStudy.Logo[0] ? caseStudy.Logo[0] : null;
-  console.log('CaseStudyCard logo data:', { 
-    Logo: caseStudy.Logo, 
-    logoUrl, 
-    company: caseStudy.Company 
+  // FIXED: Use the processed Logo array (which contains converted URLs) instead of raw google_drive_logo_path
+  const logoUrls = caseStudy.Logo || [];
+  const currentLogoUrl = logoUrls[currentImageIndex];
+
+  // Debug: Show the data flow and conversion process
+  console.log(`🔧 FIXED DATA FLOW for ${caseStudy.Company}:`);
+  console.log('  Raw google_drive_logo_path:', caseStudy.google_drive_logo_path);
+  console.log('  Processed Logo array (should contain converted URLs):', caseStudy.Logo);
+  console.log('  Current URL being used:', currentLogoUrl);
+  console.log('  URL type:', currentLogoUrl?.includes('drive.google.com') ? 'Google Drive' : 'Other');
+  console.log('  Is URL converted?:', currentLogoUrl?.includes('uc?export=view') ? 'YES (converted)' : 'NO (original or other)');
+
+  if (caseStudy.Logo && caseStudy.Logo.length > 0) {
+    console.log(`✅ Using PROCESSED logo for ${caseStudy.Company}:`, currentLogoUrl);
+  } else {
+    console.log(`❌ No processed logo available for ${caseStudy.Company}`);
+  }
+
+  console.log('CaseStudyCard logo data:', {
+    id: caseStudy.id,
+    company: caseStudy.Company,
+    google_drive_logo_path: caseStudy.google_drive_logo_path,
+    Logo: caseStudy.Logo,
+    logoUrls,
+    currentLogoUrl,
+    currentImageIndex,
+    hasImageError,
+    'Logo array length': caseStudy.Logo?.length,
+    'logoUrls length': logoUrls.length
   });
+
+  const handleImageError = () => {
+    console.log(`Image failed to load: ${currentLogoUrl} (index: ${currentImageIndex}/${logoUrls.length - 1})`);
+    console.log('Available logo URLs:', logoUrls);
+
+    // Try next image in the array
+    if (currentImageIndex < logoUrls.length - 1) {
+      setCurrentImageIndex(currentImageIndex + 1);
+      console.log(`Trying next image at index: ${currentImageIndex + 1}`);
+    } else {
+      // All images failed, show fallback
+      console.log('All logo images failed, showing fallback icon');
+      setHasImageError(true);
+    }
+  };
+
+  const resetImageState = () => {
+    setCurrentImageIndex(0);
+    setHasImageError(false);
+  };
 
   return (
     <Card 
@@ -30,16 +77,24 @@ const CaseStudyCard = ({ caseStudy, onClick }: CaseStudyCardProps) => {
       <CardContent className="p-4 sm:p-5 flex flex-col h-full">
         {/* Company Logo and Title Row */}
         <div className="flex items-start gap-3 sm:gap-4 mb-3">
-          {logoUrl ? (
+          {currentLogoUrl && !hasImageError ? (
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-background border-2 border-border flex items-center justify-center flex-shrink-0 overflow-hidden">
               <img
-                src={logoUrl}
+                src={currentLogoUrl}
                 alt={`${caseStudy.Company} logo`}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-cover"
                 onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.parentElement!.innerHTML = '<div class="w-6 h-6 text-muted-foreground"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path></svg></div>';
+                  console.log(`🚨 IMAGE LOAD ERROR for ${caseStudy.Company}:`);
+                  console.log('  Failed URL:', currentLogoUrl);
+                  console.log('  Error event:', e);
+                  handleImageError();
                 }}
+                onLoad={(e) => {
+                  console.log(`✅ IMAGE LOAD SUCCESS for ${caseStudy.Company}:`);
+                  console.log('  Successful URL:', currentLogoUrl);
+                  resetImageState();
+                }}
+                loading="lazy"
               />
             </div>
           ) : (

@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 
 interface VideoSession {
@@ -33,9 +34,9 @@ const VideoModal = ({ video, isOpen, onClose }: VideoModalProps) => {
           <DialogTitle className="text-xl font-semibold text-foreground pr-8">
             {video.title}
           </DialogTitle>
-          <p className="text-sm text-muted-foreground mt-2">
+          <DialogDescription className="text-sm text-muted-foreground mt-2">
             {video.credits}
-          </p>
+          </DialogDescription>
         </DialogHeader>
         
         <div className="px-6 pb-6">

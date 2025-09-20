@@ -20,10 +20,6 @@ interface VideoCardProps {
 }
 
 const VideoCard = ({ session, onClick }: VideoCardProps) => {
-  const handleExternalClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    window.open(session.url, '_blank', 'noopener,noreferrer');
-  };
 
   // Extract YouTube video ID for thumbnail
   const getVideoThumbnail = (url: string) => {
@@ -37,8 +33,8 @@ const VideoCard = ({ session, onClick }: VideoCardProps) => {
   const thumbnailUrl = getVideoThumbnail(session.url);
 
   return (
-    <Card 
-      className="h-full flex flex-col bg-card hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border border-border group cursor-pointer"
+    <Card
+      className="bg-card hover:shadow-lg transition-all duration-300 cursor-pointer border border-border overflow-hidden h-full flex flex-col group"
       onClick={onClick}
     >
       <CardContent className="p-0 flex flex-col h-full">
@@ -65,14 +61,14 @@ const VideoCard = ({ session, onClick }: VideoCardProps) => {
         </div>
 
         {/* Content */}
-        <div className="p-6 flex flex-col flex-1">
+        <div className="p-4 sm:p-5 flex flex-col flex-1">
           <div className="flex-1 space-y-3">
-            <h3 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors leading-tight line-clamp-2">
+            <h3 className="font-semibold text-foreground text-sm sm:text-base leading-tight mb-1 line-clamp-2 group-hover:text-primary transition-colors">
               {session.title}
             </h3>
             
             <div className="space-y-1">
-              <p className="text-sm font-medium text-foreground">
+              <p className="text-xs sm:text-sm font-medium text-foreground">
                 {session.speaker}
               </p>
               <p className="text-xs text-muted-foreground">
@@ -81,21 +77,13 @@ const VideoCard = ({ session, onClick }: VideoCardProps) => {
             </div>
           </div>
           
-          <div className="flex gap-2 mt-4">
+          <div className="mt-4">
             <Button
               size="sm"
-              className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
             >
-              <Play className="h-4 w-4 mr-2" />
+              <Play className="h-3 w-3 mr-1" />
               Watch
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleExternalClick}
-              className="border-accent text-accent hover:bg-accent hover:text-accent-foreground"
-            >
-              <ExternalLink className="h-4 w-4" />
             </Button>
           </div>
         </div>

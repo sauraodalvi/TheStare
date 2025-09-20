@@ -101,6 +101,113 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          id: string
+          email: string | null
+          full_name: string | null
+          avatar_url: string | null
+          subscription_type: string
+          subscription_start_date: string | null
+          subscription_end_date: string | null
+          subscription_updated_at: string | null
+          subscription_updated_by: string | null
+          portfolio_url: string | null
+          linkedin_url: string | null
+          resume_url: string | null
+          bio: string | null
+          current_role: string | null
+          current_company: string | null
+          years_of_experience: number | null
+          skills: string[] | null
+          career_status: string
+          job_preferences: Json | null
+          uploaded_case_study_count: number
+          last_case_study_upload: string | null
+          profile_completion_percentage: number
+          created_at: string
+          updated_at: string
+          last_login_at: string | null
+          admin_notes: string | null
+          is_featured: boolean
+          is_blocked: boolean
+          email_notifications: boolean
+          profile_visibility: string
+        }
+        Insert: {
+          id: string
+          email?: string | null
+          full_name?: string | null
+          avatar_url?: string | null
+          subscription_type?: string
+          subscription_start_date?: string | null
+          subscription_end_date?: string | null
+          subscription_updated_at?: string | null
+          subscription_updated_by?: string | null
+          portfolio_url?: string | null
+          linkedin_url?: string | null
+          resume_url?: string | null
+          bio?: string | null
+          current_role?: string | null
+          current_company?: string | null
+          years_of_experience?: number | null
+          skills?: string[] | null
+          career_status?: string
+          job_preferences?: Json | null
+          uploaded_case_study_count?: number
+          last_case_study_upload?: string | null
+          profile_completion_percentage?: number
+          created_at?: string
+          updated_at?: string
+          last_login_at?: string | null
+          admin_notes?: string | null
+          is_featured?: boolean
+          is_blocked?: boolean
+          email_notifications?: boolean
+          profile_visibility?: string
+        }
+        Update: {
+          id?: string
+          email?: string | null
+          full_name?: string | null
+          avatar_url?: string | null
+          subscription_type?: string
+          subscription_start_date?: string | null
+          subscription_end_date?: string | null
+          subscription_updated_at?: string | null
+          subscription_updated_by?: string | null
+          portfolio_url?: string | null
+          linkedin_url?: string | null
+          resume_url?: string | null
+          bio?: string | null
+          current_role?: string | null
+          current_company?: string | null
+          years_of_experience?: number | null
+          skills?: string[] | null
+          career_status?: string
+          job_preferences?: Json | null
+          uploaded_case_study_count?: number
+          last_case_study_upload?: string | null
+          profile_completion_percentage?: number
+          created_at?: string
+          updated_at?: string
+          last_login_at?: string | null
+          admin_notes?: string | null
+          is_featured?: boolean
+          is_blocked?: boolean
+          email_notifications?: boolean
+          profile_visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never

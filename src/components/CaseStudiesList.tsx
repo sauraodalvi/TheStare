@@ -1,23 +1,38 @@
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { CaseStudy } from '@/types/caseStudy';
 import { toast } from 'sonner';
 import { SupabaseService } from '@/services/supabaseService';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { usePagination } from '@/hooks/usePagination';
+import { useServerPagination } from '@/hooks/useServerPagination';
 import CaseStudyCard from './CaseStudyCard';
 import CaseStudyModal from './CaseStudyModal';
 import CaseStudySubmissionModal from './CaseStudySubmissionModal';
 import CaseStudyFilterChips from './CaseStudyFilterChips';
 import CaseStudyHeader from './CaseStudyHeader';
 import { SortOption } from './CaseStudySorting';
+import ErrorBoundary from './ErrorBoundary';
 
-const CaseStudiesList = () => {
+// Define the shape of the pagination state
+interface PaginationState {
+  currentPage: number;
+  itemsPerPage: number;
+  totalCount: number;
+  hasMore: boolean;
+  isLoadingMore: boolean;
+}
+
+const CaseStudiesList: React.FC = () => {
+  // Authentication and data fetching
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const hasShownError = useRef(false);
+  
+  // UI State
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
@@ -25,183 +40,391 @@ const CaseStudiesList = () => {
   const [selectedObjectives, setSelectedObjectives] = useState<string[]>([]);
   const [selectedCaseStudy, setSelectedCaseStudy] = useState<CaseStudy | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showSubmissionModal, setShowSubmissionModal] = useState(false);
-  const [sortBy, setSortBy] = useState<SortOption>('most-liked');
-  const hasShownError = useRef(false);
+  const [isSubmissionModalOpen, setIsSubmissionModalOpen] = useState(false);
+  const [sortBy, setSortBy] = useState<SortOption>('api-order');
+  
+  // Data state
+  const [allCaseStudies, setAllCaseStudies] = useState<CaseStudy[]>([]);
+  
+  // Server-side pagination
+  const {
+    currentPage,
+    totalCount,
+    hasMore,
+    isLoadingMore,
+    itemsPerPage,
+    updatePaginationState,
+    reset: resetPagination,
+    loadMore: loadMoreItems
+  } = useServerPagination();
+  
+  // Define the query data type to match the return type of SupabaseService.getCaseStudies
+  type CaseStudyQueryData = {
+    data: CaseStudy[];
+    totalCount: number;
+    hasMore: boolean;
+  };
 
-  const { data: caseStudies = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['caseStudies', !!user],
-    queryFn: () => SupabaseService.getCaseStudies(!!user),
-    retry: 1,
+  // Fetch subscription info from profiles (subscription_type_int) when logged in
+  const { data: profileSubData } = useQuery<{ subscription_type?: any }, Error>({
+    queryKey: ['profile-subscription', user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('subscription_type')
+        .eq('id', user!.id as string)
+        .single();
+      if (error) throw error;
+      return data || {} as any;
+    },
+    staleTime: 60_000,
   });
 
-  console.log('Authentication state:', { user: !!user, userId: user?.id });
-  console.log('Case studies data length:', caseStudies.length);
-  console.log('Loading state:', isLoading);
-  console.log('Error state:', error);
+  // Determine subscription type based on profile first, then user metadata
+  const subscriptionType = useMemo(() => {
+    if (!user) return 'free';
 
-  const categories = [...new Set(caseStudies.flatMap(cs => cs.Category || []).filter(cat => cat && cat !== 'All'))];
-  const companies = [...new Set(caseStudies.map(cs => cs.Company).filter(Boolean))];
-  const markets = [...new Set(caseStudies.map(cs => cs.Market).filter(Boolean))];
-  const objectives = [...new Set(caseStudies.flatMap(cs => cs.Objective || []).filter(obj => obj && obj.trim() !== ''))];
+    // Support profiles.subscription_type as smallint (0/1) if migration swapped types
+    const subVal = profileSubData?.subscription_type;
+    if (typeof subVal === 'number') {
+      return subVal === 1 ? 'paid' : 'free';
+    }
+    if (typeof subVal === 'string') {
+      const normalized = subVal.toLowerCase().trim();
+      if (normalized === '1' || normalized === 'paid' || normalized === 'pro') return 'paid';
+      return 'free';
+    }
+
+    // Fallback: Normalize user metadata subscriptionType
+    const rawSub: unknown = (user as any)?.user_metadata?.subscriptionType;
+    if (!rawSub) return 'free';
+    const normalized = String(rawSub).toLowerCase().trim();
+    const paidAliases = new Set([
+      'paid', 'pro', 'premium', 'plus', 'lifetime', 'enterprise', 'business', 'team',
+      'active', 'active_paid', 'trial', 'trialing', 'subscriber', 'subscribed'
+    ]);
+    return paidAliases.has(normalized) ? 'paid' : 'free';
+  }, [user, profileSubData]);
+
+  // Include all relevant dependencies in the query key to refetch when they change
+  const queryKey = useMemo(() => [
+    'caseStudies', 
+    user?.id, 
+    subscriptionType, 
+    currentPage,
+    searchQuery,
+    selectedCategories.join(','),
+    selectedCompanies.join(','),
+    selectedMarkets.join(','),
+    selectedObjectives.join(',')
+  ], [
+    user?.id, 
+    subscriptionType, 
+    currentPage,
+    searchQuery,
+    selectedCategories,
+    selectedCompanies,
+    selectedMarkets,
+    selectedObjectives
+  ]);
+
+  const isSubscriptionReady = useMemo(() => {
+    // If not logged in, we're ready (treated as free)
+    if (!user?.id) return true;
+    // If logged in, wait until profileSubData is fetched
+    return profileSubData !== undefined;
+  }, [user?.id, profileSubData]);
+
+  const { data: pageData, isLoading, error, refetch, isFetching } = useQuery<CaseStudyQueryData, Error>({
+    queryKey,
+    queryFn: async () => {
+      try {
+        console.log('=== FETCHING CASE STUDIES ===');
+        console.log('User:', user?.id ? 'Authenticated' : 'Not authenticated');
+        console.log('Subscription type:', subscriptionType);
+        console.log('Page:', currentPage, 'Items per page:', itemsPerPage);
+        
+        const result = await SupabaseService.getCaseStudies(
+          !!user, // isAuthenticated
+          subscriptionType,
+          currentPage, 
+          itemsPerPage
+        );
+        
+        console.log('=== FETCHED CASE STUDIES ===');
+        console.log('Total count:', result.totalCount);
+        console.log('Has more:', result.hasMore);
+        console.log('First item free status:', result.data[0]?.Free);
+        
+        console.log(`Fetched ${result.data.length} items, total count: ${result.totalCount}, hasMore: ${result.hasMore}`);
+
+        // Update the case studies list with deduplication
+        setAllCaseStudies(prev => {
+          // If this is the first page, replace the entire list
+          if (currentPage === 1) {
+            console.log('Resetting case studies with new data');
+            return result.data;
+          }
+          
+          // For subsequent pages, merge with existing data
+          const existingKeys = new Set(prev.map(cs => cs.id));
+          const newItems = result.data.filter(cs => !existingKeys.has(cs.id));
+          
+          if (newItems.length === 0) {
+            console.log('No new items to add');
+            return prev;
+          }
+          
+          console.log(`Adding ${newItems.length} new items to existing ${prev.length}`);
+          return [...prev, ...newItems];
+        });
+
+        return result;
+      } catch (err) {
+        console.error('Error fetching case studies:', err);
+        throw err;
+      }
+    },
+    retry: 1,
+    enabled: isSubscriptionReady,
+    placeholderData: (previousData) => previousData,
+  });
 
   useEffect(() => {
     if (error && !hasShownError.current) {
       hasShownError.current = true;
-      console.log('API Error details:', error);
-      toast.error('Failed to load case studies', {
-        description: 'There was an error loading case studies from the database.'
-      });
+      toast.error('Failed to load case studies. Please try again later.');
     }
   }, [error]);
 
+  useEffect(() => {
+    console.log('=== AUTH STATE CHANGED ===');
+    console.log('User:', user);
+    console.log('Is authenticated:', !!user);
+    console.log('Subscription type:', user?.user_metadata?.subscriptionType);
+  }, [user]);
+
+  // Update pagination state when pageData changes
+  useEffect(() => {
+    if (pageData) {
+      updatePaginationState({
+        totalCount: pageData.totalCount,
+        hasMore: pageData.hasMore,
+        isLoadingMore: false,
+      });
+    }
+  }, [pageData, updatePaginationState]);
+
+  useEffect(() => {
+    if (isLoading && currentPage > 1) {
+      updatePaginationState({
+        isLoadingMore: true,
+        hasMore: hasMore,
+        totalCount: totalCount,
+      });
+    } else {
+      updatePaginationState({
+        isLoadingMore: false,
+        hasMore: hasMore,
+        totalCount: totalCount,
+      });
+    }
+  }, [isLoading, currentPage, updatePaginationState, hasMore, totalCount]);
+
+  // Memoize derived data from case studies - must be called before any conditional returns
+  const { categories, companies, markets, objectives } = useMemo(() => {
+    const safeAllCaseStudies = allCaseStudies || [];
+    
+    const categories = [...new Set(safeAllCaseStudies.flatMap((cs) => cs?.Category || []).filter((cat) => cat && cat !== 'All'))];
+    const companies = [...new Set(safeAllCaseStudies.map((cs) => cs?.Company).filter(Boolean))];
+    const markets = [...new Set(safeAllCaseStudies.map((cs) => cs?.Market).filter(Boolean))];
+    const objectives = [...new Set(safeAllCaseStudies.flatMap((cs) => cs?.Objective || []).filter((obj) => obj && obj.trim() !== ''))];
+    
+    return { categories, companies, markets, objectives };
+  }, [allCaseStudies]);
+
+  // Memoize filtered and sorted case studies
   const filteredAndSortedCaseStudies = useMemo(() => {
-    let filtered = [...caseStudies];
+    if (!allCaseStudies || allCaseStudies.length === 0) {
+      return [];
+    }
+    
+    let result = [...allCaseStudies];
 
     // Apply search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(cs =>
-        cs.Title?.toLowerCase().includes(query) ||
-        cs.Name?.toLowerCase().includes(query) ||
-        cs.Company?.toLowerCase().includes(query) ||
-        cs.Organizer?.toLowerCase().includes(query)
+      result = result.filter((study) =>
+        (study.Title?.toLowerCase().includes(query) ||
+        study.Name?.toLowerCase().includes(query) ||
+        study.Company?.toLowerCase().includes(query) ||
+        study.Organizer?.toLowerCase().includes(query)) ?? false
       );
     }
 
-    // Apply other filters
     if (selectedCategories.length > 0) {
-      filtered = filtered.filter(cs =>
-        cs.Category?.some(cat => selectedCategories.includes(cat))
+      result = result.filter((cs) =>
+        Array.isArray(cs.Category) && cs.Category.some((cat) => 
+          cat && selectedCategories.includes(cat)
+        )
       );
     }
 
     if (selectedCompanies.length > 0) {
-      filtered = filtered.filter(cs =>
-        selectedCompanies.includes(cs.Company)
+      result = result.filter((cs) =>
+        cs.Company && selectedCompanies.includes(cs.Company)
       );
     }
 
     if (selectedMarkets.length > 0) {
-      filtered = filtered.filter(cs =>
-        selectedMarkets.includes(cs.Market)
+      result = result.filter((cs) =>
+        cs.Market && selectedMarkets.includes(cs.Market)
       );
     }
 
     if (selectedObjectives.length > 0) {
-      filtered = filtered.filter(cs =>
-        cs.Objective?.some(objective => selectedObjectives.includes(objective))
+      result = result.filter((cs) => 
+        cs.Objective && cs.Objective.some((obj) => 
+          obj && selectedObjectives.includes(obj)
+        )
       );
     }
 
-    // Apply sorting
     switch (sortBy) {
+      case 'api-order':
+        result.sort((a, b) => (a.Sort || 0) - (b.Sort || 0));
+        break;
       case 'most-liked':
-        filtered.sort((a, b) => (b.Likes || 0) - (a.Likes || 0));
+        result.sort((a, b) => (b.Likes || 0) - (a.Likes || 0));
         break;
       case 'most-recent':
-        filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         break;
       case 'a-z':
-        filtered.sort((a, b) => (a.Title || a.Name || '').localeCompare(b.Title || b.Name || ''));
+        result.sort((a, b) => (a.Title || a.Name || '').localeCompare(b.Title || b.Name || ''));
         break;
       case 'z-a':
-        filtered.sort((a, b) => (b.Title || b.Name || '').localeCompare(a.Title || a.Name || ''));
+        result.sort((a, b) => (b.Title || b.Name || '').localeCompare(a.Title || a.Name || ''));
         break;
       default:
+        result.sort((a, b) => (a.Sort || 0) - (b.Sort || 0));
         break;
     }
 
-    return filtered;
-  }, [caseStudies, searchQuery, selectedCategories, selectedCompanies, selectedMarkets, selectedObjectives, sortBy]);
+    return result;
+  }, [allCaseStudies, searchQuery, selectedCategories, selectedCompanies, selectedMarkets, selectedObjectives, sortBy]);
 
-  const {
-    paginatedData,
-    hasMore,
-    loadMore,
-    reset,
-    currentPage,
-    totalPages,
-    totalItems,
-    isLoadingMore
-  } = usePagination({
-    data: filteredAndSortedCaseStudies,
-    itemsPerPage: 30
-  });
+  const displayedCaseStudies = filteredAndSortedCaseStudies || [];
 
-  console.log('Pagination state:', { 
-    currentPage, 
-    totalItems, 
-    paginatedDataLength: paginatedData.length, 
-    hasMore,
-    isAuthenticated: !!user 
-  });
-
-  // Reset pagination when authentication state changes
   useEffect(() => {
-    console.log('Authentication state changed, resetting pagination');
-    reset();
-    // Invalidate and refetch case studies when auth state changes
+    resetPagination();
+    setAllCaseStudies([]);
+    // Invalidate the same key used by useQuery to force a refetch
     queryClient.invalidateQueries({ queryKey: ['caseStudies'] });
-  }, [!!user, queryClient, reset]);
+    hasShownError.current = false;
+  }, [user?.id, subscriptionType, queryClient, resetPagination]);
 
-  // Reset pagination when filters change
   useEffect(() => {
-    reset();
-  }, [searchQuery, selectedCategories, selectedCompanies, selectedMarkets, selectedObjectives, sortBy, reset]);
+    if (searchQuery || selectedCategories.length > 0 || selectedCompanies.length > 0 ||
+        selectedMarkets.length > 0 || selectedObjectives.length > 0) {
+      resetPagination();
+      setAllCaseStudies([]);
+      queryClient.invalidateQueries({ queryKey: ['caseStudies'] });
+    }
+  }, [searchQuery, selectedCategories, selectedCompanies, selectedMarkets, selectedObjectives, resetPagination, queryClient]);
 
-  const handleCaseStudyClick = (caseStudy: CaseStudy) => {
+  const handleLoadMore = useCallback(() => {
+    console.log('Load more clicked. Current state:', { isLoadingMore, hasMore });
+    if (!isLoadingMore && hasMore) {
+      console.log('Loading more items...');
+      loadMoreItems();
+    } else {
+      console.log('Load more prevented. State:', { isLoadingMore, hasMore });
+    }
+  }, [isLoadingMore, hasMore, loadMoreItems]);
+
+  const handleCaseStudyClick = useCallback((caseStudy: CaseStudy) => {
     setSelectedCaseStudy(caseStudy);
     setIsModalOpen(true);
-  };
+  }, [setSelectedCaseStudy, setIsModalOpen]);
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleOpenSubmissionModal = useCallback(() => {
+    setIsSubmissionModalOpen(true);
+  }, [setIsSubmissionModalOpen]);
+
+  const handleCloseSubmissionModal = useCallback(() => {
+    setIsSubmissionModalOpen(false);
+  }, [setIsSubmissionModalOpen]);
+
+  const handleSortChange = useCallback((value: SortOption) => {
+    setSortBy(value);
+  }, [setSortBy]);
+
+  const handleCloseModal = useCallback(() => {
     setSelectedCaseStudy(null);
-  };
+    setIsModalOpen(false);
+  }, [setSelectedCaseStudy, setIsModalOpen]);
 
-  const handleClearAllFilters = () => {
+  const handleSubmissionSuccess = useCallback(() => {
+    setIsSubmissionModalOpen(false);
+    refetch();
+  }, [refetch, setIsSubmissionModalOpen]);
+
+  const handleClearAllFilters = useCallback(() => {
     setSearchQuery('');
     setSelectedCategories([]);
     setSelectedCompanies([]);
     setSelectedMarkets([]);
     setSelectedObjectives([]);
-  };
+  }, []);
 
-  const handleSubmissionSuccess = () => {
-    refetch();
-  };
+  // Calculate loading and error states after all hooks are called
+  const isLoadingState = isLoading && currentPage === 1;
+  const hasError = !!error;
+  
+  // Calculate the actual count of displayed case studies
+  const displayedCount = displayedCaseStudies.length;
+  const totalItemsCount = Math.max(displayedCount, totalCount);
+  // Show the button if we have more items to load or if we haven't loaded all items yet
+  const hasMoreItems = hasMore || displayedCount < totalItemsCount;
 
-  if (isLoading) {
+  // Main content
+  // Early returns must be after all hooks
+  if (isLoadingState) {
     return (
-      <section className="py-8 px-4">
-        <div className="container mx-auto">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-foreground">Explore Case Studies</h1>
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <span className="ml-2 text-muted-foreground">Loading case studies...</span>
-          </div>
-        </div>
-      </section>
+      <div className="flex flex-col items-center justify-center min-h-[50vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="mt-4 text-muted-foreground">Loading case studies...</p>
+      </div>
     );
   }
 
-  if (error) {
+  if (hasError) {
     return (
-      <section className="py-8 px-4">
-        <div className="container mx-auto">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-foreground">Explore Case Studies</h1>
-          <div className="text-center py-12">
-            <div className="text-destructive">
-              <p className="text-lg font-medium">Unable to load case studies</p>
-              <p className="text-sm text-muted-foreground mt-2">Please check your database connection.</p>
-              <Button onClick={() => window.location.reload()} className="mt-4">
-                Retry
-              </Button>
-            </div>
-          </div>
+      <div className="flex flex-col items-center justify-center min-h-[50vh] p-4 text-center">
+        <div className="bg-destructive/10 p-4 rounded-lg max-w-md">
+          <h3 className="text-lg font-medium text-destructive">Failed to load case studies</h3>
+          <p className="text-sm text-muted-foreground mt-2">
+            There was an error loading the case studies. Please try again.
+          </p>
+          <Button
+            variant="outline"
+            className="mt-4"
+            onClick={() => refetch()}
+            disabled={isFetching}
+          >
+            {isFetching ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Retrying...
+              </>
+            ) : (
+              'Retry'
+            )}
+          </Button>
         </div>
-      </section>
+      </div>
     );
   }
 
@@ -209,10 +432,18 @@ const CaseStudiesList = () => {
     <section className="py-8 px-4">
       <div className="container mx-auto max-w-7xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Explore Case Studies</h1>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+            <h1 className="text-3xl font-bold text-foreground">Explore Case Studies</h1>
+            <Button
+              onClick={() => setIsSubmissionModalOpen(true)}
+              className="w-full sm:w-auto"
+            >
+              Submit a Case Study
+            </Button>
+          </div>
           <p className="text-muted-foreground">Discover inspiring case studies from leading companies</p>
         </div>
-        
+
         <CaseStudyHeader
           searchQuery={searchQuery}
           selectedCategories={selectedCategories}
@@ -224,17 +455,16 @@ const CaseStudiesList = () => {
           markets={markets}
           objectives={objectives}
           sortBy={sortBy}
-          totalResults={filteredAndSortedCaseStudies.length}
+          totalResults={displayedCaseStudies.length}
           onSearchChange={setSearchQuery}
           onCategoryChange={setSelectedCategories}
           onCompanyChange={setSelectedCompanies}
           onMarketChange={setSelectedMarkets}
           onObjectiveChange={setSelectedObjectives}
           onSortChange={setSortBy}
-          onSubmitClick={() => setShowSubmissionModal(true)}
+          onSubmitClick={() => setIsSubmissionModalOpen(true)}
         />
 
-        {/* Filter Chips */}
         <CaseStudyFilterChips
           selectedCategories={selectedCategories}
           selectedCompanies={selectedCompanies}
@@ -249,88 +479,84 @@ const CaseStudiesList = () => {
           onClearAll={handleClearAllFilters}
         />
 
-        {filteredAndSortedCaseStudies.length === 0 ? (
-          <div className="text-center py-12">
-            {caseStudies.length === 0 ? (
-              <div>
-                <p className="text-muted-foreground text-lg mb-4">No case studies found in the database.</p>
-                <Button onClick={() => setShowSubmissionModal(true)}>
-                  Submit the First Case Study
-                </Button>
-              </div>
-            ) : (
-              <div>
-                <p className="text-muted-foreground text-lg mb-2">No results found</p>
-                <p className="text-muted-foreground/70 text-sm mb-4">Try changing filters or submit your own case study.</p>
-                <div className="flex gap-2 justify-center">
-                  <Button variant="outline" onClick={handleClearAllFilters}>
-                    Clear Filters
-                  </Button>
-                  <Button onClick={() => setShowSubmissionModal(true)}>
-                    Submit Case Study
-                  </Button>
-                </div>
-              </div>
-            )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {displayedCaseStudies.map((caseStudy, index) => {
+            // Use database ID as primary key, fallback to index if not available
+            const uniqueKey = caseStudy.id ? `case-study-${caseStudy.id}` : `case-study-${index}`;
+            
+            return (
+              <CaseStudyCard
+                key={uniqueKey}
+                caseStudy={caseStudy}
+                onClick={() => handleCaseStudyClick(caseStudy)}
+              />
+            );
+          })}
+        </div>
+
+        {displayedCaseStudies.length === 0 ? (
+          <div className="text-center py-12 col-span-full">
+            <h3 className="text-lg font-medium text-muted-foreground">
+              {isLoading ? 'Loading case studies...' : 'No case studies found'}
+            </h3>
+            <p className="text-muted-foreground mt-2">
+              {searchQuery ||
+                selectedCategories.length > 0 ||
+                selectedCompanies.length > 0 ||
+                selectedMarkets.length > 0 ||
+                selectedObjectives.length > 0
+                ? 'Try adjusting your search or filter criteria.'
+                : 'No case studies are available at the moment. Please check back later.'}
+            </p>
           </div>
         ) : (
-          <>
-            {/* Responsive grid: Mobile: 1 column, Tablet: 2 columns, Desktop: 3 columns, Large: 4 columns */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6">
-              {paginatedData.map(caseStudy => (
-                <CaseStudyCard 
-                  key={caseStudy.id} 
-                  caseStudy={caseStudy}
-                  onClick={handleCaseStudyClick}
-                />
-              ))}
-            </div>
-            
-
-            {hasMore && !isLoadingMore && (
-              <div className="text-center mt-12">
-                <Button 
-                  onClick={loadMore}
-                  variant="outline"
-                  size="lg"
-                  className="px-8"
-                >
-                  Show More
-                </Button>
-              </div>
-            )}
-
-            {isLoadingMore && (
-              <div className="text-center mt-12">
-                <Button 
-                  variant="outline"
-                  size="lg"
-                  className="px-8"
-                  disabled
-                >
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Loading more...
-                </Button>
-              </div>
-            )}
-
-          </>
+          <div className="mt-8 text-center col-span-full">
+            <Button
+              variant="outline"
+              onClick={handleLoadMore}
+              disabled={isLoadingMore || !hasMoreItems}
+              className="mb-4"
+            >
+              {isLoadingMore ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Loading...
+                </>
+              ) : hasMoreItems ? (
+                'Show More'
+              ) : (
+                'No More Results'
+              )}
+            </Button>
+            <p className="text-sm text-muted-foreground">
+              Showing {displayedCount} of {totalItemsCount} case studies
+              {hasMoreItems ? ' (scroll to load more)' : ''}
+            </p>
+          </div>
         )}
 
+      {selectedCaseStudy && (
         <CaseStudyModal
-          caseStudy={selectedCaseStudy}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
+          caseStudy={selectedCaseStudy}
         />
+      )}
 
-        <CaseStudySubmissionModal
-          isOpen={showSubmissionModal}
-          onClose={() => setShowSubmissionModal(false)}
-          onSuccess={handleSubmissionSuccess}
-        />
-      </div>
-    </section>
-  );
+      <CaseStudySubmissionModal
+        isOpen={isSubmissionModalOpen}
+        onClose={handleCloseSubmissionModal}
+        onSuccess={handleSubmissionSuccess}
+      />
+    </div>
+  </section>
+);
 };
 
-export default CaseStudiesList;
+const CaseStudiesListWithErrorBoundary = () => (
+  <ErrorBoundary>
+    <CaseStudiesList />
+  </ErrorBoundary>
+);
+
+export default CaseStudiesListWithErrorBoundary;

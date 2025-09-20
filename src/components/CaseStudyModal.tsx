@@ -1,9 +1,9 @@
-
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
-import { Heart, Building, X, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Heart, Building, X, Loader2, ExternalLink, AlertCircle } from 'lucide-react';
 import { CaseStudy } from '@/types/caseStudy';
+import { SupabaseService } from '@/services/supabaseService';
 
 interface CaseStudyModalProps {
   caseStudy: CaseStudy | null;
@@ -12,25 +12,125 @@ interface CaseStudyModalProps {
 }
 
 const CaseStudyModal = ({ caseStudy, isOpen, onClose }: CaseStudyModalProps) => {
+  // State management
   const [isPdfLoading, setIsPdfLoading] = useState(true);
+  const [pdfError, setPdfError] = useState(false);
+  const [logoError, setLogoError] = useState(false);
+  const [currentLogoIndex, setCurrentLogoIndex] = useState(0);
+  const [pdfMethod, setPdfMethod] = useState<'preview' | 'docs-viewer' | 'original'>('preview');
+  const [retryCount, setRetryCount] = useState(0);
 
+  // Reset states when modal opens with new case study - MOVED BEFORE EARLY RETURN
+  useEffect(() => {
+    if (isOpen && caseStudy) {
+      setIsPdfLoading(true);
+      setPdfError(false);
+      setLogoError(false);
+      setCurrentLogoIndex(0);
+      setPdfMethod('preview');
+      setRetryCount(0);
+    }
+  }, [isOpen, caseStudy?.id]);
+
+  // Early return for null case study - MOVED AFTER HOOKS
   if (!caseStudy) return null;
 
-  // Convert Google Drive view URL to embed URL for PDF preview
-  const getPdfEmbedUrl = (url: string) => {
-    if (url.includes('drive.google.com/file/d/')) {
-      const fileId = url.match(/\/d\/([a-zA-Z0-9-_]+)/)?.[1];
-      return `https://drive.google.com/file/d/${fileId}/preview`;
+  // ✅ CORRECT DATA ACCESS - Following database schema analysis
+  const logoUrls = caseStudy.Logo || [];
+  const pdfUrls = caseStudy.PDF || [];
+  
+  // Primary sources from database fields, fallback to arrays
+  const primaryLogoUrl = caseStudy.google_drive_logo_thumbnail;
+  const rawLogoUrl = primaryLogoUrl || logoUrls[currentLogoIndex];
+  const logoUrl = rawLogoUrl ? SupabaseService.convertGoogleDriveImageUrl(rawLogoUrl) : null;
+  
+  // PDF URLs - convert Google Drive URLs to iframe-compatible format with fallback methods
+  const rawPdfUrl = caseStudy.google_drive_pdf_path || pdfUrls[0];
+
+  // Generate PDF URL based on current method
+  const getPdfUrl = () => {
+    if (!rawPdfUrl) return null;
+
+    switch (pdfMethod) {
+      case 'preview':
+        return SupabaseService.convertGoogleDrivePdfUrl(rawPdfUrl);
+      case 'docs-viewer':
+        return SupabaseService.convertToGoogleDocsViewer(rawPdfUrl);
+      case 'original':
+        return rawPdfUrl;
+      default:
+        return SupabaseService.convertGoogleDrivePdfUrl(rawPdfUrl);
     }
-    return url;
   };
 
-  const logoUrl = caseStudy.Logo && caseStudy.Logo[0] ? caseStudy.Logo[0] : null;
+  const pdfUrl = getPdfUrl();
+
+  // Debug logging for PDF URL conversion
+  console.log('🔍 CaseStudyModal PDF URL Debug:', {
+    caseStudyId: caseStudy.id,
+    company: caseStudy.Company,
+    rawPdfUrl,
+    currentMethod: pdfMethod,
+    convertedPdfUrl: pdfUrl,
+    pdfUrlsArray: pdfUrls,
+    retryCount
+  });
+
+  // Event handlers
+  const handlePdfLoad = () => {
+    setIsPdfLoading(false);
+    setPdfError(false);
+    console.log(`✅ PDF loaded successfully using ${pdfMethod} method`);
+  };
+
+  const handlePdfError = () => {
+    console.warn(`❌ PDF failed to load using ${pdfMethod} method, retry count: ${retryCount}`);
+    setIsPdfLoading(false);
+
+    // Automatic fallback logic
+    if (pdfMethod === 'preview' && retryCount < 2) {
+      console.log('🔄 Falling back to Google Docs Viewer method');
+      setPdfMethod('docs-viewer');
+      setRetryCount(retryCount + 1);
+      setIsPdfLoading(true);
+      setPdfError(false);
+    } else if (pdfMethod === 'docs-viewer' && retryCount < 3) {
+      console.log('🔄 Falling back to original URL method');
+      setPdfMethod('original');
+      setRetryCount(retryCount + 1);
+      setIsPdfLoading(true);
+      setPdfError(false);
+    } else {
+      console.error('❌ All PDF loading methods failed');
+      setPdfError(true);
+    }
+  };
+
+  const handleRetryPdf = () => {
+    console.log('🔄 Manual retry requested');
+    setRetryCount(0);
+    setPdfMethod('preview');
+    setIsPdfLoading(true);
+    setPdfError(false);
+  };
+
+  const handleLogoError = () => {
+    // Try next logo in array
+    if (currentLogoIndex < logoUrls.length - 1) {
+      setCurrentLogoIndex(currentLogoIndex + 1);
+    } else {
+      setLogoError(true);
+    }
+  };
+
+  const handleLogoLoad = () => {
+    setLogoError(false);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full p-0 overflow-hidden">
-        {/* Simplified Header */}
+        {/* Header Section */}
         <DialogHeader className="p-4 sm:p-6 border-b bg-background sticky top-0 z-10 shadow-sm">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
@@ -38,74 +138,139 @@ const CaseStudyModal = ({ caseStudy, isOpen, onClose }: CaseStudyModalProps) => 
                 {caseStudy.Title || caseStudy.Name}
               </DialogTitle>
               
+              <DialogDescription className="sr-only">
+                Case study details for {caseStudy.Company} by {caseStudy.Organizer}.
+                {pdfUrl && ' View the full case study PDF.'}
+              </DialogDescription>
+              
+              {/* Company Info Row */}
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                {logoUrl ? (
-                  <div className="w-8 h-8 rounded-lg bg-background border flex items-center justify-center overflow-hidden">
+                {/* ✅ FIXED LOGO DISPLAY with URL Conversion */}
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-background border-2 border-border flex items-center justify-center overflow-hidden flex-shrink-0">
+                  {logoUrl && !logoError ? (
                     <img
                       src={logoUrl}
                       alt={`${caseStudy.Company} logo`}
                       className="w-full h-full object-contain"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                        e.currentTarget.parentElement!.innerHTML = '<div class="w-4 h-4 text-muted-foreground"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path></svg></div>';
-                      }}
+                      onLoad={handleLogoLoad}
+                      onError={handleLogoError}
+                      loading="eager"
                     />
-                  </div>
-                ) : (
-                  <div className="w-8 h-8 rounded-lg bg-background border flex items-center justify-center">
-                    <Building className="w-4 h-4 text-muted-foreground" />
-                  </div>
-                )}
+                  ) : (
+                    <Building className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground" />
+                  )}
+                </div>
                 
-                <span className="font-medium">{caseStudy.Company}</span>
-                <span>|</span>
-                <span>by {caseStudy.Organizer}</span>
-                <span>|</span>
-                <div className="flex items-center gap-1">
-                  <Heart className="w-4 h-4 text-red-500 fill-red-500" />
-                  <span className="font-medium">{caseStudy.Likes || 0}</span>
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm">
+                  <span className="font-medium text-foreground">{caseStudy.Company}</span>
+                  <span className="hidden sm:inline">|</span>
+                  <span>by {caseStudy.Organizer}</span>
+                  <span className="hidden sm:inline">|</span>
+                  <div className="flex items-center gap-1">
+                    <Heart className="w-4 h-4 text-red-500 fill-red-500" />
+                    <span className="font-medium">{caseStudy.Likes || 0}</span>
+                  </div>
                 </div>
               </div>
+
+              {/* Description */}
+              {caseStudy.Creators_Tag && (
+                <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+                  {caseStudy.Creators_Tag}
+                </p>
+              )}
             </div>
             
+            {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute right-2 top-2 sm:right-4 sm:top-4 z-10 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background shadow-sm flex items-center justify-center border"
+              className="absolute right-2 top-2 sm:right-4 sm:top-4 z-10 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background shadow-sm flex items-center justify-center border transition-colors"
+              aria-label="Close modal"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         </DialogHeader>
 
-        {/* PDF Content */}
+        {/* PDF Content Section */}
         <div className="flex-1 overflow-hidden bg-muted">
-          {caseStudy.PDF && caseStudy.PDF[0] ? (
+          {pdfUrl && !pdfError ? (
             <div className="h-full flex flex-col">
               <div className="flex-1 min-h-0 relative">
+                {/* Loading State */}
                 {isPdfLoading && (
                   <div className="absolute inset-0 flex items-center justify-center bg-background z-10">
-                    <div className="flex flex-col items-center gap-3">
+                    <div className="flex flex-col items-center gap-3 text-center max-w-sm">
                       <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                      <p className="text-sm text-muted-foreground font-medium">Loading PDF...</p>
+                      <p className="text-sm text-muted-foreground font-medium">
+                        Loading PDF...
+                      </p>
+                      {retryCount > 0 && (
+                        <p className="text-xs text-muted-foreground">
+                          Trying method {retryCount + 1} of 3 ({pdfMethod === 'preview' ? 'Google Drive Preview' : pdfMethod === 'docs-viewer' ? 'Google Docs Viewer' : 'Original URL'})
+                        </p>
+                      )}
                     </div>
                   </div>
                 )}
+                
+                {/* PDF Iframe - Keep original URL format for better iframe compatibility */}
                 <iframe
-                  src={getPdfEmbedUrl(caseStudy.PDF[0])}
+                  src={pdfUrl}
                   className="w-full h-full border-0"
-                  title="Case Study PDF"
+                  title={`${caseStudy.Company} Case Study PDF`}
                   style={{ minHeight: 'calc(100vh - 200px)' }}
-                  onLoad={() => setIsPdfLoading(false)}
-                  onError={() => setIsPdfLoading(false)}
+                  onLoad={handlePdfLoad}
+                  onError={handlePdfError}
+                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
                 />
               </div>
             </div>
           ) : (
+            /* No PDF / Error State */
             <div className="h-96 flex items-center justify-center bg-muted border-2 border-dashed border-border rounded-lg m-6">
-              <div className="text-center">
-                <Building className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground font-medium mb-2">No PDF available</p>
-                <p className="text-muted-foreground/70 text-sm">This case study doesn't have an attached PDF document.</p>
+              <div className="text-center max-w-md">
+                <div className="mb-4">
+                  {pdfError ? (
+                    <AlertCircle className="w-12 h-12 text-amber-500 mx-auto" />
+                  ) : (
+                    <Building className="w-12 h-12 text-muted-foreground mx-auto" />
+                  )}
+                </div>
+                
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  {pdfError ? 'PDF Loading Failed' : 'No PDF Available'}
+                </h3>
+
+                <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
+                  {pdfError
+                    ? `Unable to load PDF after trying ${retryCount + 1} method${retryCount > 0 ? 's' : ''}. This might be due to browser security restrictions or file access permissions.`
+                    : 'This case study doesn\'t have an attached PDF document yet.'}
+                </p>
+
+                {/* Action Buttons */}
+                {pdfError && rawPdfUrl && (
+                  <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                    <Button
+                      onClick={handleRetryPdf}
+                      variant="outline"
+                      size="sm"
+                      className="gap-2"
+                    >
+                      <Loader2 className="w-4 h-4" />
+                      Try Again
+                    </Button>
+                    <Button
+                      onClick={() => window.open(rawPdfUrl, '_blank')}
+                      variant="default"
+                      size="sm"
+                      className="gap-2"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Open PDF in New Tab
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           )}

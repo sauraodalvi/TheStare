@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +7,6 @@ import { toast } from 'sonner';
 
 const PricingSection = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const navigate = useNavigate();
 
   const handleFreePlanClick = () => {
     toast.success("You're on the Free plan", {
@@ -17,26 +15,18 @@ const PricingSection = () => {
   };
   
   const handlePaidPlanClick = () => {
-    // Store the selected plan in session storage
-    sessionStorage.setItem('selectedPlan', billingCycle === 'yearly' ? 'yearly_premium' : 'monthly_premium');
-    sessionStorage.setItem('planPrice', billingCycle === 'yearly' ? '$90/month' : '$110/month');
-    
-    // Navigate to sign up page with query param
-    navigate('/sign-up?plan=premium');
-    
-    toast.info("Complete signup to subscribe", {
-      description: "Create your account to start accessing all premium features.",
-    });
+    // Open Gumroad Pro subscription page in new tab
+    window.open('https://saurao.gumroad.com/l/Pro', '_blank', 'noopener,noreferrer');
   };
   
   return (
-    <section className="py-16 bg-slate-50">
+    <section className="py-16 bg-muted/50">
       <div className="container">
         <div className="max-w-4xl mx-auto text-center mb-10">
-          <h1 className="text-4xl font-bold text-stare-navy mb-4">
+          <h1 className="text-4xl font-bold text-foreground mb-4">
             Pricing that fits every stage
           </h1>
-          <p className="text-lg text-slate-600">
+          <p className="text-lg text-muted-foreground">
             Whether you are just starting or already a product manager
           </p>
         </div>
@@ -69,15 +59,15 @@ const PricingSection = () => {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Free Plan */}
           <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
-            <CardHeader className="bg-white rounded-t-lg pt-8 pb-4">
-              <CardTitle className="text-2xl font-bold text-stare-navy text-center">
+            <CardHeader className="bg-card rounded-t-lg pt-8 pb-4">
+              <CardTitle className="text-2xl font-bold text-foreground text-center">
                 Free
               </CardTitle>
               <div className="text-center mt-2 mb-2">
-                <span className="text-slate-500 text-sm">Ideal for beginners and casual learners</span>
+                <span className="text-muted-foreground text-sm">Ideal for beginners and casual learners</span>
                 <div className="mt-4 flex items-end justify-center">
-                  <span className="text-4xl font-bold text-stare-navy">$0</span>
-                  <span className="text-slate-500 mb-1 ml-1">/ month</span>
+                  <span className="text-4xl font-bold text-foreground">$0</span>
+                  <span className="text-muted-foreground mb-1 ml-1">/ month</span>
                 </div>
               </div>
             </CardHeader>
@@ -85,23 +75,23 @@ const PricingSection = () => {
               <ul className="space-y-4">
                 <li className="flex items-start">
                   <Check className="h-5 w-5 text-stare-teal mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-slate-600">Access up to 200 case studies</span>
+                  <span className="text-muted-foreground">Access up to 200 case studies</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="h-5 w-5 text-stare-teal mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-slate-600">Access interview questions</span>
+                  <span className="text-muted-foreground">Access interview questions</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="h-5 w-5 text-stare-teal mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-slate-600">Explore a collection of seasoned PM resumes</span>
+                  <span className="text-muted-foreground">Explore a collection of seasoned PM resumes</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="h-5 w-5 text-stare-teal mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-slate-600">Browse portfolios</span>
+                  <span className="text-muted-foreground">Browse portfolios</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="h-5 w-5 text-stare-teal mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-slate-600">Read articles</span>
+                  <span className="text-muted-foreground">Read articles</span>
                 </li>
               </ul>
             </CardContent>
@@ -125,21 +115,23 @@ const PricingSection = () => {
               </div>
             </div>
             
-            <CardHeader className="bg-white rounded-t-lg pt-8 pb-4">
-              <CardTitle className="text-2xl font-bold text-stare-navy text-center">
+            <CardHeader className="bg-card rounded-t-lg pt-8 pb-4">
+              <CardTitle className="text-2xl font-bold text-foreground text-center">
                 Product Managers
               </CardTitle>
               <div className="text-center mt-2 mb-2">
-                <span className="text-slate-500 text-sm">For power users</span>
+                <span className="text-muted-foreground text-sm">For power users</span>
                 <div className="mt-4 flex items-end justify-center">
-                  <span className="text-4xl font-bold text-stare-navy">
-                    {billingCycle === 'yearly' ? '$90' : '$110'}
+                  <span className="text-4xl font-bold text-foreground">
+                    {billingCycle === 'yearly' ? '$110' : '$10'}
                   </span>
-                  <span className="text-slate-500 mb-1 ml-1">/ month</span>
+                  <span className="text-muted-foreground mb-1 ml-1">
+                    {billingCycle === 'yearly' ? '/ year' : '/ month'}
+                  </span>
                 </div>
                 {billingCycle === 'yearly' && (
                   <div className="mt-2 text-xs text-stare-accent font-medium">
-                    Save $240 annually
+                    Save $10 annually
                   </div>
                 )}
               </div>
@@ -148,23 +140,23 @@ const PricingSection = () => {
               <ul className="space-y-4">
                 <li className="flex items-start">
                   <Check className="h-5 w-5 text-stare-teal mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-slate-600">Access 900+ case studies</span>
+                  <span className="text-muted-foreground">Access 900+ case studies</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="h-5 w-5 text-stare-teal mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-slate-600">Access interview questions</span>
+                  <span className="text-muted-foreground">Access interview questions</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="h-5 w-5 text-stare-teal mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-slate-600">Explore a collection of seasoned PM resumes</span>
+                  <span className="text-muted-foreground">Explore a collection of seasoned PM resumes</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="h-5 w-5 text-stare-teal mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-slate-600">Browse portfolios</span>
+                  <span className="text-muted-foreground">Browse portfolios</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="h-5 w-5 text-stare-teal mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-slate-600">Read articles</span>
+                  <span className="text-muted-foreground">Read articles</span>
                 </li>
               </ul>
             </CardContent>

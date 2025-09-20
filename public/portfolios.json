@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Chhavi Gupta",
+    "role": "PM, All",
+    "title": "PM at Sundial",
+    "status": "Done",
+    "portfolio_url": "https://chhavihere.com/blog/skills-needed-for-a-product-manager-role",
+    "iframe": "<iframe src=\"https://chhavihere.com/blog/skills-needed-for-a-product-manager-role\" width=\"400\" height=\"400\"></iframe>"
+  },
+  {
+    "name": "Meenakshi Singhrai",
+    "role": "PM",
+    "title": "Product Manager",
+    "status": "Done",
+    "portfolio_url": "https://meenakshisinghrai.com",
+    "iframe": "<iframe src=\"https://meenakshisinghrai.com\" width=\"400\" height=\"400\"></iframe>"
+  },
+  {
+    "name": "Mark Progano",
+    "role": "SPM",
+    "title": "SPM at Unstoppable Domains",
+    "status": "Done",
+    "portfolio_url": "https://markprogano.com",
+    "iframe": "<iframe src=\"https://markprogano.com\" width=\"400\" height=\"400\"></iframe>"
+  },
+  {
+    "name": "Ben Solomon",
+    "role": "PM",
+    "title": "PM at Google",
+    "status": "Done",
+    "portfolio_url": "https://bensolomon.dev",
+    "iframe": "<iframe src=\"https://bensolomon.dev\" width=\"400\" height=\"400\"></iframe>"
+  },
+  {
+    "name": "Manish Soni",
+    "role": "BA",
+    "title": "Senior Business Analyst at TF Holdings",
+    "status": "Done",
+    "portfolio_url": "https://manishsoni.portfolio.com",
+    "iframe": "<iframe src=\"https://manishsoni.portfolio.com\" width=\"400\" height=\"400\"></iframe>"
+  },
+  {
+    "name": "Justice Ughelie",
+    "role": "PM",
+    "title": "PM at Microsoft",
+    "status": "Done",
+    "portfolio_url": "https://justiceughelie.com",
+    "iframe": "<iframe src=\"https://justiceughelie.com\" width=\"400\" height=\"400\"></iframe>"
+  },
+  {
+    "name": "Thaisa Fernandes",
+    "role": "LPM",
+    "title": "Lead Program Manager at Twitter",
+    "status": "Done",
+    "portfolio_url": "https://thaisafernandes.com",
+    "iframe": "<iframe src=\"https://thaisafernandes.com\" width=\"400\" height=\"400\"></iframe>"
+  },
+  {
+    "name": "Yan Xu",
+    "role": "UXD",
+    "title": "UX Designer at Ate Food Journal & Coach Dashboard",
+    "status": "Done",
+    "portfolio_url": "https://yanxu.design",
+    "iframe": "<iframe src=\"https://yanxu.design\" width=\"400\" height=\"400\"></iframe>"
+  },
+  {
+    "name": "Pedro Moreno",
+    "role": "UXD",
+    "title": "Senior UX Designer",
+    "status": "Done",
+    "portfolio_url": "https://pedromoreno.design",
+    "iframe": "<iframe src=\"https://pedromoreno.design\" width=\"400\" height=\"400\"></iframe>"
+  },
+  {
+    "name": "Bikash Joshi",
+    "role": "DM",
+    "title": "Deputy Manager at Jio",
+    "status": "Done",
+    "portfolio_url": "https://bikashjoshi.com",
+    "iframe": "<iframe src=\"https://bikashjoshi.com\" width=\"400\" height=\"400\"></iframe>"
+  }
+]

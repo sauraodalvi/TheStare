@@ -1,0 +1,416 @@
+[
+  {
+    "id": 1,
+    "title": "The Lean Product Playbook: How to Innovate with Minimum Viable Products and Rapid Customer Feedback",
+    "author": "Dan Olsen",
+    "rating": 4.5,
+    "link": "https://amzn.to/3VlK1N2",
+    "goodreads": "https://www.goodreads.com/en/book/show/25374501",
+    "category": "Must Read"
+  },
+  {
+    "id": 2,
+    "title": "Inspired: How to Create Tech Products That Customers Love",
+    "author": "Marty Cagan",
+    "rating": 4.7,
+    "link": "https://amzn.to/3U6UtXt",
+    "goodreads": "https://www.goodreads.com/en/book/show/35249663"
+  },
+  {
+    "id": 3,
+    "title": "The Product Book: How to Become a Great Product Manager",
+    "author": "Product School",
+    "rating": 4.3,
+    "link": "https://amzn.to/3GL79QM",
+    "goodreads": "https://www.goodreads.com/book/show/35274263-the-product-book?ref=nav_sb_ss_1_55",
+    "category": "Must Read"
+  },
+  {
+    "id": 4,
+    "title": "The Lean Startup: How Constant Innovation Creates Radically Successful Businesses",
+    "author": "Eric Ries",
+    "rating": 4.5,
+    "link": "https://amzn.to/3U6Mj1q",
+    "goodreads": "https://www.goodreads.com/book/show/10127019-the-lean-startup?ref=nav_sb_ss_1_16"
+  },
+  {
+    "id": 5,
+    "title": "Crossing the Chasm: Marketing and Selling Disruptive Products to Mainstream Customers",
+    "author": "Geoffrey A. Moore",
+    "rating": 4.4,
+    "link": "https://amzn.to/3EELxmD",
+    "goodreads": "https://www.goodreads.com/book/show/61329.Crossing_the_Chasm?ref=nav_sb_ss_1_18"
+  },
+  {
+    "id": 6,
+    "title": "Escaping the Build Trap: How Effective Product Management Creates Real Value",
+    "author": "Melissa Perri",
+    "rating": 4.6,
+    "link": "https://amzn.to/3idqzDE",
+    "goodreads": "https://www.goodreads.com/book/show/42611483-escaping-the-build-trap?ref=nav_sb_ss_1_23",
+    "category": "Must Read"
+  },
+  {
+    "id": 7,
+    "title": "The Hard Thing about Hard Things: Building a Business When There are No Easy Answers",
+    "author": "Ben Horowitz",
+    "rating": 4.4,
+    "link": "https://amzn.to/3XCOI6L",
+    "goodreads": "https://www.goodreads.com/book/show/18176747-the-hard-thing-about-hard-things?ref=nav_sb_ss_1_32"
+  },
+  {
+    "id": 8,
+    "title": "Sprint: Solve Big Problems and Test New Ideas in Just Five Days",
+    "author": "Jake Knapp, John Zeratsky, Braden Kowitz",
+    "rating": 4.6,
+    "link": "https://amzn.to/3XwrpeV",
+    "goodreads": "https://www.goodreads.com/book/show/25814544-sprint?ref=nav_sb_ss_1_63",
+    "category": "Must Read"
+  },
+  {
+    "id": 9,
+    "title": "Hooked: How to Build Habit-Forming Products",
+    "author": "Nir Eyal",
+    "rating": 4.5,
+    "link": "https://amzn.to/3idutfZ",
+    "goodreads": "https://www.goodreads.com/book/show/22668729-hooked?ref=nav_sb_ss_1_43",
+    "category": "Must Read"
+  },
+  {
+    "id": 10,
+    "title": "When Coffee and Kale Compete: Become Great at Making Products People Will Buy",
+    "author": "Alan Klement",
+    "rating": 4.2,
+    "link": "https://amzn.to/3ieYbBa",
+    "goodreads": "https://www.goodreads.com/book/show/32493686-when-coffee-kale-compete?ref=nav_sb_ss_1_28"
+  },
+  {
+    "id": 11,
+    "title": "The Making of a Manager: What to Do When Everyone Looks to You",
+    "author": "Julie Zhuo",
+    "rating": 4.4,
+    "link": "https://amzn.to/3Xy7rR2",
+    "goodreads": "https://www.goodreads.com/book/show/38821039-the-making-of-a-manager?ref=nav_sb_ss_1_23"
+  },
+  {
+    "id": 12,
+    "title": "The Influential Product Manager: How to Lead and Launch Successful Technology Products",
+    "author": "Ken Sandy",
+    "rating": 4.3,
+    "link": "https://amzn.to/3ibRBLG",
+    "goodreads": "https://www.goodreads.com/book/show/50245368-the-influential-product-manager?ref=nav_sb_ss_1_31"
+  },
+  {
+    "id": 13,
+    "title": "Product Management's Sacred Seven: The Skills Required to Crush Product Manager Interviews and be a World-Class PM",
+    "author": "Parth Detroja, Neel Mehta, Aditya Agashe",
+    "rating": 4.2,
+    "link": "https://amzn.to/3VceI7u",
+    "goodreads": "https://www.goodreads.com/book/show/55025971-product-management-s-sacred-seven?ref=nav_sb_ss_1_33"
+  },
+  {
+    "id": 14,
+    "title": "Shape Up: Stop Running in Circles and Ship Work that Matters",
+    "author": "Ryan Singer",
+    "rating": 4.3,
+    "link": "https://basecamp.com/shapeup",
+    "goodreads": "https://www.goodreads.com/book/show/50776459-shape-up?ref=nav_sb_ss_1_8"
+  },
+  {
+    "id": 15,
+    "title": "The Mom Test: How to talk to customers",
+    "author": "Rob Fitzpatrick",
+    "rating": 4.6,
+    "link": "https://amzn.to/3V78aH7",
+    "goodreads": "https://www.goodreads.com/book/show/52283963-the-mom-test?ref=nav_sb_ss_1_12",
+    "category": "Must Read"
+  },
+  {
+    "id": 16,
+    "title": "Measure What Matters: OKRs: The Simple Idea that Drives 10x Growth",
+    "author": "John Doerr",
+    "rating": 4.4,
+    "link": "https://amzn.to/3GMRujN",
+    "goodreads": "https://www.goodreads.com/book/show/39286958-measure-what-matters?ref=nav_sb_ss_1_20"
+  },
+  {
+    "id": 17,
+    "title": "Predictably Irrational: The Hidden Forces that Shape Our Decisions",
+    "author": "Dan Ariely",
+    "rating": 4.3,
+    "link": "https://amzn.to/3gvSfDu",
+    "goodreads": "https://www.goodreads.com/book/show/1713426.Predictably_Irrational?ref=nav_sb_ss_1_22"
+  },
+  {
+    "id": 18,
+    "title": "Product Leadership: How Top Product Managers Launch Awesome Products and Build Successful Teams",
+    "author": "Richard Banfield, Martin Eriksson, Nate Walkingshaw",
+    "rating": 4.2,
+    "link": "https://amzn.to/3EHUV8Q",
+    "goodreads": "https://www.goodreads.com/book/show/30014114-product-leadership?ref=nav_sb_ss_1_18"
+  },
+  {
+    "id": 19,
+    "title": "Empowered: Ordinary People, Extraordinary Products",
+    "author": "Marty Cagan",
+    "rating": 4.5,
+    "link": "https://amzn.to/3i426k4",
+    "goodreads": "https://www.goodreads.com/en/book/show/53481975"
+  },
+  {
+    "id": 20,
+    "title": "Made to Stick: Why some ideas take hold and others come unstuck",
+    "author": "Chip Heath, Dan Heath",
+    "rating": 4.4,
+    "link": "https://amzn.to/3XCP6lJ",
+    "goodreads": "https://www.goodreads.com/book/show/69242.Made_to_Stick?ref=nav_sb_ss_1_13",
+    "category": "Must Read"
+  },
+  {
+    "id": 21,
+    "title": "How to Lie with Statistics",
+    "author": "Darrell Huff",
+    "rating": 4.2,
+    "link": "https://amzn.to/3OECYwD",
+    "goodreads": "https://www.goodreads.com/book/show/2017339.How_to_Lie_With_Statistics"
+  },
+  {
+    "id": 22,
+    "title": "Meaningful: The Story of Ideas that Fly",
+    "author": "Bernadette Jiwa",
+    "rating": 4.1,
+    "link": "https://amzn.to/3u2U7Xq",
+    "goodreads": "https://www.goodreads.com/book/show/27153980-meaningful?ref=nav_sb_ss_1_39"
+  },
+  {
+    "id": 23,
+    "title": "Don't Make Me Think, Revisited: A Common Sense Approach to Web & Mobile Usability",
+    "author": "Steve Krug",
+    "rating": 4.5,
+    "link": "https://amzn.to/3UhbdeU",
+    "goodreads": "https://www.goodreads.com/book/show/18197267-don-t-make-me-think-revisited?ref=nav_sb_ss_1_19"
+  },
+  {
+    "id": 24,
+    "title": "In The Plex: How Google Thinks, Works, and Shapes Our Lives",
+    "author": "Steven Levy",
+    "rating": 4.3,
+    "link": "https://amzn.to/3i2KchB",
+    "goodreads": "https://www.goodreads.com/book/show/7841446-in-the-plex?ref=nav_sb_ss_1_59"
+  },
+  {
+    "id": 25,
+    "title": "The Design of Everyday Things",
+    "author": "Don Norman",
+    "rating": 4.5,
+    "link": "https://amzn.to/3VtSQ7j",
+    "goodreads": "https://www.goodreads.com/book/show/840.The_Design_of_Everyday_Things?ref=nav_sb_ss_1_29",
+    "category": "Must Read, Design"
+  },
+  {
+    "id": 26,
+    "title": "Nudge: The Final Edition",
+    "author": "Richard H. Thaler, Cass R. Sunstein",
+    "rating": 4.3,
+    "link": "https://amzn.to/3U9XdU6",
+    "goodreads": "https://www.goodreads.com/book/show/58007618-nudge?from_search=true&from_srp=true&qid=mp4p2SxOY1&rank=1"
+  },
+  {
+    "id": 27,
+    "title": "Continuous Discovery Habits: Discover Products that Create Customer Value and Business Value",
+    "author": "Teresa Torres",
+    "rating": 4.5,
+    "link": "https://amzn.to/3tZnyJZ",
+    "goodreads": "https://www.goodreads.com/book/show/58046715-continuous-discovery-habits?ref=nav_sb_ss_1_27"
+  },
+  {
+    "id": 28,
+    "title": "Drive: The Surprising Truth About What Motivates Us",
+    "author": "Daniel H. Pink",
+    "rating": 4.4,
+    "link": "https://amzn.to/3ialNqy",
+    "goodreads": "https://www.goodreads.com/book/show/6452796-drive?ref=nav_sb_ss_1_51"
+  },
+  {
+    "id": 29,
+    "title": "Well-Designed: How to Use Empathy to Create Products People",
+    "author": "Jon Kolko",
+    "rating": 4.2,
+    "link": "https://amzn.to/3V8i37B",
+    "goodreads": "https://www.goodreads.com/book/show/21413972-well-designed?ref=nav_sb_ss_1_13",
+    "category": "Design"
+  },
+  {
+    "id": 30,
+    "title": "Start at the End: How to Build Products That Create Change",
+    "author": "Matt Wallaert",
+    "rating": 4.1,
+    "link": "https://amzn.to/3u1hxw9",
+    "goodreads": "https://www.goodreads.com/book/show/43607837-start-at-the-end?ref=nav_sb_ss_1_58"
+  },
+  {
+    "id": 31,
+    "title": "Product-Led Growth: How to Build a Product That Sells Itself",
+    "author": "Wes Bush",
+    "rating": 4.3,
+    "link": "https://amzn.to/3tY5eRo",
+    "goodreads": "https://www.goodreads.com/book/show/46033247-product-led-growth?ref=nav_sb_ss_1_60"
+  },
+  {
+    "id": 32,
+    "title": "Emotional Design: Why We Love (or Hate) Everyday Things",
+    "author": "Don Norman",
+    "rating": 4.3,
+    "link": "https://amzn.to/3F45XGY",
+    "goodreads": "https://www.goodreads.com/book/show/841.Emotional_Design?ref=nav_sb_ss_1_55"
+  },
+  {
+    "id": 33,
+    "title": "Start with Why: How Great Leaders Inspire Everyone to Take Action",
+    "author": "Simon Sinek",
+    "rating": 4.4,
+    "link": "https://amzn.to/3gAAItA",
+    "goodreads": "https://www.goodreads.com/book/show/7108725-start-with-why?ref=nav_sb_ss_1_65"
+  },
+  {
+    "id": 34,
+    "title": "Loonshots: How to Nurture the Crazy Ideas That Win Wars, Cure Diseases, and Transform Industries",
+    "author": "Safi Bahcall",
+    "rating": 4.3,
+    "link": "https://amzn.to/3EZVbS1",
+    "goodreads": "https://www.goodreads.com/book/show/39863447-loonshots?ref=nav_sb_ss_1_96"
+  },
+  {
+    "id": 35,
+    "title": "Contagious: Why Things Catch On",
+    "author": "Jonah Berger",
+    "rating": 4.4,
+    "link": "https://amzn.to/3Xw05gS",
+    "goodreads": "https://www.goodreads.com/book/show/15801967-contagious?ref=nav_sb_ss_1_31"
+  },
+  {
+    "id": 36,
+    "title": "Good to Great: Why Some Companies Make the Leap… and Others Don't",
+    "author": "Jim Collins",
+    "rating": 4.5,
+    "link": "https://amzn.to/3XBCFXm",
+    "goodreads": "https://www.goodreads.com/book/show/76865.Good_to_Great?ref=nav_sb_ss_1_65"
+  },
+  {
+    "id": 37,
+    "title": "Built to Last: Successful Habits of Visionary Companies",
+    "author": "Jim Collins, Jerry I. Porras",
+    "rating": 4.4,
+    "link": "https://amzn.to/3gC8U8d",
+    "goodreads": "https://www.goodreads.com/book/show/4122.Built_to_Last?ref=nav_sb_ss_1_55"
+  },
+  {
+    "id": 38,
+    "title": "Product-Led Onboarding: How to Turn New Users Into Lifelong Customers",
+    "author": "Ramli John",
+    "rating": 4.2,
+    "link": "https://amzn.to/3tYUGBq",
+    "goodreads": "https://www.goodreads.com/book/show/58294382-product-led-onboarding?ref=nav_sb_ss_1_69"
+  },
+  {
+    "id": 39,
+    "title": "Product Roadmaps Relaunched: How to Set Direction while Embracing Uncertainty",
+    "author": "C. Todd Lombardo, Bruce McCarthy, Evan Ryan, Michael Connors",
+    "rating": 4.3,
+    "link": "https://amzn.to/3ORVj9L",
+    "goodreads": "https://www.goodreads.com/book/show/36507075-product-roadmaps-relaunched?ref=nav_sb_ss_1_77"
+  },
+  {
+    "id": 40,
+    "title": "The Jobs To Be Done Playbook: Align Your Markets, Organization, and Strategy Around Customer Needs",
+    "author": "Jim Kalbach",
+    "rating": 4.2,
+    "link": "https://amzn.to/3U6Oi5B",
+    "goodreads": "https://www.goodreads.com/book/show/52105688-the-jobs-to-be-done-playbook?ref=nav_sb_ss_1_98"
+  },
+  {
+    "id": 41,
+    "title": "User Story Mapping: Discover the Whole Story, Build the Right Product",
+    "author": "Jeff Patton",
+    "rating": 4.6,
+    "link": "https://amzn.to/3ANN88i",
+    "goodreads": "https://www.goodreads.com/book/show/22221112-user-story-mapping?ref=nav_sb_ss_1_69"
+  },
+  {
+    "id": 42,
+    "title": "Cracking the PM Interview: How to Land a Product Manager Job in Technology",
+    "author": "Gayle Laakmann McDowell, Jackie Bavaro",
+    "rating": 4.4,
+    "link": "https://amzn.to/3u2bdEU",
+    "goodreads": "https://www.goodreads.com/book/show/19243347-cracking-the-pm-interview?ref=nav_sb_ss_1_74",
+    "category": "Interview Prep"
+  },
+  {
+    "id": 43,
+    "title": "Decode and Conquer: Answers to Product Management Interviews",
+    "author": "Lewis C. Lin",
+    "rating": 4.3,
+    "link": "https://amzn.to/3UhbO08",
+    "goodreads": "https://www.goodreads.com/book/show/20822143-decode-and-conquer?ref=nav_sb_ss_1_60",
+    "category": "Interview Prep"
+  },
+  {
+    "id": 44,
+    "title": "Swipe to Unlock: The Primer on Technology and Business Strategy",
+    "author": "Parth Detroja, Neel Mehta, Aditya Agashe",
+    "rating": 4.4,
+    "link": "https://amzn.to/3gGuDMb",
+    "goodreads": "https://www.goodreads.com/book/show/43385933-swipe-to-unlock?ref=nav_sb_ss_1_63",
+    "category": "Interview Prep, Tech, Technology"
+  },
+  {
+    "id": 45,
+    "title": "Badass: Making Users Awesome",
+    "author": "Kathy Sierra",
+    "rating": 4.3,
+    "link": "https://amzn.to/3OA0quZ",
+    "goodreads": "https://www.goodreads.com/book/show/24737268-badass?ref=nav_sb_ss_1_28"
+  },
+  {
+    "id": 46,
+    "title": "Launch: How to Sell Almost Anything Online, Build a Business You Love, and Live the Life of Your Dreams",
+    "author": "Anik Singal",
+    "rating": 4.2,
+    "link": "https://amzn.to/3F32w3n",
+    "goodreads": "https://www.goodreads.com/book/show/58548499-launch-updated-expanded-edition?ref=nav_sb_ss_1_258"
+  },
+  {
+    "id": 47,
+    "title": "UX Bites - Small bites of information about User Experience Design",
+    "author": "Adelina M. Ciocoiu",
+    "rating": 4.1,
+    "link": "https://amzn.to/3Vg8gMY",
+    "goodreads": "https://www.goodreads.com/book/show/51821393-ux-bites---small-bites-of-information-about-user-experience-design?ref=nav_sb_ss_1_66"
+  },
+  {
+    "id": 48,
+    "title": "Visual Doing: Applying Visual Thinking in your Day to Day Business",
+    "author": "Willemien Brand",
+    "rating": 4.2,
+    "link": "https://amzn.to/3OK1NaA",
+    "goodreads": "https://www.goodreads.com/book/show/41010161-visual-doing?ref=nav_sb_ss_1_12"
+  },
+  {
+    "id": 49,
+    "title": "The Product Manager Interview: 164 Actual Questions and Answers",
+    "author": "Lewis C. Lin",
+    "rating": 4.3,
+    "link": "https://amzn.to/3XBetUW",
+    "goodreads": "https://www.goodreads.com/book/show/36562516-the-product-manager-interview?from_search=true&from_srp=true&qid=nAn5Bxd0Cv&rank=11",
+    "category": "Interview Prep"
+  },
+  {
+    "id": 50,
+    "title": "Grokking Algorithms: An illustrated guide for programmers and other curious people",
+    "author": "Aditya Y. Bhargava",
+    "rating": 4.4,
+    "link": "https://amzn.to/3OBuWEA",
+    "goodreads": "https://www.goodreads.com/book/show/58394297-grokking-algorithms",
+    "category": "Tech, Technology, Algorithms"
+  }
+]

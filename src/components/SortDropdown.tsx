@@ -12,6 +12,7 @@ interface SortDropdownProps {
 }
 
 const sortOptions = [
+  { value: 'api-order' as SortOption, label: 'Default' },
   { value: 'most-liked' as SortOption, label: 'Most Liked' },
   { value: 'most-recent' as SortOption, label: 'Most Recent' },
   { value: 'a-z' as SortOption, label: 'A-Z' },

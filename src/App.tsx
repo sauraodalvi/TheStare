@@ -20,6 +20,10 @@ import Portfolio from "./pages/Portfolio";
 import SelfStudy from "./pages/SelfStudy";
 import Courses from "./pages/Courses";
 import Resume from "./pages/Resume";
+import CaseStudyReview from "./pages/CaseStudyReview";
+import Profile from "./pages/Profile";
+import Checkout from "./pages/Checkout";
+import PDFTestComponent from "./components/PDFTestComponent";
 
 const App: React.FC = () => {
   // Create QueryClient inside the component to ensure proper React context
@@ -48,11 +52,15 @@ const App: React.FC = () => {
                 <Route path="/resources/self-study" element={<SelfStudy />} />
                 <Route path="/resources/courses" element={<Courses />} />
                 <Route path="/resources/resume" element={<Resume />} />
+                <Route path="/case-study-review" element={<CaseStudyReview />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/sign-in" element={<SignIn />} />
                 <Route path="/sign-up" element={<SignUp />} />
                 <Route path="/pricing" element={<Pricing />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/test-pdf" element={<PDFTestComponent />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

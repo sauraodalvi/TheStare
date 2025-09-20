@@ -1,0 +1,112 @@
+{
+  "companies": [
+    {
+      "id": 1,
+      "name": "Flipkart",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/11/Flipkart-Logo.png",
+      "altText": "Flipkart logo"
+    },
+    {
+      "id": 2,
+      "name": "Zomato",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Zomato-Logo.png",
+      "altText": "Zomato logo"
+    },
+    {
+      "id": 3,
+      "name": "Google",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/09/Google-Logo.png",
+      "altText": "Google logo"
+    },
+    {
+      "id": 4,
+      "name": "Microsoft",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/09/Microsoft-Logo.png",
+      "altText": "Microsoft logo"
+    },
+    {
+      "id": 5,
+      "name": "Amazon",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/04/Amazon-Logo.png",
+      "altText": "Amazon logo"
+    },
+    {
+      "id": 6,
+      "name": "Paytm",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Paytm-Logo.png",
+      "altText": "Paytm logo"
+    },
+    {
+      "id": 7,
+      "name": "Swiggy",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Swiggy-Logo.png",
+      "altText": "Swiggy logo"
+    },
+    {
+      "id": 8,
+      "name": "Ola",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Ola-Logo.png",
+      "altText": "Ola logo"
+    },
+    {
+      "id": 9,
+      "name": "BYJU'S",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Byjus-Logo.png",
+      "altText": "BYJU'S logo"
+    },
+    {
+      "id": 10,
+      "name": "Razorpay",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Razorpay-Logo.png",
+      "altText": "Razorpay logo"
+    },
+    {
+      "id": 11,
+      "name": "Uber",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/05/Uber-Logo.png",
+      "altText": "Uber logo"
+    },
+    {
+      "id": 12,
+      "name": "Netflix",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/04/Netflix-Logo.png",
+      "altText": "Netflix logo"
+    },
+    {
+      "id": 13,
+      "name": "Spotify",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/06/Spotify-Logo.png",
+      "altText": "Spotify logo"
+    },
+    {
+      "id": 14,
+      "name": "Airbnb",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/10/Airbnb-Logo.png",
+      "altText": "Airbnb logo"
+    },
+    {
+      "id": 15,
+      "name": "Slack",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/01/Slack-Logo.png",
+      "altText": "Slack logo"
+    },
+    {
+      "id": 16,
+      "name": "Notion",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Notion-Logo.png",
+      "altText": "Notion logo"
+    },
+    {
+      "id": 17,
+      "name": "Freshworks",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Freshworks-Logo.png",
+      "altText": "Freshworks logo"
+    },
+    {
+      "id": 18,
+      "name": "Zerodha",
+      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Zerodha-Logo.png",
+      "altText": "Zerodha logo"
+    }
+  ]
+}

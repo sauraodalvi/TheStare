@@ -4,9 +4,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Download, ExternalLink, X } from 'lucide-react';
 
 interface Resume {
   id: string;
@@ -31,61 +30,27 @@ interface ResumeModalProps {
 const ResumeModal: React.FC<ResumeModalProps> = ({ resume, isOpen, onClose }) => {
   if (!resume) return null;
 
-  const handleDownload = () => {
-    window.open(resume.resumeLink, '_blank');
-  };
-
-  const handleViewPost = () => {
-    if (resume.referenceLink) {
-      window.open(resume.referenceLink, '_blank');
-    }
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] p-0">
-        <DialogHeader className="p-6 pb-4 border-b">
-          <div className="flex items-center justify-between">
-            <div>
-              <DialogTitle className="text-xl font-bold">
-                {resume.name}'s Resume
-              </DialogTitle>
-              <p className="text-muted-foreground">
-                {resume.designation} at {resume.company}
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Button
-                onClick={handleDownload}
-                variant="outline"
-                size="sm"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Download
-              </Button>
-              
-              {resume.referenceLink && (
-                <Button
-                  onClick={handleViewPost}
-                  variant="outline"
-                  size="sm"
-                >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  View Post
-                </Button>
-              )}
-            </div>
-          </div>
+      <DialogContent className="max-w-[95vw] sm:max-w-[90vw] md:max-w-4xl w-full max-h-[95vh] p-0 bg-background overflow-hidden">
+        <DialogHeader className="p-4 sm:p-6 pb-0">
+          <DialogTitle className="text-lg sm:text-xl font-semibold text-foreground pr-8">
+            {resume.name}'s Resume
+          </DialogTitle>
+          <DialogDescription className="text-sm text-muted-foreground mt-2">
+            {resume.designation} at {resume.company}
+          </DialogDescription>
         </DialogHeader>
-        
-        <div className="flex-1 min-h-0">
-          <iframe
-            src={resume.previewEmbed}
-            className="w-full h-[600px] border-0"
-            title={`${resume.name}'s Resume`}
-            loading="lazy"
-          />
+
+        <div className="pl-4 sm:pl-6 pb-4 sm:pb-6 flex-1 overflow-hidden">
+          <div className="aspect-[4/5] overflow-hidden bg-muted max-h-[calc(95vh-120px)] w-full">
+            <iframe
+              src={resume.previewEmbed}
+              className="w-full h-full border-0"
+              title={`${resume.name}'s Resume`}
+              loading="lazy"
+            />
+          </div>
         </div>
       </DialogContent>
     </Dialog>

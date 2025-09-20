@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "name": "To-Do-Portfolio",
+    "description": "A no-code, customizable & analytics-integrated portfolio for your next interview",
+    "category": "Website Builder",
+    "difficulty": "Easy",
+    "url": "https://achalesh.gumroad.com/l/portfolio"
+  },
+  {
+    "id": 2,
+    "name": "Makers.so",
+    "description": "A website builder inside Figma, fully responsive, no-code",
+    "category": "Website Builder",
+    "difficulty": "Medium",
+    "url": "https://makers.so"
+  },
+  {
+    "id": 3,
+    "name": "Launchaco",
+    "description": "The Simplest Way to Build a Website For Your Startup",
+    "category": "Website Builder",
+    "difficulty": "Easy",
+    "url": "https://launchaco.com"
+  },
+  {
+    "id": 4,
+    "name": "Webflow",
+    "description": "The site you want — without the dev time",
+    "category": "Website Builder",
+    "difficulty": "Difficult",
+    "url": "https://webflow.com"
+  },
+  {
+    "id": 5,
+    "name": "Daftpage",
+    "description": "Next-gen website builder for makers",
+    "category": "Website Builder",
+    "difficulty": "Easy",
+    "url": "https://daftpage.com"
+  },
+  {
+    "id": 6,
+    "name": "Unicorn Platform",
+    "description": "Sexy landing page builder for startups",
+    "category": "Website Builder",
+    "difficulty": "Medium",
+    "url": "https://unicornplatform.com"
+  },
+  {
+    "id": 7,
+    "name": "Siter",
+    "description": "Freehand design tool, no-code website creating",
+    "category": "Website Builder",
+    "difficulty": "Medium",
+    "url": "https://siter.io"
+  },
+  {
+    "id": 8,
+    "name": "Popsy",
+    "description": "No-code website builder that works like Notion",
+    "category": "Notion",
+    "difficulty": "Easy",
+    "url": "https://popsy.co"
+  },
+  {
+    "id": 9,
+    "name": "Wix",
+    "description": "Create a website",
+    "category": "Website Builder",
+    "difficulty": "Easy",
+    "url": "https://wix.com"
+  },
+  {
+    "id": 10,
+    "name": "Potion",
+    "description": "Create custom websites in minutes, all on Notion",
+    "category": "Notion",
+    "difficulty": "Easy",
+    "url": "https://potion.so"
+  },
+  {
+    "id": 11,
+    "name": "Carrd",
+    "description": "Simple, responsive, one-page sites for pretty much anything",
+    "category": "Website Builder",
+    "difficulty": "Easy",
+    "url": "https://carrd.co"
+  },
+  {
+    "id": 12,
+    "name": "mmm",
+    "description": "Make website in less than 5 minutes",
+    "category": "Website Builder",
+    "difficulty": "Easy",
+    "url": "https://mmm.page"
+  }
+]

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Upload, Loader2, Building } from 'lucide-react';
 import { toast } from 'sonner';
@@ -187,6 +187,9 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-stare-navy">Submit Case Study</DialogTitle>
+          <DialogDescription className="text-sm text-muted-foreground mt-2">
+            Share your case study with the community. Fill out all required fields below to submit your work for review and potential inclusion in our case study library.
+          </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6">

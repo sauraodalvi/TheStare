@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { useAuth } from '@/hooks/useAuth';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -19,6 +20,14 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
+  const { user, signOut, loading } = useAuth();
+
+  // Debug authentication state
+  console.log('=== NAVBAR AUTH DEBUG ===');
+  console.log('User:', user);
+  console.log('Loading:', loading);
+  console.log('User email:', user?.email);
+  console.log('=== END NAVBAR AUTH DEBUG ===');
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -29,13 +38,17 @@ const Navbar = () => {
   };
   
   const handleSignInClick = () => {
-    toast.error("This is a premium feature", {
-      description: "Only paid users can sign in. Please subscribe to a plan first.",
-      action: {
-        label: "View Plans",
-        onClick: () => navigate('/pricing'),
-      },
-    });
+    navigate('/sign-in');
+  };
+
+  const handleSignOutClick = async () => {
+    try {
+      await signOut();
+      toast.success('Signed out successfully');
+      navigate('/');
+    } catch (error) {
+      toast.error('Error signing out');
+    }
   };
 
   // Add scroll effect
@@ -70,7 +83,7 @@ const Navbar = () => {
         <NavigationMenu className="hidden md:flex">
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="bg-transparent hover:bg-muted focus:bg-muted data-[state=open]:bg-muted">Resources</NavigationMenuTrigger>
+              <NavigationMenuTrigger className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent">Resources</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                   <li className="row-span-3">
@@ -133,7 +146,7 @@ const Navbar = () => {
                         to="/resources/portfolio"
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted focus:bg-muted"
                       >
-                        <div className="text-sm font-medium leading-none text-foreground">Portfolio Examples</div>
+                        <div className="text-sm font-medium leading-none text-foreground">Portfolio</div>
                         <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                           Showcase your work effectively
                         </p>
@@ -153,18 +166,32 @@ const Navbar = () => {
                       </Link>
                     </NavigationMenuLink>
                   </li>
+                  <li>
+                    <NavigationMenuLink asChild>
+                      <Link
+                        to="/case-study-review"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted focus:bg-muted"
+                      >
+                        <div className="text-sm font-medium leading-none text-foreground">Case Study Review</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          Get AI-powered feedback on your case studies
+                        </p>
+                      </Link>
+                    </NavigationMenuLink>
+                  </li>
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
+
             <NavigationMenuItem>
-              <Link to="#jobs" className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex">
-                Jobs
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link to="#referrals" className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex">
-                Referrals
-              </Link>
+              <a
+                href="https://saurao.gumroad.com/l/BuymeaCoffee"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex"
+              >
+                Donate
+              </a>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <Link to="/about" className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex">
@@ -180,93 +207,171 @@ const Navbar = () => {
         </NavigationMenu>
 
         {/* Desktop Auth Buttons */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-4">
           <ThemeToggle />
-          <Button size="sm" variant="outline" className="font-medium" onClick={handleSignInClick}>
-            Sign In
-          </Button>
-          <Button size="sm" variant="brand" className="font-medium" onClick={handleJoinNowClick}>
-            Join Now
-          </Button>
+          {loading ? (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="animate-spin h-4 w-4 border-2 border-muted-foreground border-t-transparent rounded-full"></div>
+              Loading...
+            </div>
+          ) : user ? (
+            <div className="flex items-center gap-4">
+              <Link to="/profile" className="flex items-center gap-2 text-sm py-2 px-3 bg-muted rounded-md hover:bg-accent/50 transition-colors">
+                <User className="h-4 w-4 text-muted-foreground" />
+                <span className="font-medium">
+                  {user.email?.split('@')[0] || 'User'}
+                </span>
+              </Link>
+              <Button size="sm" variant="outline" onClick={handleSignOutClick}>
+                <LogOut className="h-4 w-4 mr-1" />
+                Sign Out
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <Button size="sm" variant="outline" onClick={handleSignInClick}>
+                Sign In
+              </Button>
+              <Button size="sm" variant="brand" onClick={handleJoinNowClick}>
+                Join Now
+              </Button>
+            </div>
+          )}
         </div>
 
-        {/* Mobile Navigation */}
-        <button onClick={toggleMenu} className="block md:hidden">
-          {isMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
+        {/* Mobile menu button */}
+        <button
+          className="md:hidden p-2 rounded-md text-muted-foreground hover:text-foreground focus:outline-none"
+          onClick={toggleMenu}
+        >
+          {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
+      </div>
 
-        {isMenuOpen && (
-          <div className="absolute top-16 left-0 right-0 bg-background border-b border-border shadow-lg animate-fade-in md:hidden">
-            <div className="container py-4 flex flex-col gap-4">
-              <ul className="flex flex-col gap-4">
-                <li className="border-b border-border pb-2">
-                  <div className="flex items-center justify-between">
-                    <Link to="/resources" className="text-foreground font-medium py-2" onClick={toggleMenu}>
-                      Resources
-                    </Link>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <div className="mt-2 pl-4 flex flex-col gap-3">
-                    <Link to="/case-studies" className="text-muted-foreground hover:text-foreground text-sm py-1 transition-colors" onClick={toggleMenu}>
-                      Case Studies
-                    </Link>
-                    <Link to="/resources/self-study" className="text-muted-foreground hover:text-foreground text-sm py-1 transition-colors" onClick={toggleMenu}>
-                      Self Study
-                    </Link>
-                    <Link to="/resources/courses" className="text-muted-foreground hover:text-foreground text-sm py-1 transition-colors" onClick={toggleMenu}>
-                      Courses
-                    </Link>
-                    <Link to="/resources/participate" className="text-muted-foreground hover:text-foreground text-sm py-1 transition-colors" onClick={toggleMenu}>
-                      Participate
-                    </Link>
-                    <Link to="/resources/portfolio" className="text-muted-foreground hover:text-foreground text-sm py-1 transition-colors" onClick={toggleMenu}>
-                      Portfolio Examples
-                    </Link>
-                    <Link to="/resources/resume" className="text-muted-foreground hover:text-foreground text-sm py-1 transition-colors" onClick={toggleMenu}>
-                      Resume
-                    </Link>
-                  </div>
-                </li>
-                <li>
-                  <Link to="#jobs" className="text-muted-foreground hover:text-foreground font-medium transition-colors block py-2" onClick={toggleMenu}>
-                    Jobs
-                  </Link>
-                </li>
-                <li>
-                  <Link to="#referrals" className="text-muted-foreground hover:text-foreground font-medium transition-colors block py-2" onClick={toggleMenu}>
-                    Referrals
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/about" className="text-muted-foreground hover:text-foreground font-medium transition-colors block py-2" onClick={toggleMenu}>
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/pricing" className="text-muted-foreground hover:text-foreground font-medium transition-colors block py-2" onClick={toggleMenu}>
-                    Pricing
-                  </Link>
-                </li>
-              </ul>
-              <div className="flex flex-col gap-3 pt-3 border-t border-border">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-foreground">Theme</span>
-                  <ThemeToggle />
-                </div>
-                <Button size="sm" variant="outline" className="font-medium w-full" onClick={(e) => { toggleMenu(); handleSignInClick(); }}>
-                  Sign In
-                </Button>
-                <Button size="sm" variant="brand" className="font-medium w-full" onClick={(e) => { toggleMenu(); handleJoinNowClick(); }}>
-                  Join Now
-                </Button>
-              </div>
-            </div>
+      {/* Mobile menu */}
+      <div className={cn("md:hidden", isMenuOpen ? 'block' : 'hidden')}>
+        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <Link
+            to="/case-studies"
+            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
+            onClick={toggleMenu}
+          >
+            Case Studies
+          </Link>
+          <Link
+            to="/resources/self-study"
+            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
+            onClick={toggleMenu}
+          >
+            Self Study
+          </Link>
+          <Link
+            to="/resources/courses"
+            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
+            onClick={toggleMenu}
+          >
+            Courses
+          </Link>
+          <Link
+            to="/resources/participate"
+            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
+            onClick={toggleMenu}
+          >
+            Participate
+          </Link>
+          <Link
+            to="/resources/portfolio"
+            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
+            onClick={toggleMenu}
+          >
+            Portfolio
+          </Link>
+          <Link
+            to="/resources/resume"
+            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
+            onClick={toggleMenu}
+          >
+            Resume
+          </Link>
+          <Link
+            to="/case-study-review"
+            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
+            onClick={toggleMenu}
+          >
+            Case Study Review
+          </Link>
+          <a
+            href="https://saurao.gumroad.com/l/BuymeaCoffee"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
+            onClick={toggleMenu}
+          >
+            Donate
+          </a>
+          <Link
+            to="/about"
+            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
+            onClick={toggleMenu}
+          >
+            About
+          </Link>
+          <Link
+            to="/pricing"
+            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
+            onClick={toggleMenu}
+          >
+            Pricing
+          </Link>
+        </div>
+
+        <div className="pt-4 pb-3 border-t border-border">
+          <div className="flex items-center justify-between px-4">
+            <div className="text-sm font-medium text-foreground">Theme</div>
+            <ThemeToggle />
           </div>
-        )}
+          <div className="mt-3 space-y-1 px-2">
+            {loading ? (
+              <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground py-2">
+                <div className="animate-spin h-4 w-4 border-2 border-muted-foreground border-t-transparent rounded-full"></div>
+                Loading...
+              </div>
+            ) : user ? (
+              <>
+                <Link
+                  to="/profile"
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+                  onClick={toggleMenu}
+                >
+                  <User className="h-4 w-4" />
+                  <span>{user.email?.split('@')[0] || 'User'}</span>
+                </Link>
+                <button
+                  onClick={(e) => { toggleMenu(); handleSignOutClick(); }}
+                  className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Sign Out</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={(e) => { toggleMenu(); handleSignInClick(); }}
+                  className="w-full text-left px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={(e) => { toggleMenu(); handleJoinNowClick(); }}
+                  className="w-full text-left px-3 py-2 text-sm font-medium rounded-md text-foreground bg-brand hover:bg-brand/90"
+                >
+                  Join Now
+                </button>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </header>
   );

@@ -19,16 +19,27 @@ export function usePagination<T>({ data, itemsPerPage }: UsePaginationProps<T>) 
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
   const loadMore = useCallback(() => {
+    console.log('=== LOAD MORE CLICKED ===');
+    console.log('hasMore:', hasMore);
+    console.log('isLoadingMore:', isLoadingMore);
+    console.log('current itemsToShow:', itemsToShow);
+    console.log('data.length:', data.length);
+    console.log('itemsPerPage:', itemsPerPage);
+
     if (hasMore && !isLoadingMore) {
       setIsLoadingMore(true);
-      
+
       // Simulate loading delay for better UX
       setTimeout(() => {
-        setItemsToShow(prev => Math.min(prev + itemsPerPage, data.length));
+        const newItemsToShow = Math.min(itemsToShow + itemsPerPage, data.length);
+        console.log('Setting itemsToShow to:', newItemsToShow);
+        setItemsToShow(newItemsToShow);
         setIsLoadingMore(false);
       }, 300);
+    } else {
+      console.log('Load more blocked - hasMore:', hasMore, 'isLoadingMore:', isLoadingMore);
     }
-  }, [hasMore, isLoadingMore, itemsPerPage, data.length]);
+  }, [hasMore, isLoadingMore, itemsPerPage, data.length, itemsToShow]);
 
   const reset = useCallback(() => {
     setItemsToShow(itemsPerPage);
