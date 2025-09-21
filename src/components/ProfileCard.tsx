@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 interface ProfileCardProps {
   profile: UserProfile;
-  onEdit: () => void;
+  onEdit?: () => void;
 }
 
 const calculateCompletionPercentage = (profile: UserProfile) => {
@@ -79,15 +79,17 @@ const ProfileCard = ({ profile, onEdit }: ProfileCardProps) => {
               <p className="text-sm text-muted-foreground">{profile.email}</p>
             </div>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="gap-2 self-start sm:self-center"
-            onClick={onEdit}
-          >
-            <Edit className="h-4 w-4" />
-            Edit Profile
-          </Button>
+          {onEdit && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2 self-start sm:self-center"
+              onClick={onEdit}
+            >
+              <Edit className="h-4 w-4" />
+              Edit Profile
+            </Button>
+          )}
         </div>
       </CardHeader>
       <CardContent className="p-6 space-y-6">
