@@ -2,111 +2,135 @@
   "companies": [
     {
       "id": 1,
-      "name": "Flipkart",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/11/Flipkart-Logo.png",
-      "altText": "Flipkart logo"
+      "name": "Amazon",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/905px-Amazon_logo.svg.png?20250504041148",
+      "altText": "Amazon logo"
     },
     {
       "id": 2,
-      "name": "Zomato",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Zomato-Logo.png",
-      "altText": "Zomato logo"
+      "name": "Lowe's",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Lowes_Companies_Logo.svg/137px-Lowes_Companies_Logo.svg.png?20170829203107",
+      "altText": "Lowe's logo"
     },
     {
       "id": 3,
-      "name": "Google",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/09/Google-Logo.png",
-      "altText": "Google logo"
+      "name": "KAVAK",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Logo_de_Kavak.svg/1200px-Logo_de_Kavak.svg.png?20211207013840",
+      "altText": "KAVAK logo"
     },
     {
       "id": 4,
       "name": "Microsoft",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/09/Microsoft-Logo.png",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Microsoft_logo_%282012%29.svg/768px-Microsoft_logo_%282012%29.svg.png?20230221160917",
       "altText": "Microsoft logo"
     },
     {
       "id": 5,
-      "name": "Amazon",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/04/Amazon-Logo.png",
-      "altText": "Amazon logo"
-    },
-    {
-      "id": 6,
-      "name": "Paytm",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Paytm-Logo.png",
-      "altText": "Paytm logo"
-    },
-    {
-      "id": 7,
       "name": "Swiggy",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Swiggy-Logo.png",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/1/13/Swiggy_logo.png",
       "altText": "Swiggy logo"
     },
     {
+      "id": 6,
+      "name": "Walmart",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Walmart_logo_%282008%29.svg/1199px-Walmart_logo_%282008%29.svg.png?20250802041146",
+      "altText": "Walmart logo"
+    },
+    {
+      "id": 7,
+      "name": "Zoho",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/ZOHO_logo_2023.svg/768px-ZOHO_logo_2023.svg.png?20231106145651",
+      "altText": "Zoho logo"
+    },
+    {
       "id": 8,
-      "name": "Ola",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Ola-Logo.png",
-      "altText": "Ola logo"
+      "name": "Foundit",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Foundit-Logo.svg/222px-Foundit-Logo.svg.png",
+      "altText": "Foundit logo"
     },
     {
       "id": 9,
-      "name": "BYJU'S",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Byjus-Logo.png",
-      "altText": "BYJU'S logo"
+      "name": "PolicyBazaar",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/1/10/Policybazaar_Logo.gif?20110805060835",
+      "altText": "PolicyBazaar logo"
     },
     {
       "id": 10,
-      "name": "Razorpay",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Razorpay-Logo.png",
-      "altText": "Razorpay logo"
+      "name": "JP Morgan",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/J_P_Morgan_Logo_2008_1.svg/147px-J_P_Morgan_Logo_2008_1.svg.png?20190328173407",
+      "altText": "JP Morgan logo"
     },
     {
       "id": 11,
-      "name": "Uber",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/05/Uber-Logo.png",
-      "altText": "Uber logo"
+      "name": "BYJU'S",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Byju%27s_logo.svg/597px-Byju%27s_logo.svg.png?20220324143625",
+      "altText": "BYJU'S logo"
     },
     {
       "id": 12,
-      "name": "Netflix",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/04/Netflix-Logo.png",
-      "altText": "Netflix logo"
+      "name": "ICICI Bank",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/ICICI_Bank_Logo.svg/456px-ICICI_Bank_Logo.svg.png?20180808221300",
+      "altText": "ICICI Bank logo"
     },
     {
       "id": 13,
-      "name": "Spotify",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/06/Spotify-Logo.png",
-      "altText": "Spotify logo"
+      "name": "HSBC",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/HSBC_logo_%282018%29.svg/768px-HSBC_logo_%282018%29.svg.png?20250513103914",
+      "altText": "HSBC logo"
     },
     {
       "id": 14,
-      "name": "Airbnb",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2020/10/Airbnb-Logo.png",
-      "altText": "Airbnb logo"
+      "name": "ServiceNow",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/ServiceNow_logo.svg/195px-ServiceNow_logo.svg.png?20210504091505",
+      "altText": "ServiceNow logo"
     },
     {
       "id": 15,
-      "name": "Slack",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/01/Slack-Logo.png",
-      "altText": "Slack logo"
+      "name": "Nuclei",
+      "logoUrl": "https://i0.wp.com/mid-east.info/wp-content/uploads/2020/10/nuclei-logo.png?fit=1111%2C486&ssl=1",
+      "altText": "Nuclei logo"
     },
     {
       "id": 16,
-      "name": "Notion",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Notion-Logo.png",
-      "altText": "Notion logo"
+      "name": "Skill Lync",
+      "logoUrl": "https://news.easyshiksha.com/wp-content/uploads/Skill-Lync-Logo-696x174.png",
+      "altText": "Skill Lync logo"
     },
     {
       "id": 17,
-      "name": "Freshworks",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Freshworks-Logo.png",
-      "altText": "Freshworks logo"
+      "name": "Infosys",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Infosys_logo.svg/600px-Infosys_logo.svg.png?20100302211036",
+      "altText": "Infosys logo"
     },
     {
       "id": 18,
-      "name": "Zerodha",
-      "logoUrl": "https://logos-world.net/wp-content/uploads/2021/03/Zerodha-Logo.png",
-      "altText": "Zerodha logo"
+      "name": "Allianz",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Allianz-logo.png/1200px-Allianz-logo.png?20230102112209",
+      "altText": "Allianz logo"
+    },
+    {
+      "id": 19,
+      "name": "PhonePe",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/PhonePe_Logo.svg/345px-PhonePe_Logo.svg.png?20210407195407",
+      "altText": "PhonePe logo"
+    },
+    {
+      "id": 20,
+      "name": "MakeMyTrip",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Makemytrip_logo.svg/1200px-Makemytrip_logo.svg.png?20230712101321",
+      "altText": "MakeMyTrip logo"
+    },
+    {
+      "id": 21,
+      "name": "Salesforce",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Salesforce.com_logo.svg/768px-Salesforce.com_logo.svg.png?20210504050649",
+      "altText": "Salesforce logo"
+    },
+    {
+      "id": 22,
+      "name": "Tally",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Tally_-_Logo.png/1200px-Tally_-_Logo.png?20160628070014",
+      "altText": "Tally logo"
     }
   ]
 }

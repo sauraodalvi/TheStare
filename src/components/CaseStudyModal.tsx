@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Heart, Building, X, Loader2, ExternalLink, AlertCircle } from 'lucide-react';
 import { CaseStudy } from '@/types/caseStudy';
 import { SupabaseService } from '@/services/supabaseService';
+import { SafeImage } from '@/utils/imageUtils';
 
 interface CaseStudyModalProps {
   caseStudy: CaseStudy | null;
@@ -35,15 +36,10 @@ const CaseStudyModal = ({ caseStudy, isOpen, onClose }: CaseStudyModalProps) => 
   // Early return for null case study - MOVED AFTER HOOKS
   if (!caseStudy) return null;
 
-  // ✅ CORRECT DATA ACCESS - Following database schema analysis
-  const logoUrls = caseStudy.Logo || [];
+  // Get the best available logo URL
+  const logoUrl = caseStudy.google_drive_logo_thumbnail || caseStudy.Logo?.[0];
   const pdfUrls = caseStudy.PDF || [];
-  
-  // Primary sources from database fields, fallback to arrays
-  const primaryLogoUrl = caseStudy.google_drive_logo_thumbnail;
-  const rawLogoUrl = primaryLogoUrl || logoUrls[currentLogoIndex];
-  const logoUrl = rawLogoUrl ? SupabaseService.convertGoogleDriveImageUrl(rawLogoUrl) : null;
-  
+
   // PDF URLs - convert Google Drive URLs to iframe-compatible format with fallback methods
   const rawPdfUrl = caseStudy.google_drive_pdf_path || pdfUrls[0];
 
@@ -115,16 +111,12 @@ const CaseStudyModal = ({ caseStudy, isOpen, onClose }: CaseStudyModalProps) => 
   };
 
   const handleLogoError = () => {
-    // Try next logo in array
-    if (currentLogoIndex < logoUrls.length - 1) {
-      setCurrentLogoIndex(currentLogoIndex + 1);
-    } else {
-      setLogoError(true);
-    }
+    console.warn('Logo failed to load:', logoUrl);
+    setLogoError(true);
   };
 
   const handleLogoLoad = () => {
-    setLogoError(false);
+    console.log('✅ Modal logo loaded:', logoUrl);
   };
 
   return (
@@ -145,20 +137,15 @@ const CaseStudyModal = ({ caseStudy, isOpen, onClose }: CaseStudyModalProps) => 
               
               {/* Company Info Row */}
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                {/* ✅ FIXED LOGO DISPLAY with URL Conversion */}
+                {/* Company Logo */}
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-background border-2 border-border flex items-center justify-center overflow-hidden flex-shrink-0">
-                  {logoUrl && !logoError ? (
-                    <img
+                  <div className="w-full h-full flex items-center justify-center p-1">
+                    <SafeImage
                       src={logoUrl}
                       alt={`${caseStudy.Company} logo`}
-                      className="w-full h-full object-contain"
-                      onLoad={handleLogoLoad}
-                      onError={handleLogoError}
-                      loading="eager"
+                      className="max-w-full max-h-full object-contain"
                     />
-                  ) : (
-                    <Building className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground" />
-                  )}
+                  </div>
                 </div>
                 
                 <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm">

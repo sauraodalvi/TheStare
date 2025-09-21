@@ -39,7 +39,12 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
           <ThemeProvider defaultTheme="system" storageKey="stare-ui-theme">
             <TooltipProvider>
               <Toaster />

@@ -49,26 +49,24 @@ const CompanyLogos = () => {
           </div>
 
           {/* Company Logos Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
             {loading ? (
               // Loading skeleton
-              Array.from({ length: 18 }).map((_, index) => (
-                <Card 
+              Array.from({ length: 22 }).map((_, index) => (
+                <div 
                   key={index} 
-                  className="bg-card border border-border overflow-hidden h-24 flex items-center justify-center"
+                  className="bg-card border border-border rounded-lg overflow-hidden h-24 flex items-center justify-center p-4"
                 >
-                  <CardContent className="p-4 w-full h-full flex items-center justify-center">
-                    <div className="w-full h-12 bg-gray-200 rounded animate-pulse"></div>
-                  </CardContent>
-                </Card>
+                  <div className="w-full h-12 bg-muted rounded animate-pulse"></div>
+                </div>
               ))
             ) : (
               companies.map((company) => (
-                <Card 
+                <div 
                   key={company.id} 
-                  className="bg-card hover:shadow-lg transition-all duration-300 cursor-pointer border border-border overflow-hidden h-24 flex items-center justify-center group"
+                  className="bg-card hover:shadow-lg transition-all duration-300 rounded-lg border border-border overflow-hidden h-24 flex items-center justify-center p-4 group"
                 >
-                  <CardContent className="p-4 w-full h-full flex items-center justify-center">
+                  <div className="relative w-full h-full flex items-center justify-center">
                     <img
                       src={company.logoUrl}
                       alt={company.altText}
@@ -80,12 +78,15 @@ const CompanyLogos = () => {
                         target.style.display = 'none';
                         const parent = target.parentElement;
                         if (parent) {
-                          parent.innerHTML = `<span class="text-sm font-medium text-muted-foreground text-center">${company.name}</span>`;
+                          const fallback = document.createElement('div');
+                          fallback.className = 'text-sm font-medium text-muted-foreground text-center';
+                          fallback.textContent = company.name;
+                          parent.appendChild(fallback);
                         }
                       }}
                     />
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))
             )}
           </div>
