@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { verifyGumroadLicense, updateSubscriptionFromGumroad } from '@/services/gumroadService';
 import { UserProfile } from '@/types/profile';
 import { Check, X, Loader2 } from 'lucide-react';
@@ -95,7 +95,7 @@ export default function LicenseVerification({ profile, onVerificationSuccess }: 
           {isPaidUser ? (
             <Badge className="bg-green-500 hover:bg-green-600">
               <Check className="h-3 w-3 mr-1" />
-              Pro Plan
+              Premium
             </Badge>
           ) : (
             <Badge variant="outline">
