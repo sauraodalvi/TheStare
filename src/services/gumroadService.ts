@@ -1,7 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 
 const GUMROAD_ACCESS_TOKEN = 'BEA6_TuCBnp6RYeVw7DqrrjayXpIipHu9oc8E2Gp37I';
-const GUMROAD_PRODUCT_ID = 'aedrs';
+const GUMROAD_PRODUCT_PERMALINK = 'aedrs';
 
 export interface GumroadLicenseResponse {
   success: boolean;
@@ -37,9 +37,9 @@ export const verifyGumroadLicense = async (licenseKey: string): Promise<GumroadL
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        product_id: GUMROAD_PRODUCT_ID,
+        product_permalink: GUMROAD_PRODUCT_PERMALINK,
         license_key: licenseKey,
-        access_token: GUMROAD_ACCESS_TOKEN,
+        increment_uses_count: 'false',
       }),
     });
 
