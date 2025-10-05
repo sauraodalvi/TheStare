@@ -433,15 +433,11 @@ const CaseStudiesList: React.FC = () => {
       <div className="container mx-auto max-w-7xl">
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-            <h1 className="text-3xl font-bold text-foreground">Explore Case Studies</h1>
-            <Button
-              onClick={() => setIsSubmissionModalOpen(true)}
-              className="w-full sm:w-auto"
-            >
-              Submit a Case Study
-            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Explore Case Studies</h1>
+              <p className="text-muted-foreground mt-2">Discover inspiring case studies from leading companies</p>
+            </div>
           </div>
-          <p className="text-muted-foreground">Discover inspiring case studies from leading companies</p>
         </div>
 
         <CaseStudyHeader

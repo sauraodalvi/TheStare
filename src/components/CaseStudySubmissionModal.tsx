@@ -19,22 +19,26 @@ interface CaseStudySubmissionModalProps {
 
 const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmissionModalProps) => {
   const [formData, setFormData] = useState({
-    title: '',
+    name: '',
     company: '',
-    creator: '',
+    creators_tag: '',
     category: [] as string[],
     market: [] as string[],
-    objective: [] as string[]
+    objective: [] as string[],
+    type: [] as string[],
+    sort_order: '0'
   });
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [confirmChecked, setConfirmChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const categories = ['Marketing', 'Sales', 'Finance', 'Technology', 'HR', 'Operations', 'Design', 'Strategy', 'E-commerce', 'Product'];
   const markets = ['B2B', 'B2C', 'E-commerce', 'SaaS', 'Healthcare', 'Education', 'Finance', 'Real Estate', 'Fintech', 'EdTech'];
   const objectives = ['Lead Generation', 'Brand Awareness', 'Customer Retention', 'Cost Reduction', 'Revenue Growth', 'Process Improvement', 'User Engagement', 'Market Expansion'];
+  const types = ['Website', 'App', 'Campaign', 'Branding', 'Digital', 'Print', 'Strategy', 'UX/UI'];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -83,11 +87,11 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
   };
 
   const validateForm = () => {
-    if (!formData.title.trim()) {
-      toast.error('Title is required');
+    if (!formData.name.trim()) {
+      toast.error('Name is required');
       return false;
     }
-    if (!formData.creator.trim()) {
+    if (!formData.creators_tag.trim()) {
       toast.error('Creator name is required');
       return false;
     }
@@ -107,6 +111,14 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
       toast.error('Please select at least one objective');
       return false;
     }
+    if (formData.type.length === 0) {
+      toast.error('Please select at least one type');
+      return false;
+    }
+    if (!logoFile) {
+      toast.error('Logo upload is required');
+      return false;
+    }
     if (!pdfFile) {
       toast.error('PDF upload is required');
       return false;
@@ -124,59 +136,74 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
     if (!validateForm()) return;
 
     setIsSubmitting(true);
+    setUploadProgress(10);
     
     try {
-      let logoUrl = '';
-      
-      // Upload logo if provided
-      if (logoFile) {
-        logoUrl = await uploadFile(logoFile, 'logo');
-      }
+      // Upload logo to Google Drive
+      setUploadProgress(30);
+      const logoUrl = await uploadFile(logoFile!, 'logo');
       
       // Upload PDF to Google Drive
+      setUploadProgress(60);
       const pdfUrl = await uploadFile(pdfFile!, 'pdf');
+      
+      setUploadProgress(80);
       
       // Save to database
       const { error: insertError } = await supabase
         .from('case_studies')
         .insert({
-          name: formData.title,
-          organizer: formData.creator,
+          name: formData.name,
+          creators_tag: formData.creators_tag,
           company: formData.company,
+          google_drive_logo_path: logoUrl,
           google_drive_logo_thumbnail: logoUrl,
           google_drive_pdf_path: pdfUrl,
-          free: true, // Always free for user submissions (lowercase)
-          likes: 0,
-          publish: true, // Boolean value as expected by schema
-          category: formData.category.join(', '), // String format
-          market: formData.market.join(', '),
-          objective: formData.objective.join(', ')
+          category: formData.category.join(', '),
+          market: formData.market[0] || '',
+          objective: formData.objective.join(', '),
+          type: formData.type.join(', '),
+          sort_order: parseInt(formData.sort_order) || 0,
+          publish: true,
+          free: false,
+          seo_index: true,
+          plan: 1,
+          likes: 0
         });
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error('Database insert error:', insertError);
+        throw new Error(`Failed to save case study: ${insertError.message}`);
+      }
 
-      toast.success('Case study submitted successfully and will be reviewed shortly!');
+      setUploadProgress(100);
+      toast.success('✅ Case Study Uploaded Successfully');
       
       // Reset form
       setFormData({ 
-        title: '', 
-        creator: '', 
+        name: '', 
+        creators_tag: '', 
         company: '', 
         category: [], 
         market: [], 
-        objective: [] 
+        objective: [],
+        type: [],
+        sort_order: '0'
       });
       setLogoFile(null);
       setLogoPreview(null);
       setPdfFile(null);
       setConfirmChecked(false);
+      setUploadProgress(0);
       
       onSuccess?.();
       onClose();
       
     } catch (error) {
       console.error('Error submitting case study:', error);
-      toast.error('Failed to submit case study. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to submit case study. Please try again.';
+      toast.error(errorMessage);
+      setUploadProgress(0);
     } finally {
       setIsSubmitting(false);
     }
@@ -193,30 +220,48 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
+          {/* Progress Indicator */}
+          {isSubmitting && uploadProgress > 0 && (
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Uploading...</span>
+                <span>{uploadProgress}%</span>
+              </div>
+              <div className="relative h-2 w-full overflow-hidden rounded-full bg-secondary">
+                <div 
+                  className="h-full bg-primary transition-all duration-500 ease-in-out"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Name */}
           <div>
-            <Label htmlFor="title" className="text-sm font-medium">Title *</Label>
+            <Label htmlFor="name" className="text-sm font-medium">Name *</Label>
             <Input
-              id="title"
-              name="title"
-              value={formData.title}
+              id="name"
+              name="name"
+              value={formData.name}
               onChange={handleInputChange}
-              placeholder="Enter case study title"
+              placeholder="Enter case study name"
               required
+              disabled={isSubmitting}
               className="mt-1"
             />
           </div>
 
-          {/* Creator Name */}
+          {/* Creator Tag */}
           <div>
-            <Label htmlFor="creator" className="text-sm font-medium">Creator Name *</Label>
+            <Label htmlFor="creators_tag" className="text-sm font-medium">Creator Name *</Label>
             <Input
-              id="creator"
-              name="creator"
-              value={formData.creator}
+              id="creators_tag"
+              name="creators_tag"
+              value={formData.creators_tag}
               onChange={handleInputChange}
               placeholder="Your name"
               required
+              disabled={isSubmitting}
               className="mt-1"
             />
           </div>
@@ -231,6 +276,7 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
               onChange={handleInputChange}
               placeholder="Company name"
               required
+              disabled={isSubmitting}
               className="mt-1"
             />
           </div>
@@ -277,15 +323,46 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
             </div>
           </div>
 
+          {/* Type Multi-Select */}
+          <div>
+            <Label className="text-sm font-medium">Type *</Label>
+            <div className="mt-1">
+              <FilterDropdown
+                title="Select Types"
+                options={types}
+                selectedOptions={formData.type}
+                onSelectionChange={(types) => setFormData(prev => ({ ...prev, type: types }))}
+                placeholder="Search types..."
+              />
+            </div>
+          </div>
+
+          {/* Sort Order */}
+          <div>
+            <Label htmlFor="sort_order" className="text-sm font-medium">Sort Order</Label>
+            <Input
+              id="sort_order"
+              name="sort_order"
+              type="number"
+              value={formData.sort_order}
+              onChange={handleInputChange}
+              placeholder="0"
+              disabled={isSubmitting}
+              className="mt-1"
+            />
+          </div>
+
           {/* Company Logo Upload */}
           <div>
-            <Label htmlFor="logo" className="text-sm font-medium">Company Logo (Optional)</Label>
+            <Label htmlFor="logo" className="text-sm font-medium">Company Logo *</Label>
             <div className="mt-1 flex items-center gap-4">
               <Input
                 id="logo"
                 type="file"
                 accept="image/*"
                 onChange={handleLogoUpload}
+                required
+                disabled={isSubmitting}
                 className="cursor-pointer flex-1"
               />
               {logoPreview ? (
@@ -298,8 +375,8 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
                 </div>
               )}
             </div>
-            {!logoFile && (
-              <p className="text-sm text-amber-600 mt-1">No logo uploaded - a placeholder will be shown</p>
+            {logoFile && (
+              <p className="text-sm text-green-600 mt-1">{logoFile.name}</p>
             )}
           </div>
 
@@ -313,6 +390,7 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
               onChange={handlePdfUpload}
               className="cursor-pointer mt-1"
               required
+              disabled={isSubmitting}
             />
             {pdfFile && (
               <p className="text-sm text-green-600 mt-1">{pdfFile.name}</p>
