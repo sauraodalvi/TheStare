@@ -38,6 +38,13 @@ export interface UserProfile {
   subscription_updated_at?: string | null;
   subscription_updated_by?: string | null;
   
+  // Gumroad integration fields
+  license_key?: string | null;
+  gumroad_subscription_id?: string | null;
+  gumroad_sale_id?: string | null;
+  product_id?: string | null;
+  subscription_status?: string | null;
+  
   // Professional profile information
   portfolio_url?: string | null;
   linkedin_url?: string | null;

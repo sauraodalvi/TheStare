@@ -6,9 +6,11 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import ProfileCard from '@/components/ProfileCard';
 import EditProfileForm from '@/components/EditProfileForm';
+import LicenseVerification from '@/components/LicenseVerification';
 import { UserProfile } from '@/types/profile';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { checkLicenseExpiry } from '@/services/gumroadService';
 
 const Profile = () => {
   const { user } = useAuth();
@@ -51,7 +53,7 @@ const Profile = () => {
           is_featured: false,
           is_blocked: false,
           current_company: '',
-          current_role: '',
+          current_title: '',
           bio: '',
           skills: [],
           years_of_experience: 0,
@@ -80,6 +82,18 @@ const Profile = () => {
 
     fetchProfile();
   }, [user, navigate]);
+
+  // Auto-verify license on load
+  useEffect(() => {
+    const verifyStoredLicense = async () => {
+      if (profile?.license_key && user) {
+        await checkLicenseExpiry(user.id, profile.license_key);
+        await fetchProfile();
+      }
+    };
+
+    verifyStoredLicense();
+  }, [user?.id]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -131,31 +145,38 @@ const Profile = () => {
               />
             </div>
           ) : profile ? (
-            <div className="bg-background rounded-lg shadow-sm border border-border overflow-hidden">
-              <ProfileCard 
-                profile={{
-                  ...profile,
-                  // Ensure we have all required fields with defaults
-                  full_name: profile.full_name || '',
-                  email: profile.email || user?.email || '',
-                  subscription_type: profile.subscription_type || 'free',
-                  skills: profile.skills || [],
-                  profile_completion_percentage: profile.profile_completion_percentage || 0,
-                  current_role: profile.current_role || '',
-                  current_company: profile.current_company || '',
-                  years_of_experience: profile.years_of_experience || 0,
-                  bio: profile.bio || '',
-                  linkedin_url: profile.linkedin_url || '',
-                  portfolio_url: profile.portfolio_url || '',
-                  resume_url: profile.resume_url || '',
-                  career_status: profile.career_status || 'not_specified',
-                  subscription_start_date: profile.subscription_start_date || null,
-                  subscription_end_date: profile.subscription_end_date || null,
-                  subscription_updated_at: profile.subscription_updated_at || null,
-                }} 
-                onEdit={handleEdit} 
+            <>
+              <div className="bg-background rounded-lg shadow-sm border border-border overflow-hidden mb-6">
+                <ProfileCard 
+                  profile={{
+                    ...profile,
+                    // Ensure we have all required fields with defaults
+                    full_name: profile.full_name || '',
+                    email: profile.email || user?.email || '',
+                    subscription_type: profile.subscription_type || 'free',
+                    skills: profile.skills || [],
+                    profile_completion_percentage: profile.profile_completion_percentage || 0,
+                    current_title: profile.current_title || '',
+                    current_company: profile.current_company || '',
+                    years_of_experience: profile.years_of_experience || 0,
+                    bio: profile.bio || '',
+                    linkedin_url: profile.linkedin_url || '',
+                    portfolio_url: profile.portfolio_url || '',
+                    resume_url: profile.resume_url || '',
+                    career_status: profile.career_status || 'not_specified',
+                    subscription_start_date: profile.subscription_start_date || null,
+                    subscription_end_date: profile.subscription_end_date || null,
+                    subscription_updated_at: profile.subscription_updated_at || null,
+                  }} 
+                  onEdit={handleEdit} 
+                />
+              </div>
+              
+              <LicenseVerification 
+                profile={profile} 
+                onVerificationSuccess={fetchProfile}
               />
-            </div>
+            </>
           ) : (
             <div className="text-center py-12 bg-background rounded-lg border border-border">
               <h3 className="text-lg font-medium text-foreground mb-2">No profile found</h3>

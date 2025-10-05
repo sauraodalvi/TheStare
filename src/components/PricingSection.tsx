@@ -15,8 +15,8 @@ const PricingSection = () => {
   };
   
   const handlePaidPlanClick = () => {
-    // Open Gumroad Pro subscription page in new tab
-    window.open('https://saurao.gumroad.com/l/Pro', '_blank', 'noopener,noreferrer');
+    // Open Gumroad product page in new tab
+    window.open('https://saurao.gumroad.com/l/aedrs', '_blank', 'noopener,noreferrer');
   };
   
   return (
@@ -165,8 +165,11 @@ const PricingSection = () => {
                 onClick={handlePaidPlanClick}
                 className="w-full bg-stare-teal hover:bg-stare-teal/90"
               >
-                Subscribe Now
+                Upgrade Now
               </Button>
+              <p className="text-xs text-muted-foreground text-center mt-3">
+                After purchasing, your license will be verified automatically or you can enter your license key in your profile.
+              </p>
             </CardFooter>
           </Card>
         </div>
