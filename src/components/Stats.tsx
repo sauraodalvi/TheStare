@@ -50,7 +50,7 @@ const Stats = () => {
               <stat.icon className="h-6 w-6 text-stare-teal" />
             </div>
             <h3
-              ref={elementRef}
+              ref={elementRef as React.RefObject<HTMLHeadingElement>}
               className="text-3xl font-bold text-stare-navy mb-2"
             >
               {count}{stat.suffix}

@@ -71,7 +71,7 @@ const SignUpForm = () => {
       if (error) {
         console.error('Sign up error:', error);
         toast.error("Sign up failed", {
-          description: error.message || "Please try again with a different email",
+          description: error,
         });
       } else {
         toast.success("Account created successfully!", {

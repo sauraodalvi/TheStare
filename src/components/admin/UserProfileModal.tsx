@@ -93,7 +93,7 @@ const UserProfileModal = ({ userId, isOpen, onClose, onRefresh }: UserProfileMod
     const updates = Object.keys(editedProfile).reduce((acc, key) => {
       const typedKey = key as keyof UpdateUserProfile;
       if (editedProfile[typedKey] !== undefined) {
-        acc[typedKey] = editedProfile[typedKey] as any;
+        (acc as any)[typedKey] = editedProfile[typedKey];
       }
       return acc;
     }, {} as UpdateUserProfile);
@@ -246,7 +246,7 @@ const UserProfileModal = ({ userId, isOpen, onClose, onRefresh }: UserProfileMod
                       {isEditing ? (
                         <Input
                           id="full_name"
-                          value={getFieldValue('full_name') || ''}
+                          value={(getFieldValue('full_name') as string) || ''}
                           onChange={(e) => handleFieldChange('full_name', e.target.value)}
                           placeholder="Enter full name"
                         />
@@ -319,16 +319,16 @@ const UserProfileModal = ({ userId, isOpen, onClose, onRefresh }: UserProfileMod
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="current_role">Current Role</Label>
+                  <Label htmlFor="current_title">Current Title</Label>
                   {isEditing ? (
                     <Input
-                      id="current_role"
-                      value={getFieldValue('current_role') || ''}
-                      onChange={(e) => handleFieldChange('current_role', e.target.value)}
+                      id="current_title"
+                      value={(getFieldValue('current_title') as string) || ''}
+                      onChange={(e) => handleFieldChange('current_title', e.target.value)}
                       placeholder="e.g., Product Manager"
                     />
                   ) : (
-                    <p className="text-sm">{profile.current_role || 'Not provided'}</p>
+                    <p className="text-sm">{profile.current_title || 'Not provided'}</p>
                   )}
                 </div>
 
@@ -337,7 +337,7 @@ const UserProfileModal = ({ userId, isOpen, onClose, onRefresh }: UserProfileMod
                   {isEditing ? (
                     <Input
                       id="current_company"
-                      value={getFieldValue('current_company') || ''}
+                      value={(getFieldValue('current_company') as string) || ''}
                       onChange={(e) => handleFieldChange('current_company', e.target.value)}
                       placeholder="e.g., Google"
                     />
@@ -354,7 +354,7 @@ const UserProfileModal = ({ userId, isOpen, onClose, onRefresh }: UserProfileMod
                       type="number"
                       min="0"
                       max="50"
-                      value={getFieldValue('years_of_experience') || ''}
+                      value={(getFieldValue('years_of_experience') as number) || ''}
                       onChange={(e) => handleFieldChange('years_of_experience', parseInt(e.target.value) || null)}
                       placeholder="e.g., 5"
                     />
@@ -367,7 +367,7 @@ const UserProfileModal = ({ userId, isOpen, onClose, onRefresh }: UserProfileMod
                   <Label htmlFor="career_status">Career Status</Label>
                   {isEditing ? (
                     <Select
-                      value={getFieldValue('career_status') || 'not_specified'}
+                      value={(getFieldValue('career_status') as CareerStatus) || 'not_specified'}
                       onValueChange={(value) => handleFieldChange('career_status', value as CareerStatus)}
                     >
                       <SelectTrigger>
@@ -394,7 +394,7 @@ const UserProfileModal = ({ userId, isOpen, onClose, onRefresh }: UserProfileMod
                 {isEditing ? (
                   <Textarea
                     id="bio"
-                    value={getFieldValue('bio') || ''}
+                    value={(getFieldValue('bio') as string) || ''}
                     onChange={(e) => handleFieldChange('bio', e.target.value)}
                     placeholder="Tell us about yourself..."
                     rows={3}
@@ -422,7 +422,7 @@ const UserProfileModal = ({ userId, isOpen, onClose, onRefresh }: UserProfileMod
                     <Input
                       id="portfolio_url"
                       type="url"
-                      value={getFieldValue('portfolio_url') || ''}
+                      value={(getFieldValue('portfolio_url') as string) || ''}
                       onChange={(e) => handleFieldChange('portfolio_url', e.target.value)}
                       placeholder="https://yourportfolio.com"
                     />
@@ -451,7 +451,7 @@ const UserProfileModal = ({ userId, isOpen, onClose, onRefresh }: UserProfileMod
                     <Input
                       id="linkedin_url"
                       type="url"
-                      value={getFieldValue('linkedin_url') || ''}
+                      value={(getFieldValue('linkedin_url') as string) || ''}
                       onChange={(e) => handleFieldChange('linkedin_url', e.target.value)}
                       placeholder="https://linkedin.com/in/username"
                     />
@@ -480,7 +480,7 @@ const UserProfileModal = ({ userId, isOpen, onClose, onRefresh }: UserProfileMod
                     <Input
                       id="resume_url"
                       type="url"
-                      value={getFieldValue('resume_url') || ''}
+                      value={(getFieldValue('resume_url') as string) || ''}
                       onChange={(e) => handleFieldChange('resume_url', e.target.value)}
                       placeholder="https://drive.google.com/..."
                     />
@@ -560,7 +560,7 @@ const UserProfileModal = ({ userId, isOpen, onClose, onRefresh }: UserProfileMod
                 {isEditing ? (
                   <Textarea
                     id="admin_notes"
-                    value={getFieldValue('admin_notes') || ''}
+                    value={(getFieldValue('admin_notes') as string) || ''}
                     onChange={(e) => handleFieldChange('admin_notes', e.target.value)}
                     placeholder="Add internal notes about this user..."
                     rows={3}

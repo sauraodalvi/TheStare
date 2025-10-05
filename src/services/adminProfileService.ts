@@ -210,7 +210,16 @@ export class AdminProfileService {
         throw new Error(`Failed to update user profile: ${error.message}`);
       }
 
-      return data;
+      // Normalize subscription_type for the return value
+      const stVal = (data as any)?.subscription_type;
+      const isPaid = typeof stVal === 'number'
+        ? stVal === 1
+        : (typeof stVal === 'string' && stVal.toLowerCase().trim() === 'paid');
+
+      return {
+        ...(data as any),
+        subscription_type: isPaid ? 'paid' : 'free',
+      } as UserProfile;
     } catch (error) {
       console.error('AdminProfileService.updateUserProfile error:', error);
       throw error;

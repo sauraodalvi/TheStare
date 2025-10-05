@@ -36,6 +36,7 @@ const createUnsafeFallback = () => {
 // Create admin client when configured; otherwise export safe fallback
 export const supabaseAdmin = isAdminConfigured()
   ? (() => {
+      const supabaseUrl = 'https://rnpxnaqfoqdivxrlozfr.supabase.co';
       // Create a proxy that adds admin methods to the existing client
       return new Proxy(supabase, {
         get(target, prop) {
@@ -43,7 +44,7 @@ export const supabaseAdmin = isAdminConfigured()
           if (prop === 'auth') {
             return {
               ...target.auth,
-              admin: createClient(supabase.supabaseUrl, supabaseServiceRoleKey!, {
+              admin: createClient(supabaseUrl, supabaseServiceRoleKey!, {
                 auth: {
                   autoRefreshToken: false,
                   persistSession: false,

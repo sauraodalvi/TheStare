@@ -109,37 +109,6 @@ USING (profile_visibility = 'public' AND is_blocked = FALSE);`;
     setMigrationMessage('');
 
     try {
-      // Step 1: Create the profiles table
-      console.log('Creating profiles table...');
-      const { error: tableError } = await supabase.rpc('exec_sql', { 
-        sql: createProfilesTableSQL 
-      });
-
-      if (tableError) {
-        // Try alternative approach using direct SQL execution
-        const { error: directError } = await supabase
-          .from('profiles')
-          .select('id')
-          .limit(1);
-
-        if (directError && directError.code === '42P01') {
-          // Table doesn't exist, we need to create it manually
-          throw new Error('Profiles table needs to be created manually in Supabase SQL Editor');
-        }
-      }
-
-      // Step 2: Create indexes
-      console.log('Creating indexes...');
-      await supabase.rpc('exec_sql', { sql: createIndexesSQL });
-
-      // Step 3: Enable RLS
-      console.log('Enabling Row Level Security...');
-      await supabase.rpc('exec_sql', { sql: enableRLSSQL });
-
-      // Step 4: Create policies
-      console.log('Creating RLS policies...');
-      await supabase.rpc('exec_sql', { sql: createPoliciesSQL });
-
       // Test if the table exists and is accessible
       const { data, error: testError } = await supabase
         .from('profiles')

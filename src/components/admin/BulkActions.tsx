@@ -180,9 +180,6 @@ const BulkActions = ({ users, selectedUsers, onSelectionChange, onRefresh }: Bul
               <div className="flex items-center gap-2">
                 <Checkbox
                   checked={allSelected}
-                  ref={(el) => {
-                    if (el) el.indeterminate = someSelected;
-                  }}
                   onCheckedChange={handleSelectAll}
                 />
                 <span className="text-sm font-medium">
