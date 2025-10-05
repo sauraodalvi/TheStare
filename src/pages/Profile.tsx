@@ -172,10 +172,12 @@ const Profile = () => {
                 />
               </div>
               
-              <LicenseVerification 
-                profile={profile} 
-                onVerificationSuccess={fetchProfile}
-              />
+              <div className="w-full max-w-3xl mx-auto">
+                <LicenseVerification 
+                  profile={profile} 
+                  onVerificationSuccess={fetchProfile}
+                />
+              </div>
             </>
           ) : (
             <div className="text-center py-12 bg-background rounded-lg border border-border">

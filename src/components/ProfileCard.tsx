@@ -35,6 +35,7 @@ const calculateCompletionPercentage = (profile: UserProfile) => {
 const ProfileCard = ({ profile, onEdit }: ProfileCardProps) => {
   const navigate = useNavigate();
   const completionPercentage = calculateCompletionPercentage(profile);
+  const isPaid = (profile.subscription_type as any) === 1 || profile.subscription_type === 'paid';
   
   const getInitials = (name: string) => {
     if (!name) return 'U';
@@ -205,8 +206,8 @@ const ProfileCard = ({ profile, onEdit }: ProfileCardProps) => {
         <div className="pt-2">
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
-              <Badge variant={profile.subscription_type === 'paid' ? 'default' : 'outline'} className="text-sm">
-                {profile.subscription_type === 'paid' ? (
+              <Badge variant={isPaid ? 'default' : 'outline'} className="text-sm">
+                {isPaid ? (
                   <span className="flex items-center gap-1">
                     <Crown className="h-3.5 w-3.5 mr-1" />
                     Premium Member
@@ -214,36 +215,36 @@ const ProfileCard = ({ profile, onEdit }: ProfileCardProps) => {
                 ) : 'Free Plan'}
               </Badge>
               
-              {profile.subscription_type === 'paid' && profile.subscription_end_date && (
+              {isPaid && profile.subscription_end_date && (
                 <span className="text-xs text-muted-foreground">
                   Renews on {formatSubscriptionDate(profile.subscription_end_date)}
                 </span>
               )}
             </div>
             
-            {profile.subscription_type === 'paid' ? (
-              <div className="space-y-2">
+              {isPaid ? (
+                <div className="space-y-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full justify-between"
+                    onClick={handleUpgradeClick}
+                  >
+                    <span>Extend Subscription</span>
+                    <ArrowUpRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
                 <Button 
-                  variant="outline" 
+                  variant="default" 
                   size="sm" 
-                  className="w-full justify-between"
+                  className="w-full gap-2"
                   onClick={handleUpgradeClick}
                 >
-                  <span>Extend Subscription</span>
-                  <ArrowUpRight className="h-4 w-4" />
+                  <Crown className="h-4 w-4" />
+                  Upgrade to Premium
                 </Button>
-              </div>
-            ) : (
-              <Button 
-                variant="default" 
-                size="sm" 
-                className="w-full gap-2"
-                onClick={handleUpgradeClick}
-              >
-                <Crown className="h-4 w-4" />
-                Upgrade to Premium
-              </Button>
-            )}
+              )}
           </div>
         </div>
       </CardContent>

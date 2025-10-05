@@ -83,7 +83,7 @@ export default function LicenseVerification({ profile, onVerificationSuccess }: 
   const hasActiveLicense = isPaidUser && profile.license_key;
 
   return (
-    <Card>
+    <Card className="w-full max-w-3xl mx-auto border-border">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
