@@ -83,7 +83,7 @@ export const updateSubscriptionFromGumroad = async (
   const { error } = await supabase
     .from('profiles')
     .update({
-      subscription_type: isActive ? 'paid' : 'free',
+      subscription_type: (isActive ? 1 : 0) as any,
       subscription_start_date: isActive ? startDate.toISOString() : null,
       subscription_end_date: isActive ? endDate.toISOString() : null,
       subscription_updated_at: new Date().toISOString(),
@@ -92,8 +92,11 @@ export const updateSubscriptionFromGumroad = async (
       gumroad_sale_id: gumroadData.sale_id,
       product_id: gumroadData.product_id,
       subscription_status: isActive ? 'active' : 'inactive',
+      has_license: isActive,
     })
     .eq('id', userId);
+
+  console.log('Subscription updated:', { userId, isActive, error });
 
   return { error };
 };
@@ -107,10 +110,11 @@ export const checkLicenseExpiry = async (userId: string, licenseKey: string) => 
     await supabase
       .from('profiles')
       .update({
-        subscription_type: 'free',
+        subscription_type: 0 as any,
         subscription_end_date: null,
         license_key: null,
         subscription_status: 'expired',
+        has_license: false,
       })
       .eq('id', userId);
     
@@ -129,10 +133,11 @@ export const checkLicenseExpiry = async (userId: string, licenseKey: string) => 
     await supabase
       .from('profiles')
       .update({
-        subscription_type: 'free',
+        subscription_type: 0 as any,
         subscription_end_date: null,
         license_key: null,
         subscription_status: 'expired',
+        has_license: false,
       })
       .eq('id', userId);
     

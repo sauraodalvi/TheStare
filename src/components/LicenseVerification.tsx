@@ -30,9 +30,11 @@ export default function LicenseVerification({ profile, onVerificationSuccess }: 
     }
 
     setIsVerifying(true);
+    console.log('Verifying license:', licenseKey);
 
     try {
       const result = await verifyGumroadLicense(licenseKey);
+      console.log('Verification result:', result);
 
       if (result.success && result.purchase) {
         // Update subscription in Supabase
@@ -77,7 +79,7 @@ export default function LicenseVerification({ profile, onVerificationSuccess }: 
     }
   };
 
-  const isPaidUser = profile.subscription_type === 'paid';
+  const isPaidUser = (profile.subscription_type as any) === 1 || profile.subscription_type === 'paid';
   const hasActiveLicense = isPaidUser && profile.license_key;
 
   return (
