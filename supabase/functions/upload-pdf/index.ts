@@ -1,3 +1,4 @@
+import "https://deno.land/x/xhr@0.4.0/mod.ts"
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
 const corsHeaders = {
@@ -22,17 +23,29 @@ serve(async (req) => {
 
     const formData = await req.formData()
     const file = formData.get('file') as File
-    const fileType = formData.get('type') as string // 'pdf' or 'logo'
+    const fileType = (formData.get('type') as string) || '' // 'pdf' or 'logo'
+    const fileInfo = file ? { name: file.name, type: file.type, size: file.size } : null
+    console.log('upload-pdf request received', { fileType, fileInfo })
 
     if (!file) {
-      return new Response('No file provided', { status: 400, headers: corsHeaders })
+      return new Response(
+        JSON.stringify({ error: 'no_file', message: 'No file provided' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
-    // Get Google Service Account credentials from secrets
-    const serviceAccountJson = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_JSON')
+    // Get Google Service Account credentials from secrets (support two env names)
+    const serviceAccountJson = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_JSON') ?? Deno.env.get('GOOGLE_SERVICE_ACCOUNT_KEY')
     if (!serviceAccountJson) {
-      console.error('Google Service Account JSON not found in environment')
-      return new Response('Service account not configured', { status: 500, headers: corsHeaders })
+      console.error('Google Service Account JSON not found in environment (checked GOOGLE_SERVICE_ACCOUNT_JSON and GOOGLE_SERVICE_ACCOUNT_KEY)')
+      return new Response(
+        JSON.stringify({
+          error: 'missing_service_account',
+          message: 'Service account not configured',
+          details: 'Set GOOGLE_SERVICE_ACCOUNT_JSON or GOOGLE_SERVICE_ACCOUNT_KEY'
+        }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
     const serviceAccount = JSON.parse(serviceAccountJson)
@@ -124,6 +137,7 @@ serve(async (req) => {
     const isPdf = fileType === 'pdf' || file.type === 'application/pdf'
     const folderId = isPdf ? GOOGLE_DRIVE_PDF_FOLDER : GOOGLE_DRIVE_LOGO_FOLDER
     const fileName = isPdf ? `case-study-${Date.now()}.pdf` : `logo-${Date.now()}-${file.name}`
+    console.log('upload target resolved', { isPdf, folderId, fileName })
 
     const metadata = {
       name: fileName,
@@ -165,6 +179,9 @@ serve(async (req) => {
     const uploadData = await uploadResponse.json()
     const fileId = uploadData.id
 
+    // Optional permission warning collection
+    let permissionWarning: string | undefined = undefined
+
     // Make file public (also add supportsAllDrives)
     const permissionResponse = await fetch(
       `https://www.googleapis.com/drive/v3/files/${fileId}/permissions?supportsAllDrives=true`,
@@ -184,16 +201,24 @@ serve(async (req) => {
     if (!permissionResponse.ok) {
       const permError = await permissionResponse.text()
       console.error('Failed to set permissions:', permError)
+      permissionWarning = permError
     }
 
     const shareUrl = `https://drive.google.com/file/d/${fileId}/view`
 
-    return new Response(JSON.stringify({ shareUrl }), {
+    return new Response(JSON.stringify({ shareUrl, permissionWarning }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
 
   } catch (error) {
-    console.error('Error uploading file:', error)
-    return new Response('Internal server error', { status: 500, headers: corsHeaders })
+    console.error('Error uploading file:', (error as any)?.message ?? error, (error as any)?.stack)
+    return new Response(
+      JSON.stringify({
+        error: 'internal_error',
+        message: 'Internal server error',
+        details: String((error as any)?.message ?? error)
+      }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
   }
 })
