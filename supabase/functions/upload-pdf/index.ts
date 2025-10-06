@@ -104,7 +104,14 @@ serve(async (req) => {
     if (!tokenResponse.ok) {
       const errorText = await tokenResponse.text()
       console.error('Failed to get access token:', errorText)
-      return new Response('Failed to authenticate with Google', { status: 500, headers: corsHeaders })
+      return new Response(
+        JSON.stringify({
+          error: 'google_auth_failed',
+          message: 'Failed to authenticate with Google',
+          details: errorText,
+        }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
     const tokenData = await tokenResponse.json()
@@ -141,8 +148,18 @@ serve(async (req) => {
 
     if (!uploadResponse.ok) {
       const errorText = await uploadResponse.text()
-      console.error('Failed to upload to Drive:', errorText)
-      return new Response('Failed to upload to Google Drive', { status: 500, headers: corsHeaders })
+      console.error('Failed to upload to Drive:', { errorText, folderId, fileType, fileName })
+      return new Response(
+        JSON.stringify({
+          error: 'google_upload_failed',
+          message: 'Failed to upload to Google Drive',
+          details: errorText,
+          folderId,
+          fileType,
+          fileName,
+        }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
     const uploadData = await uploadResponse.json()
