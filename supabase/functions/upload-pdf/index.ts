@@ -49,9 +49,11 @@ serve(async (req) => {
       iat: now
     }
 
-    // Encode JWT (simplified - in production use a proper JWT library)
-    const encodedHeader = btoa(JSON.stringify(header))
-    const encodedPayload = btoa(JSON.stringify(payload))
+    // Encode JWT (base64url as required by Google OAuth)
+    const toBase64Url = (input: string) =>
+      btoa(input).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+/g, '');
+    const encodedHeader = toBase64Url(JSON.stringify(header))
+    const encodedPayload = toBase64Url(JSON.stringify(payload))
     const unsignedToken = `${encodedHeader}.${encodedPayload}`
 
     // Import private key
