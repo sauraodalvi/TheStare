@@ -47,7 +47,7 @@ const ProfileCard = ({ profile, onEdit }: ProfileCardProps) => {
   };
   
   const handleUpgradeClick = () => {
-    navigate('/checkout');
+    navigate('/pricing');
   };
   
   const formatSubscriptionDate = (dateString?: string | null) => {

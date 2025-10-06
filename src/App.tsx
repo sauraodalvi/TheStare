@@ -22,7 +22,7 @@ import Courses from "./pages/Courses";
 import Resume from "./pages/Resume";
 import CaseStudyReview from "./pages/CaseStudyReview";
 import Profile from "./pages/Profile";
-import Checkout from "./pages/Checkout";
+
 import PDFTestComponent from "./components/PDFTestComponent";
 
 const App: React.FC = () => {
@@ -64,7 +64,6 @@ const App: React.FC = () => {
                 <Route path="/sign-up" element={<SignUp />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/profile" element={<Profile />} />
-                <Route path="/checkout" element={<Checkout />} />
                 <Route path="/test-pdf" element={<PDFTestComponent />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

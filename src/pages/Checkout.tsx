@@ -18,7 +18,7 @@ const Checkout = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate('/sign-in?redirect=/checkout');
+      navigate('/sign-in?redirect=/pricing');
     }
   }, [user, navigate]);
 

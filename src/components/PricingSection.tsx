@@ -160,14 +160,14 @@ const PricingSection = () => {
                 </li>
               </ul>
             </CardContent>
-            <CardFooter className="px-8 pb-8 pt-0">
+            <CardFooter className="px-8 pb-8 pt-0 flex flex-col gap-3">
               <Button 
                 onClick={handlePaidPlanClick}
                 className="w-full bg-stare-teal hover:bg-stare-teal/90"
               >
                 Upgrade Now
               </Button>
-              <p className="text-xs text-muted-foreground text-center mt-3">
+              <p className="text-xs text-muted-foreground text-center">
                 After purchasing, your license will be verified automatically or you can enter your license key in your profile.
               </p>
             </CardFooter>
