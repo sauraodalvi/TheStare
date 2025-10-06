@@ -5,10 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Upload, Loader2, Building } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { GoogleDriveService } from '@/services/googleDriveService';
 import FilterDropdown from './FilterDropdown';
 
 interface CaseStudySubmissionModalProps {
@@ -22,11 +22,10 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
     name: '',
     company: '',
     creators_tag: '',
+    organizer: '',
     category: [] as string[],
-    market: [] as string[],
-    objective: [] as string[],
-    type: [] as string[],
-    sort_order: '0'
+    market: '',
+    objective: [] as string[]
   });
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -35,10 +34,10 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const categories = ['Marketing', 'Sales', 'Finance', 'Technology', 'HR', 'Operations', 'Design', 'Strategy', 'E-commerce', 'Product'];
-  const markets = ['B2B', 'B2C', 'E-commerce', 'SaaS', 'Healthcare', 'Education', 'Finance', 'Real Estate', 'Fintech', 'EdTech'];
-  const objectives = ['Lead Generation', 'Brand Awareness', 'Customer Retention', 'Cost Reduction', 'Revenue Growth', 'Process Improvement', 'User Engagement', 'Market Expansion'];
-  const types = ['Website', 'App', 'Campaign', 'Branding', 'Digital', 'Print', 'Strategy', 'UX/UI'];
+  const categories = ['Dating', 'Social Media', 'SaaS', 'E-commerce', 'Finance', 'Healthcare', 'Education', 'Entertainment', 'Productivity', 'Travel'];
+  const markets = ['B2C', 'B2B', 'B2B,B2C'];
+  const objectives = ['Onboarding', 'Retention', 'Marketing', 'Growth', 'User Engagement', 'Monetization', 'Product Development'];
+  const organizers = ['NextLeap', 'Producthood', 'PMSchool', 'TPF', 'Others', 'Self'];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -103,16 +102,12 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
       toast.error('Please select at least one category');
       return false;
     }
-    if (formData.market.length === 0) {
-      toast.error('Please select at least one market');
+    if (!formData.market) {
+      toast.error('Please select a market');
       return false;
     }
     if (formData.objective.length === 0) {
       toast.error('Please select at least one objective');
-      return false;
-    }
-    if (formData.type.length === 0) {
-      toast.error('Please select at least one type');
       return false;
     }
     if (!logoFile) {
@@ -156,18 +151,17 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
           name: formData.name,
           creators_tag: formData.creators_tag,
           company: formData.company,
+          organizer: formData.organizer || null,
           google_drive_logo_path: logoUrl,
           google_drive_logo_thumbnail: logoUrl,
           google_drive_pdf_path: pdfUrl,
           category: formData.category.join(', '),
-          market: formData.market[0] || '',
+          market: formData.market,
           objective: formData.objective.join(', '),
-          type: formData.type.join(', '),
-          sort_order: parseInt(formData.sort_order) || 0,
-          publish: true,
+          publish: false,
           free: false,
-          seo_index: true,
-          plan: 1,
+          seo_index: false,
+          plan: 0,
           likes: 0
         });
 
@@ -183,12 +177,11 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
       setFormData({ 
         name: '', 
         creators_tag: '', 
-        company: '', 
+        company: '',
+        organizer: '',
         category: [], 
-        market: [], 
-        objective: [],
-        type: [],
-        sort_order: '0'
+        market: '', 
+        objective: []
       });
       setLogoFile(null);
       setLogoPreview(null);
@@ -238,32 +231,31 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
 
           {/* Name */}
           <div>
-            <Label htmlFor="name" className="text-sm font-medium">Name *</Label>
+            <Label htmlFor="name" className="text-sm font-medium">Title of Case Study *</Label>
             <Input
               id="name"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              placeholder="Enter case study name"
+              placeholder="e.g., Bumble's onboarding journey"
               required
               disabled={isSubmitting}
               className="mt-1"
             />
           </div>
 
-          {/* Creator Tag */}
+          {/* Objective Multi-Select */}
           <div>
-            <Label htmlFor="creators_tag" className="text-sm font-medium">Creator Name *</Label>
-            <Input
-              id="creators_tag"
-              name="creators_tag"
-              value={formData.creators_tag}
-              onChange={handleInputChange}
-              placeholder="Your name"
-              required
-              disabled={isSubmitting}
-              className="mt-1"
-            />
+            <Label className="text-sm font-medium">Objective *</Label>
+            <div className="mt-1">
+              <FilterDropdown
+                title="Select Objectives"
+                options={objectives}
+                selectedOptions={formData.objective}
+                onSelectionChange={(objectives) => setFormData(prev => ({ ...prev, objective: objectives }))}
+                placeholder="Search objectives..."
+              />
+            </div>
           </div>
 
           {/* Company Name */}
@@ -274,7 +266,7 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
               name="company"
               value={formData.company}
               onChange={handleInputChange}
-              placeholder="Company name"
+              placeholder="e.g., Bumble"
               required
               disabled={isSubmitting}
               className="mt-1"
@@ -295,58 +287,58 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
             </div>
           </div>
 
-          {/* Market Multi-Select */}
+          {/* Market Dropdown (Single Select) */}
           <div>
-            <Label className="text-sm font-medium">Market *</Label>
-            <div className="mt-1">
-              <FilterDropdown
-                title="Select Markets"
-                options={markets}
-                selectedOptions={formData.market}
-                onSelectionChange={(markets) => setFormData(prev => ({ ...prev, market: markets }))}
-                placeholder="Search markets..."
-              />
-            </div>
+            <Label htmlFor="market" className="text-sm font-medium">Market *</Label>
+            <Select
+              value={formData.market}
+              onValueChange={(value) => setFormData(prev => ({ ...prev, market: value }))}
+              disabled={isSubmitting}
+            >
+              <SelectTrigger className="mt-1">
+                <SelectValue placeholder="Select market type" />
+              </SelectTrigger>
+              <SelectContent>
+                {markets.map((market) => (
+                  <SelectItem key={market} value={market}>
+                    {market}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* Objective Multi-Select */}
+          {/* Organizer Dropdown (Optional) */}
           <div>
-            <Label className="text-sm font-medium">Objective *</Label>
-            <div className="mt-1">
-              <FilterDropdown
-                title="Select Objectives"
-                options={objectives}
-                selectedOptions={formData.objective}
-                onSelectionChange={(objectives) => setFormData(prev => ({ ...prev, objective: objectives }))}
-                placeholder="Search objectives..."
-              />
-            </div>
+            <Label htmlFor="organizer" className="text-sm font-medium">Organizer (Optional)</Label>
+            <Select
+              value={formData.organizer}
+              onValueChange={(value) => setFormData(prev => ({ ...prev, organizer: value }))}
+              disabled={isSubmitting}
+            >
+              <SelectTrigger className="mt-1">
+                <SelectValue placeholder="Select organizer" />
+              </SelectTrigger>
+              <SelectContent>
+                {organizers.map((organizer) => (
+                  <SelectItem key={organizer} value={organizer}>
+                    {organizer}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* Type Multi-Select */}
+          {/* Creator Tag */}
           <div>
-            <Label className="text-sm font-medium">Type *</Label>
-            <div className="mt-1">
-              <FilterDropdown
-                title="Select Types"
-                options={types}
-                selectedOptions={formData.type}
-                onSelectionChange={(types) => setFormData(prev => ({ ...prev, type: types }))}
-                placeholder="Search types..."
-              />
-            </div>
-          </div>
-
-          {/* Sort Order */}
-          <div>
-            <Label htmlFor="sort_order" className="text-sm font-medium">Sort Order</Label>
+            <Label htmlFor="creators_tag" className="text-sm font-medium">Creator Name *</Label>
             <Input
-              id="sort_order"
-              name="sort_order"
-              type="number"
-              value={formData.sort_order}
+              id="creators_tag"
+              name="creators_tag"
+              value={formData.creators_tag}
               onChange={handleInputChange}
-              placeholder="0"
+              placeholder="e.g., Arpit Agrawal"
+              required
               disabled={isSubmitting}
               className="mt-1"
             />
