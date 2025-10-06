@@ -49,6 +49,7 @@ serve(async (req) => {
     }
 
     const serviceAccount = JSON.parse(serviceAccountJson)
+    console.log('Using service account', { client_email: serviceAccount?.client_email })
     
     // Create JWT for Google OAuth
     const header = {
@@ -59,7 +60,7 @@ serve(async (req) => {
     const now = Math.floor(Date.now() / 1000)
     const payload = {
       iss: serviceAccount.client_email,
-      scope: 'https://www.googleapis.com/auth/drive.file',
+      scope: 'https://www.googleapis.com/auth/drive',
       aud: 'https://oauth2.googleapis.com/token',
       exp: now + 3600,
       iat: now
@@ -162,17 +163,27 @@ serve(async (req) => {
 
     if (!uploadResponse.ok) {
       const errorText = await uploadResponse.text()
-      console.error('Failed to upload to Drive:', { errorText, folderId, fileType, fileName })
+      let parsed: any = undefined
+      try { parsed = JSON.parse(errorText) } catch {}
+      const reason = parsed?.error?.errors?.[0]?.reason || parsed?.error?.status
+      const message = parsed?.error?.message || 'Failed to upload to Google Drive'
+      const status = reason === 'storageQuotaExceeded' ? 400 : 500
+      const help = reason === 'storageQuotaExceeded'
+        ? 'Service Accounts have no storage quota. Move target folders into a Shared Drive and grant the service account Content Manager, then update folder IDs.'
+        : undefined
+      console.error('Failed to upload to Drive:', { errorText, reason, folderId, fileType, fileName })
       return new Response(
         JSON.stringify({
           error: 'google_upload_failed',
-          message: 'Failed to upload to Google Drive',
+          message,
+          reason,
           details: errorText,
+          help,
           folderId,
           fileType,
           fileName,
         }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
