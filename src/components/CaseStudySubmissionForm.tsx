@@ -44,19 +44,29 @@ const CaseStudySubmissionForm = () => {
     }
   };
 
-  const uploadLogo = async (file: File): Promise<string> => {
-    const fileName = `${Date.now()}-${file.name}`;
-    const { data, error } = await supabase.storage
-      .from('company-logos')
-      .upload(fileName, file);
+  const uploadToGoogleDrive = async (file: File, type: 'pdf' | 'logo'): Promise<string> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
 
-    if (error) throw error;
+    const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-pdf`;
+    const headers = {
+      'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+    };
 
-    const { data: urlData } = supabase.storage
-      .from('company-logos')
-      .getPublicUrl(data.path);
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
 
-    return urlData.publicUrl;
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to upload file to Google Drive');
+    }
+
+    const result = await response.json();
+    return result.shareUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,13 +85,13 @@ const CaseStudySubmissionForm = () => {
     setIsSubmitting(true);
     
     try {
-      // Upload logo to Supabase Storage
-      const logoUrl = await uploadLogo(logoFile);
-      
-      // Upload PDF to Google Drive
-      const pdfUrl = await GoogleDriveService.uploadPDF(pdfFile);
-      
-      // Save to database using the case_studies table
+      toast.info('Uploading logo to Google Drive...');
+      const logoUrl = await uploadToGoogleDrive(logoFile, 'logo');
+
+      toast.info('Uploading PDF to Google Drive...');
+      const pdfUrl = await uploadToGoogleDrive(pdfFile, 'pdf');
+
+      toast.info('Saving case study to database...');
       const { error: insertError } = await supabase
         .from('case_studies')
         .insert({
@@ -90,27 +100,25 @@ const CaseStudySubmissionForm = () => {
           company: formData.company,
           google_drive_logo_path: logoUrl,
           google_drive_pdf_path: pdfUrl,
-          free: true, // Default to free (lowercase)
-          likes: 0, // Default to 0 likes
-          publish: true // Boolean value
+          free: true,
+          likes: 0,
+          publish: true
         });
 
       if (insertError) throw insertError;
 
       toast.success('Case study submitted successfully!');
-      
-      // Reset form
+
       setFormData({ title: '', creator: '', company: '' });
       setLogoFile(null);
       setPdfFile(null);
-      
-      // Reset file inputs
+
       const fileInputs = document.querySelectorAll('input[type="file"]') as NodeListOf<HTMLInputElement>;
       fileInputs.forEach(input => input.value = '');
-      
+
     } catch (error) {
       console.error('Error submitting case study:', error);
-      toast.error('Failed to submit case study. Please try again.');
+      toast.error(error instanceof Error ? error.message : 'Failed to submit case study. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

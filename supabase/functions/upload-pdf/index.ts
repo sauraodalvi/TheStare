@@ -1,19 +1,20 @@
-import "https://deno.land/x/xhr@0.4.0/mod.ts"
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
+};
 
-// Google Drive folder IDs (must be in a Shared Drive, not My Drive)
 const GOOGLE_DRIVE_LOGO_FOLDER = '1eruGLtCGGu3PeXrFqKYPMB_tg4KgsXOC'
 const GOOGLE_DRIVE_PDF_FOLDER = '1NedyZm9HIJqKZGmY19zReyysSvZtgPE6'
 
-serve(async (req) => {
-  // Handle CORS preflight requests
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, {
+      status: 200,
+      headers: corsHeaders,
+    });
   }
 
   try {
@@ -218,6 +219,7 @@ serve(async (req) => {
     const shareUrl = `https://drive.google.com/file/d/${fileId}/view`
 
     return new Response(JSON.stringify({ shareUrl, permissionWarning }), {
+      status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
 
