@@ -74,15 +74,26 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
     formData.append('file', file);
     formData.append('type', type);
 
-    const response = await supabase.functions.invoke('upload-pdf', {
+    const { data: { session } } = await supabase.auth.getSession();
+    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+
+    const response = await fetch(`${supabaseUrl}/functions/v1/upload-pdf`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${session?.access_token || anonKey}`,
+      },
       body: formData,
     });
 
-    if (response.error) {
-      throw new Error(`Failed to upload ${type}: ${response.error.message}`);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.message || errorData.error || `Failed to upload ${type}`;
+      throw new Error(errorMessage);
     }
 
-    return response.data.shareUrl;
+    const data = await response.json();
+    return data.shareUrl;
   };
 
   const validateForm = () => {
