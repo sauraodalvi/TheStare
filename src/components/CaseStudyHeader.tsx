@@ -1,8 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
+import AddYourWorkModal from './AddYourWorkModal';
 import { Plus, Search } from 'lucide-react';
 import FilterDropdown from './FilterDropdown';
 import SortDropdown from './SortDropdown';
@@ -49,8 +49,15 @@ const CaseStudyHeader = ({
   onSortChange,
   onSubmitClick
 }: CaseStudyHeaderProps) => {
+  const [isAddWorkModalOpen, setIsAddWorkModalOpen] = useState(false);
   return (
     <div className="space-y-6">
+      {/* Add Your Work Modal */}
+      <AddYourWorkModal 
+        isOpen={isAddWorkModalOpen} 
+        onClose={() => setIsAddWorkModalOpen(false)} 
+      />
+
       {/* Full Width Search Bar */}
       <div className="relative w-full">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -101,13 +108,15 @@ const CaseStudyHeader = ({
         </div>
 
         {/* Right side - Sorting and Submit */}
-        <div className="flex items-center gap-3 shrink-0">
-          <SortDropdown value={sortBy} onChange={onSortChange} />
+        <div className="flex items-center gap-3 w-full sm:w-auto mt-3 sm:mt-0">
+          <div className="w-full sm:w-auto">
+            <SortDropdown value={sortBy} onChange={onSortChange} />
+          </div>
           
           <Button 
-            onClick={onSubmitClick}
+            onClick={() => setIsAddWorkModalOpen(true)}
             variant="brand"
-            className="whitespace-nowrap"
+            className="w-full sm:w-auto whitespace-nowrap"
           >
             <Plus className="mr-2 h-4 w-4" />
             Submit Case Study

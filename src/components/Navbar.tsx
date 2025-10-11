@@ -83,7 +83,9 @@ const Navbar = () => {
         <NavigationMenu className="hidden md:flex">
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent">Resources</NavigationMenuTrigger>
+              <NavigationMenuTrigger className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 bg-transparent hover:bg-muted/50 focus:bg-transparent data-[state=open]:bg-transparent">
+                Resources
+              </NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                   <li className="row-span-3">
