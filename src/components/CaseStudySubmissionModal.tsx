@@ -88,8 +88,10 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      console.error('Edge function error:', errorData);
       const errorMessage = errorData.message || errorData.error || `Failed to upload ${type}`;
-      throw new Error(errorMessage);
+      const details = errorData.details ? `: ${errorData.details}` : '';
+      throw new Error(`${errorMessage}${details}`);
     }
 
     const data = await response.json();
