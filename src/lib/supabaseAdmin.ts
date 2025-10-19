@@ -36,7 +36,10 @@ const createUnsafeFallback = () => {
 // Create admin client when configured; otherwise export safe fallback
 export const supabaseAdmin = isAdminConfigured()
   ? (() => {
-      const supabaseUrl = 'https://rnpxnaqfoqdivxrlozfr.supabase.co';
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      if (!supabaseUrl) {
+        throw new Error('VITE_SUPABASE_URL is not defined in environment variables');
+      }
       // Create a proxy that adds admin methods to the existing client
       return new Proxy(supabase, {
         get(target, prop) {

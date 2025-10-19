@@ -1,0 +1,19 @@
+{
+  "name": "stare-security-scripts",
+  "version": "1.0.0",
+  "description": "Security configuration scripts for STARE application",
+  "main": "index.js",
+  "scripts": {
+    "configure-security": "ts-node scripts/configure-security.ts",
+    "setup-monitoring": "ts-node scripts/setup-monitoring.ts",
+    "apply-migrations": "supabase migration up",
+    "setup-all": "npm run apply-migrations && npm run configure-security && npm run setup-monitoring"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.21.0",
+    "dotenv": "^16.0.3",
+    "typescript": "^4.9.5",
+    "ts-node": "^10.9.1",
+    "@types/node": "^18.11.18"
+  }
+}

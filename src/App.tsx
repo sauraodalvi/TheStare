@@ -1,9 +1,9 @@
 
-import React, { useState } from "react";
+import React, { useState, Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/components/theme-provider";
 import Index from "./pages/Index";
@@ -11,7 +11,6 @@ import CaseStudies from "./pages/CaseStudies";
 import Resources from "./pages/Resources";
 import Participate from "./pages/Participate";
 import About from "./pages/About";
-import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -24,7 +23,19 @@ import CaseStudyReview from "./pages/CaseStudyReview";
 import Profile from "./pages/Profile";
 import AddYourWork from "./pages/AddYourWork";
 
+// Lazy load admin components
+const Admin = lazy(() => import("./pages/Admin"));
+const SecureAdminLayout = lazy(() => import("@/components/SecureAdminLayout"));
+const SecureAdminLogin = lazy(() => import("@/components/SecureAdminLogin"));
+
 import PDFTestComponent from "./components/PDFTestComponent";
+
+// Loading component for Suspense
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+  </div>
+);
 
 const App: React.FC = () => {
   // Create QueryClient inside the component to ensure proper React context
@@ -60,7 +71,27 @@ const App: React.FC = () => {
                 <Route path="/resources/resume" element={<Resume />} />
                 <Route path="/case-study-review" element={<CaseStudyReview />} />
                 <Route path="/about" element={<About />} />
-                <Route path="/admin" element={<Admin />} />
+                {/* Admin Routes */}
+                <Route path="/admin">
+                  <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                  <Route path="login" element={
+                    <Suspense fallback={<LoadingSpinner />}>
+                      <SecureAdminLogin onAuthenticated={() => window.location.href = '/admin/dashboard'} />
+                    </Suspense>
+                  } />
+                  <Route element={
+                    <Suspense fallback={<LoadingSpinner />}>
+                      <SecureAdminLayout />
+                    </Suspense>
+                  }>
+                    <Route path="dashboard" element={
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <Admin />
+                      </Suspense>
+                    } />
+                    {/* Add more secure admin routes here */}
+                  </Route>
+                </Route>
                 <Route path="/sign-in" element={<SignIn />} />
                 <Route path="/sign-up" element={<SignUp />} />
                 <Route path="/pricing" element={<Pricing />} />

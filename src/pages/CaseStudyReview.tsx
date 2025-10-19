@@ -11,53 +11,96 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { cn } from '@/lib/utils';
 
-const GEMINI_API_KEY_STORAGE_KEY = 'gemini_api_key';
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent';
+
+// Server-side API endpoint for Gemini API calls
+const GEMINI_API_ENDPOINT = '/api/gemini';
+
+interface GeminiResponse {
+  data: any;
+  error?: string;
+}
 
 const CaseStudyReview: React.FC = () => {
   const navigate = useNavigate();
-  const [apiKey, setApiKey] = useState('');
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [reviewData, setReviewData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const [rememberKey, setRememberKey] = useState(false);
-  
   const { toast } = useToast();
 
-  // Load API key from storage if available
-  useEffect(() => {
-    const storedKey = localStorage.getItem(GEMINI_API_KEY_STORAGE_KEY) || 
-                     sessionStorage.getItem(GEMINI_API_KEY_STORAGE_KEY);
-    
-    if (storedKey) {
-      setApiKey(storedKey);
-      verifyApiKey(storedKey);
+  // Get API key from environment variables
+  const getApiKey = (): string => {
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    if (!apiKey) {
+      console.error('Gemini API key is not configured');
+      toast({
+        title: 'Configuration Error',
+        description: 'Gemini API key is not configured. Please contact support.',
+        variant: 'destructive',
+      });
     }
-  }, []);
+    return apiKey || '';
+  };
 
-  const verifyApiKey = async (key: string) => {
-    setIsVerifying(true);
+  const processFile = async () => {
+    if (!selectedFile) return;
+    
+    setIsProcessing(true);
     setError(null);
     
     try {
-      // Mock verification for demo purposes
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Read file content as base64
+      const fileContent = await readFileAsBase64(selectedFile);
       
-      // Always verify for demo
-      setIsVerified(true);
-      if (rememberKey) {
-        localStorage.setItem(GEMINI_API_KEY_STORAGE_KEY, key);
-      } else {
-        sessionStorage.setItem(GEMINI_API_KEY_STORAGE_KEY, key);
+      // Call our secure API endpoint
+      const response = await fetch(GEMINI_API_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Add any authentication token if needed
+          // 'Authorization': `Bearer ${userToken}`
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: `Please review this case study and provide feedback:\n\n${fileContent}`
+                }
+              ]
+            }
+          ]
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to process file');
       }
-    } catch (err) {
-      setError('Failed to verify API key. Using demo mode.');
-      setIsVerified(true); // Still set as verified for demo purposes
+      
+      const data: GeminiResponse = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      setReviewData(data.data);
+      
+      toast({
+        title: 'Success',
+        description: 'Case study processed successfully!',
+      });
+    } catch (error) {
+      console.error('Error processing file:', error);
+      setError('Failed to process file. Please check your connection and try again.');
+      toast({
+        title: 'Processing Failed',
+        description: 'Could not process the file. Please check your configuration.',
+        variant: 'destructive',
+      });
     } finally {
-      setIsVerifying(false);
+      setIsProcessing(false);
     }
   };
 

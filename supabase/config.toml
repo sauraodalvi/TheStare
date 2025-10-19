@@ -1,4 +1,20 @@
 project_id = "rnpxnaqfoqdivxrlozfr"
 
+# Enable JWT verification for all functions by default
+[functions]
+verify_jwt = true
+
+# Configure the secure file upload function
+[functions.secure-upload]
+verify_jwt = true
+# Set a higher timeout for file uploads
+exec_timeout = 60  # 60 seconds
+
+# Configure the Xano API proxy
+[functions.xano-proxy]
+verify_jwt = true
+
+# Deprecated - will be removed after migration
 [functions.upload-pdf]
-verify_jwt = false
+verify_jwt = true
+enabled = false  # Disable the old endpoint

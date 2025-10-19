@@ -1,14 +1,16 @@
 
 import React, { useState } from 'react';
+import { Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Upload, Loader2, Building } from 'lucide-react';
+import { Upload, Loader2, X } from 'lucide-react';
+import { supabase } from '@/lib/supabaseClient';
+import { GoogleDriveService } from '@/services/googleDriveService';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 import FilterDropdown from './FilterDropdown';
 
 interface CaseStudySubmissionModalProps {
@@ -70,30 +72,14 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
   };
 
   const uploadFile = async (file: File, type: 'pdf' | 'logo'): Promise<string> => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('type', type);
-
-    const { data: { session } } = await supabase.auth.getSession();
-    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-
-    const response = await fetch(`${supabaseUrl}/functions/v1/upload-pdf`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${session?.access_token || anonKey}`,
-      },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.message || errorData.error || `Failed to upload ${type}`;
-      throw new Error(errorMessage);
+    try {
+      // Use the secure file upload service
+      const result = await GoogleDriveService.uploadFile(file, type);
+      return result; // Returns the file URL
+    } catch (error) {
+      console.error(`Failed to upload ${type}:`, error);
+      throw new Error(error instanceof Error ? error.message : `Failed to upload ${type}`);
     }
-
-    const data = await response.json();
-    return data.shareUrl;
   };
 
   const validateForm = () => {

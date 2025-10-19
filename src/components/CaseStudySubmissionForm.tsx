@@ -3,11 +3,11 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { GoogleDriveService } from '@/services/googleDriveService';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { GoogleDriveService } from '@/services/googleDriveService';
 
 const CaseStudySubmissionForm = () => {
   const [formData, setFormData] = useState({
@@ -45,28 +45,14 @@ const CaseStudySubmissionForm = () => {
   };
 
   const uploadToGoogleDrive = async (file: File, type: 'pdf' | 'logo'): Promise<string> => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('type', type);
-
-    const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-pdf`;
-    const headers = {
-      'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-    };
-
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers,
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to upload file to Google Drive');
+    try {
+      // Use the secure file upload service
+      const result = await GoogleDriveService.uploadFile(file, type);
+      return result; // Returns the file URL
+    } catch (error) {
+      console.error('File upload error:', error);
+      throw new Error(error instanceof Error ? error.message : 'Failed to upload file');
     }
-
-    const result = await response.json();
-    return result.shareUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
