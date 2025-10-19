@@ -1,4 +1,3 @@
-
 import React, { memo, useCallback, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +10,7 @@ interface CaseStudyCardProps {
   onClick: (caseStudy: CaseStudy) => void;
 }
 
-const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy, onClick }) => {
+const CaseStudyCard: React.FC<CaseStudyCardProps> = memo(({ caseStudy, onClick }) => {
   // Memoize the clean categories to prevent recalculation on every render
   const cleanCategories = useMemo(() => 
     (caseStudy.Category || [])
@@ -93,15 +92,8 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy, onClick }) => 
       </CardContent>
     </Card>
   );
-};
+});
 
-// Add display name for better debugging in React DevTools
 CaseStudyCard.displayName = 'CaseStudyCard';
 
-export default memo(CaseStudyCard, (prevProps, nextProps) => {
-  // Only re-render if caseStudy or onClick changes
-  return (
-    prevProps.caseStudy?.id === nextProps.caseStudy?.id &&
-    prevProps.onClick === nextProps.onClick
-  );
-});
+export default CaseStudyCard;

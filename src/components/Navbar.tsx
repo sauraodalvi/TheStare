@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronDown, User, LogOut } from 'lucide-react';
+import { Menu, User, ChevronRight, LogOut, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/hooks/useAuth';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -15,33 +16,23 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+
+interface NavItem {
+  title: string;
+  href: string;
+  description?: string;
+  external?: boolean;
+  onClick?: () => void;
+}
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const { user, signOut, loading } = useAuth();
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
-  // Debug authentication state
-  console.log('=== NAVBAR AUTH DEBUG ===');
-  console.log('User:', user);
-  console.log('Loading:', loading);
-  console.log('User email:', user?.email);
-  console.log('=== END NAVBAR AUTH DEBUG ===');
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleJoinNowClick = () => {
-    navigate('/pricing');
-  };
-  
-  const handleSignInClick = () => {
-    navigate('/sign-in');
-  };
-
-  const handleSignOutClick = async () => {
+  const handleSignOut = async () => {
     try {
       await signOut();
       toast.success('Signed out successfully');
@@ -54,16 +45,79 @@ const Navbar = () => {
   // Add scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 10);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Navigation items with descriptions for the desktop dropdown
+  const navItems: NavItem[] = [
+    { 
+      title: 'Case Studies', 
+      href: '/case-studies',
+      description: 'Real-world product management scenarios to learn from'
+    },
+    { 
+      title: 'Self Study', 
+      href: '/resources/self-study',
+      description: 'Books, courses, and resources for independent learning'
+    },
+    { 
+      title: 'Courses', 
+      href: '/resources/courses',
+      description: 'Free video courses and sessions from top PMs'
+    },
+    { 
+      title: 'Participate', 
+      href: '/resources/participate',
+      description: 'Join case challenges to build your portfolio'
+    },
+    { 
+      title: 'Portfolio', 
+      href: '/resources/portfolio',
+      description: 'Showcase your work effectively'
+    },
+    { 
+      title: 'Resume', 
+      href: '/resources/resume',
+      description: 'Real PM resumes and templates'
+    },
+    { 
+      title: 'Case Study Review', 
+      href: '/case-study-review',
+      description: 'Get AI-powered feedback on your case studies'
+    },
+    { 
+      title: 'About', 
+      href: '/about',
+      description: 'Learn more about our mission and team'
+    },
+    { 
+      title: 'Donate', 
+      href: 'https://saurao.gumroad.com/l/BuymeaCoffee', 
+      external: true 
+    },
+  ];
+
+  // Create a filtered list for the mobile menu (without descriptions)
+  const mobileNavItems = navItems.map(({ title, href, external, onClick }) => ({
+    title,
+    href,
+    external,
+    onClick
+  }));
+
+  // Add sign out if user is logged in
+  if (user) {
+    mobileNavItems.push({ 
+      title: 'Sign Out', 
+      href: '#', 
+      onClick: handleSignOut,
+      external: false
+    });
+  }
 
   return (
     <header className={cn(
@@ -72,141 +126,208 @@ const Navbar = () => {
         ? "bg-background/90 shadow-sm border-border/70" 
         : "bg-background/80 border-border/30"
     )}>
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="font-display font-bold text-2xl text-stare-navy">The<span className="text-stare-teal">Stare</span></span>
-          </Link>
+      <div className="container flex h-16 items-center justify-between px-4">
+        <Link to="/" className="flex items-center gap-2">
+          <span className="font-display font-bold text-2xl text-stare-navy">
+            The<span className="text-stare-teal">Stare</span>
+          </span>
+        </Link>
+
+        {/* Mobile Menu Button */}
+        <div className="md:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="md:hidden">
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Toggle menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[280px] sm:w-[350px]">
+              <SheetHeader>
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+              </SheetHeader>
+              <nav className="flex flex-col h-full py-6">
+                <div className="space-y-2 flex-1">
+                  {mobileNavItems.map((item) => (
+                    item.external ? (
+                      <a
+                        key={item.href}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-accent transition-colors"
+                      >
+                        <span>{item.title}</span>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      </a>
+                    ) : (
+                      <Link
+                        key={item.href}
+                        to={item.href}
+                        onClick={item.onClick}
+                        className="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-accent transition-colors"
+                      >
+                        <span>{item.title}</span>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      </Link>
+                    )
+                  ))}
+                  
+                  {/* Mobile Auth Buttons */}
+                  <div className="pt-4 border-t mt-4">
+                    <div className="px-4 py-2 flex items-center justify-between">
+                      <span className="text-sm font-medium">Theme</span>
+                      <ThemeToggle />
+                    </div>
+                    
+                    {loading ? (
+                      <div className="flex items-center justify-center gap-2 px-4 py-3 text-sm text-muted-foreground">
+                        <div className="animate-spin h-4 w-4 border-2 border-muted-foreground border-t-transparent rounded-full"></div>
+                        Loading...
+                      </div>
+                    ) : user ? (
+                      <>
+                        <Link
+                          to="/profile"
+                          className="flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg hover:bg-accent transition-colors"
+                        >
+                          <div className="flex items-center gap-2">
+                            <User className="h-4 w-4" />
+                            <span>{user.email?.split('@')[0] || 'Profile'}</span>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </Link>
+                        <button
+                          onClick={handleSignOut}
+                          className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg hover:bg-accent transition-colors text-left"
+                        >
+                          <div className="flex items-center gap-2 text-destructive">
+                            <LogOut className="h-4 w-4" />
+                            <span>Sign Out</span>
+                          </div>
+                        </button>
+                      </>
+                    ) : (
+                      <div className="space-y-2 px-4 py-2">
+                        <Button 
+                          variant="outline" 
+                          className="w-full justify-start"
+                          onClick={() => navigate('/sign-in')}
+                        >
+                          Sign In
+                        </Button>
+                        <Button 
+                          variant="brand" 
+                          className="w-full"
+                          onClick={() => navigate('/pricing')}
+                        >
+                          Join Now
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {user && (
+                  <div className="mt-auto pt-4 border-t">
+                    <div className="flex items-center gap-3 px-4 py-3">
+                      <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center">
+                        <User className="h-4 w-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{user.email}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
 
         {/* Desktop Navigation */}
-        <NavigationMenu className="hidden md:flex">
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 bg-transparent hover:bg-muted/50 focus:bg-transparent data-[state=open]:bg-transparent">
-                Resources
-              </NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                  <li className="row-span-3">
-                    <NavigationMenuLink asChild>
-                      <Link
-                        to="/case-studies"
-                        className="flex h-full w-full select-none flex-col justify-end rounded-md stare-gradient p-6 no-underline outline-none focus:shadow-md"
-                      >
-                        <div className="mb-2 mt-4 text-lg font-medium text-white">
-                          Case Studies
-                        </div>
-                        <p className="text-sm leading-tight text-white/90">
-                          Real-world product management scenarios to learn from
-                        </p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        to="/resources/self-study"
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted focus:bg-muted"
-                      >
-                        <div className="text-sm font-medium leading-none text-foreground">Self Study</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Books, courses, and resources for independent learning
-                        </p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        to="/resources/courses"
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted focus:bg-muted"
-                      >
-                        <div className="text-sm font-medium leading-none text-foreground">Courses</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Free video courses and sessions from top PMs
-                        </p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        to="/resources/participate"
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted focus:bg-muted"
-                      >
-                        <div className="text-sm font-medium leading-none text-foreground">Participate</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Join case challenges to build your portfolio
-                        </p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        to="/resources/portfolio"
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted focus:bg-muted"
-                      >
-                        <div className="text-sm font-medium leading-none text-foreground">Portfolio</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Showcase your work effectively
-                        </p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        to="/resources/resume"
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted focus:bg-muted"
-                      >
-                        <div className="text-sm font-medium leading-none text-foreground">Resume</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Real PM resumes and templates
-                        </p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        to="/case-study-review"
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted focus:bg-muted"
-                      >
-                        <div className="text-sm font-medium leading-none text-foreground">Case Study Review</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Get AI-powered feedback on your case studies
-                        </p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
+        <div className="hidden md:flex items-center gap-2">
+          <NavigationMenu>
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 bg-transparent hover:bg-muted/50 focus:bg-transparent data-[state=open]:bg-transparent">
+                  Resources
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                    {navItems
+                      .filter(item => !item.external)
+                      .map((item, index) => (
+                        <li key={item.href} className={index === 0 ? 'row-span-3' : ''}>
+                          <NavigationMenuLink asChild>
+                            <Link
+                              to={item.href}
+                              onClick={item.onClick}
+                              className={cn(
+                                'block h-full w-full select-none rounded-md p-3 no-underline outline-none transition-colors',
+                                index === 0 
+                                  ? 'flex flex-col justify-end bg-gradient-to-br from-stare-teal to-stare-navy p-6 text-white' 
+                                  : 'hover:bg-muted focus:bg-muted'
+                              )}
+                            >
+                              <div className={cn(
+                                'font-medium',
+                                index === 0 ? 'text-lg mb-2 mt-4' : 'text-sm'
+                              )}>
+                                {item.title}
+                              </div>
+                              {item.description && (
+                                <p className={cn(
+                                  'leading-snug',
+                                  index === 0 
+                                    ? 'text-sm text-white/90' 
+                                    : 'text-sm text-muted-foreground line-clamp-2'
+                                )}>
+                                  {item.description}
+                                </p>
+                              )}
+                            </Link>
+                          </NavigationMenuLink>
+                        </li>
+                      ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
 
-            <NavigationMenuItem>
-              <a
-                href="https://saurao.gumroad.com/l/BuymeaCoffee"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex"
-              >
-                Donate
-              </a>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link to="/about" className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex">
-                About
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link to="/pricing" className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex">
-                Pricing
-              </Link>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
+              <NavigationMenuItem>
+                <a
+                  href="https://saurao.gumroad.com/l/BuymeaCoffee"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex"
+                >
+                  Donate
+                </a>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link to="/about" className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex">
+                  About
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link to="/pricing" className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex">
+                  Pricing
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="gap-2 hidden md:flex"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </Button>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
 
         {/* Desktop Auth Buttons */}
         <div className="hidden md:flex items-center gap-4">
@@ -224,156 +345,23 @@ const Navbar = () => {
                   {user.email?.split('@')[0] || 'User'}
                 </span>
               </Link>
-              <Button size="sm" variant="outline" onClick={handleSignOutClick}>
+              <Button size="sm" variant="outline" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4 mr-1" />
                 Sign Out
               </Button>
             </div>
           ) : (
             <div className="flex items-center gap-4">
-              <Button size="sm" variant="outline" onClick={handleSignInClick}>
+              <Button size="sm" variant="outline" onClick={() => navigate('/sign-in')}>
                 Sign In
               </Button>
-              <Button size="sm" variant="brand" onClick={handleJoinNowClick}>
+              <Button size="sm" variant="brand" onClick={() => navigate('/pricing')}>
                 Join Now
               </Button>
             </div>
           )}
         </div>
 
-        {/* Mobile menu button */}
-        <button
-          className="md:hidden p-2 rounded-md text-muted-foreground hover:text-foreground focus:outline-none"
-          onClick={toggleMenu}
-        >
-          {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
-      </div>
-
-      {/* Mobile menu */}
-      <div className={cn("md:hidden", isMenuOpen ? 'block' : 'hidden')}>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <Link
-            to="/case-studies"
-            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
-            onClick={toggleMenu}
-          >
-            Case Studies
-          </Link>
-          <Link
-            to="/resources/self-study"
-            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
-            onClick={toggleMenu}
-          >
-            Self Study
-          </Link>
-          <Link
-            to="/resources/courses"
-            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
-            onClick={toggleMenu}
-          >
-            Courses
-          </Link>
-          <Link
-            to="/resources/participate"
-            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
-            onClick={toggleMenu}
-          >
-            Participate
-          </Link>
-          <Link
-            to="/resources/portfolio"
-            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
-            onClick={toggleMenu}
-          >
-            Portfolio
-          </Link>
-          <Link
-            to="/resources/resume"
-            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
-            onClick={toggleMenu}
-          >
-            Resume
-          </Link>
-          <Link
-            to="/case-study-review"
-            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
-            onClick={toggleMenu}
-          >
-            Case Study Review
-          </Link>
-          <a
-            href="https://saurao.gumroad.com/l/BuymeaCoffee"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
-            onClick={toggleMenu}
-          >
-            Donate
-          </a>
-          <Link
-            to="/about"
-            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
-            onClick={toggleMenu}
-          >
-            About
-          </Link>
-          <Link
-            to="/pricing"
-            className="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium"
-            onClick={toggleMenu}
-          >
-            Pricing
-          </Link>
-        </div>
-
-        <div className="pt-4 pb-3 border-t border-border">
-          <div className="flex items-center justify-between px-4">
-            <div className="text-sm font-medium text-foreground">Theme</div>
-            <ThemeToggle />
-          </div>
-          <div className="mt-3 space-y-1 px-2">
-            {loading ? (
-              <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground py-2">
-                <div className="animate-spin h-4 w-4 border-2 border-muted-foreground border-t-transparent rounded-full"></div>
-                Loading...
-              </div>
-            ) : user ? (
-              <>
-                <Link
-                  to="/profile"
-                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
-                  onClick={toggleMenu}
-                >
-                  <User className="h-4 w-4" />
-                  <span>{user.email?.split('@')[0] || 'User'}</span>
-                </Link>
-                <button
-                  onClick={(e) => { toggleMenu(); handleSignOutClick(); }}
-                  className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span>Sign Out</span>
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={(e) => { toggleMenu(); handleSignInClick(); }}
-                  className="w-full text-left px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
-                >
-                  Sign In
-                </button>
-                <button
-                  onClick={(e) => { toggleMenu(); handleJoinNowClick(); }}
-                  className="w-full text-left px-3 py-2 text-sm font-medium rounded-md text-foreground bg-brand hover:bg-brand/90"
-                >
-                  Join Now
-                </button>
-              </>
-            )}
-          </div>
-        </div>
       </div>
     </header>
   );
