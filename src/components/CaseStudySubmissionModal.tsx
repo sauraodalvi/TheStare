@@ -73,9 +73,41 @@ const CaseStudySubmissionModal = ({ isOpen, onClose, onSuccess }: CaseStudySubmi
 
   const uploadFile = async (file: File, type: 'pdf' | 'logo'): Promise<string> => {
     try {
-      // Use the secure file upload service
-      const result = await GoogleDriveService.uploadFile(file, type);
-      return result; // Returns the file URL
+      // First try using Google Drive service
+      try {
+        const result = await GoogleDriveService.uploadFile(file, type);
+        return result;
+      } catch (driveError) {
+        console.warn('Google Drive upload failed, falling back to Supabase function', driveError);
+        
+        // Fallback to Supabase function if Google Drive fails
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('type', type);
+
+        const { data: { session } } = await supabase.auth.getSession();
+        const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+
+        const response = await fetch(`${supabaseUrl}/functions/v1/upload-pdf`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session?.access_token || anonKey}`,
+          },
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.error('Supabase function error:', errorData);
+          const errorMessage = errorData.message || errorData.error || `Failed to upload ${type}`;
+          const details = errorData.details ? `: ${errorData.details}` : '';
+          throw new Error(`${errorMessage}${details}`);
+        }
+
+        const result = await response.json();
+        return result.url || result.publicUrl || '';
+      }
     } catch (error) {
       console.error(`Failed to upload ${type}:`, error);
       throw new Error(error instanceof Error ? error.message : `Failed to upload ${type}`);
