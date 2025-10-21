@@ -7,6 +7,7 @@ import PortfolioSubmissionModal from '@/components/PortfolioSubmissionModal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Plus, X } from 'lucide-react';
+import { Skeleton } from '@/components/LayoutStable';
 
 interface Portfolio {
   name: string;
@@ -95,9 +96,37 @@ const Portfolio = () => {
     return (
       <div className="flex flex-col min-h-screen">
         <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">Loading...</div>
-        </div>
+        <main className="flex-1">
+          <section className="py-8 px-4">
+            <div className="container mx-auto max-w-7xl">
+              <div className="mb-8">
+                <Skeleton width="200px" height={36} className="mb-2" />
+                <Skeleton width="500px" height={20} />
+              </div>
+            </div>
+          </section>
+          <section className="py-8 px-4">
+            <div className="container mx-auto max-w-7xl">
+              <div className="space-y-12">
+                <section>
+                  <div className="flex justify-between items-center mb-6">
+                    <Skeleton width="300px" height={32} />
+                    <Skeleton width="150px" height={40} className="rounded" />
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6">
+                    {Array.from({ length: 8 }).map((_, index) => (
+                      <div key={index} className="space-y-3 p-4 border rounded-lg">
+                        <Skeleton width="100%" height={200} className="rounded-lg" />
+                        <Skeleton width="80%" height={24} />
+                        <Skeleton width="60%" height={20} />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            </div>
+          </section>
+        </main>
         <Footer />
       </div>
     );

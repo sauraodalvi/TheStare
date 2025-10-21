@@ -58,7 +58,7 @@ const ResourcesList = () => {
   ];
 
   return (
-    <section className="py-16 bg-slate-50">
+    <section className="py-16 bg-muted/30">
       <div className="container">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {resources.map((resource, index) => (
@@ -68,9 +68,9 @@ const ResourcesList = () => {
                   <div className={`p-3 rounded-full ${resource.color}`}>
                     <resource.icon className="h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-semibold">{resource.title}</h3>
+                  <h3 className="text-xl font-semibold text-foreground">{resource.title}</h3>
                 </div>
-                <p className="text-gray-600 mb-6">{resource.description}</p>
+                <p className="text-muted-foreground mb-6">{resource.description}</p>
                 <Link 
                   to={resource.path} 
                   className="text-stare-teal hover:text-stare-navy font-medium flex items-center"

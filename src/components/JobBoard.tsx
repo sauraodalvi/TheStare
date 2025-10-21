@@ -37,7 +37,7 @@ const JobBoard = () => {
   ];
 
   return (
-    <section id="jobs" className="section-padding bg-white">
+    <section id="jobs" className="section-padding bg-background">
       <div className="container">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
@@ -59,7 +59,7 @@ const JobBoard = () => {
               <CardContent className="p-0">
                 <div className="flex flex-col md:flex-row md:items-center gap-6 p-6">
                   <div className="flex-shrink-0">
-                    <div className="h-14 w-14 bg-slate-100 rounded-lg flex items-center justify-center">
+                    <div className="h-14 w-14 bg-muted rounded-lg flex items-center justify-center">
                       <OptimizedImage src={job.logo} alt={job.company} className="h-10 w-10" width={40} height={40} />
                     </div>
                   </div>
@@ -68,15 +68,15 @@ const JobBoard = () => {
                     <h3 className="text-xl font-semibold text-stare-navy">{job.title}</h3>
                     <p className="text-stare-gray">{job.company}</p>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      <span className="inline-flex items-center text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded">
+                      <span className="inline-flex items-center text-xs bg-muted text-muted-foreground px-2 py-1 rounded">
                         <MapPin className="h-3 w-3 mr-1" />
                         {job.location}
                       </span>
-                      <span className="inline-flex items-center text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded">
+                      <span className="inline-flex items-center text-xs bg-muted text-muted-foreground px-2 py-1 rounded">
                         <Briefcase className="h-3 w-3 mr-1" />
                         {job.type}
                       </span>
-                      <span className="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded">
+                      <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded">
                         {job.experience}
                       </span>
                     </div>
@@ -92,7 +92,7 @@ const JobBoard = () => {
           ))}
         </div>
 
-        <div className="mt-10 bg-slate-50 rounded-xl p-8 text-center">
+        <div className="mt-10 bg-muted/50 rounded-xl p-8 text-center">
           <h3 className="text-2xl font-semibold mb-2 text-stare-navy">Find your next product role</h3>
           <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
             Create a job alert and get notified when new positions matching your criteria are posted.

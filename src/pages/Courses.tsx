@@ -4,6 +4,7 @@ import Footer from '@/components/Footer';
 import CourseCard from '@/components/CourseCard';
 import VideoModal from '@/components/VideoModal';
 import VideoSessionList from '@/components/VideoSessionList';
+import { Skeleton } from '@/components/LayoutStable';
 
 interface Course {
   title: string;
@@ -64,14 +65,43 @@ const Courses = () => {
     setSelectedVideo(null);
   };
 
-
-
   if (loading) {
     return (
       <div className="flex flex-col min-h-screen">
         <Navbar />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        <main className="flex-1">
+          <section className="py-8 px-4">
+            <div className="container mx-auto max-w-7xl">
+              <div className="mb-8">
+                <Skeleton width="200px" height={36} className="mb-2" />
+                <Skeleton width="400px" height={20} />
+              </div>
+            </div>
+          </section>
+          <section className="py-8 px-4">
+            <div className="container mx-auto max-w-7xl">
+              <div className="space-y-12">
+                <section>
+                  <Skeleton width="300px" height={32} className="mb-6" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6">
+                    {Array.from({ length: 6 }).map((_, index) => (
+                      <div key={index} className="space-y-3 p-4 border rounded-lg">
+                        <div className="flex items-start gap-3">
+                          <Skeleton width={48} height={48} className="rounded-lg" />
+                          <div className="flex-1 space-y-2">
+                            <Skeleton width="100%" height={20} />
+                            <Skeleton width="60%" height={16} />
+                          </div>
+                        </div>
+                        <Skeleton width="100%" height={120} className="rounded-lg" />
+                        <Skeleton width="100%" height={36} className="rounded" />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            </div>
+          </section>
         </main>
         <Footer />
       </div>
