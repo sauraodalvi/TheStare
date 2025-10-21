@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PlayCircle } from 'lucide-react';
+import { OptimizedImage } from '@/components/OptimizedImage';
 
 interface Course {
   title: string;
@@ -123,11 +124,13 @@ const CourseCard = ({ course, courseType = 'beginner', courseIndex = 0, onClick 
         {/* Thumbnail */}
         <div className="aspect-video rounded-lg overflow-hidden mb-3">
           {thumbnailUrl && !imageError ? (
-            <img
+            <OptimizedImage
               src={thumbnailUrl}
               alt={course.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              onError={handleImageError}
+              onLoad={() => setImageError(false)}
+              width={480}
+              height={270}
             />
           ) : (
             <div className="w-full h-full stare-gradient flex items-center justify-center">

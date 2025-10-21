@@ -34,4 +34,53 @@ export default defineConfig(({ mode }) => ({
   },
   // Ensure proper static file serving
   publicDir: "public",
+  build: {
+    // Enable minification
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: mode === 'production',
+        drop_debugger: mode === 'production',
+      },
+    },
+    // Optimize chunk splitting
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separate vendor chunks for better caching
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-select',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-accordion',
+          ],
+          'query-vendor': ['@tanstack/react-query'],
+        },
+        // Optimize asset file names
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        entryFileNames: 'assets/js/[name]-[hash].js',
+        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
+      },
+    },
+    // Increase chunk size warning limit
+    chunkSizeWarningLimit: 1000,
+    // Enable CSS code splitting
+    cssCodeSplit: true,
+    // Source maps only in development
+    sourcemap: mode === 'development',
+    // Optimize assets
+    assetsInlineLimit: 4096, // 4kb
+  },
+  // Performance optimizations
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      '@tanstack/react-query',
+      '@supabase/supabase-js',
+    ],
+  },
 }));

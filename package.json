@@ -9,7 +9,9 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "setup:env": "node scripts/setup-env.js"
+    "setup:env": "node scripts/setup-env.js",
+    "find-images": "node scripts/find-images.js",
+    "perf-audit": "npm run build && npm run preview"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -71,7 +73,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
-    "@supabase/supabase-js": "^2.75.1",
+    "@supabase/supabase-js": "^2.76.0",
     "@tailwindcss/typography": "^0.5.15",
     "@types/node": "^22.18.10",
     "@types/react": "^18.3.25",
@@ -86,6 +88,7 @@
     "lovable-tagger": "^1.1.7",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.11",
+    "terser": "^5.44.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.0.1",

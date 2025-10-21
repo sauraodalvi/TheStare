@@ -1,0 +1,61 @@
+{
+  "imgTags": [
+    {
+      "file": "src\\components\\AddYourWorkModal.tsx",
+      "line": 45,
+      "content": "<img"
+    },
+    {
+      "file": "src\\components\\CaseStudySubmissionModal.tsx",
+      "line": 391,
+      "content": "<img src={logoPreview} alt=\"Logo preview\" className=\"w-full h-full object-contain\" />"
+    },
+    {
+      "file": "src\\components\\CompanyLogos.tsx",
+      "line": 70,
+      "content": "<img"
+    },
+    {
+      "file": "src\\components\\CourseCard.tsx",
+      "line": 126,
+      "content": "<img"
+    },
+    {
+      "file": "src\\components\\Hero.tsx",
+      "line": 36,
+      "content": "<img"
+    },
+    {
+      "file": "src\\components\\JobBoard.tsx",
+      "line": 62,
+      "content": "<img src={job.logo} alt={job.company} className=\"h-10 w-10\" />"
+    },
+    {
+      "file": "src\\components\\OptimizedImage.tsx",
+      "line": 68,
+      "content": "<img"
+    },
+    {
+      "file": "src\\components\\VideoCard.tsx",
+      "line": 44,
+      "content": "<img"
+    },
+    {
+      "file": "src\\pages\\AddYourWork.tsx",
+      "line": 39,
+      "content": "<img"
+    },
+    {
+      "file": "src\\pages\\case-studies\\[slug].tsx",
+      "line": 47,
+      "content": "<img"
+    },
+    {
+      "file": "src\\utils\\imageUtils.tsx",
+      "line": 138,
+      "content": "<img"
+    }
+  ],
+  "imageImports": [],
+  "backgroundImages": []
+}

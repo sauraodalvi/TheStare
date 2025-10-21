@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import { OptimizedImage } from '@/components/OptimizedImage';
 
 interface Company {
   id: number;
@@ -67,23 +68,12 @@ const CompanyLogos = () => {
                   className="bg-card hover:shadow-lg transition-all duration-300 rounded-lg border border-border overflow-hidden h-24 flex items-center justify-center p-4 group"
                 >
                   <div className="relative w-full h-full flex items-center justify-center">
-                    <img
+                    <OptimizedImage
                       src={company.logoUrl}
                       alt={company.altText}
                       className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
-                      loading="lazy"
-                      onError={(e) => {
-                        // Fallback to company name if image fails to load
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        const parent = target.parentElement;
-                        if (parent) {
-                          const fallback = document.createElement('div');
-                          fallback.className = 'text-sm font-medium text-muted-foreground text-center';
-                          fallback.textContent = company.name;
-                          parent.appendChild(fallback);
-                        }
-                      }}
+                      width={100}
+                      height={60}
                     />
                   </div>
                 </div>

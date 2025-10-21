@@ -16,6 +16,7 @@ import CaseStudyFilterChips from './CaseStudyFilterChips';
 import CaseStudyHeader from './CaseStudyHeader';
 import { SortOption } from './CaseStudySorting';
 import ErrorBoundary from './ErrorBoundary';
+import { Skeleton } from './LayoutStable';
 
 // Define the shape of the pagination state
 interface PaginationState {
@@ -393,9 +394,21 @@ const CaseStudiesList: React.FC = () => {
   // Early returns must be after all hooks
   if (isLoadingState) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="mt-4 text-muted-foreground">Loading case studies...</p>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <Skeleton width="300px" height={40} className="mb-4" />
+          <Skeleton width="100%" height={48} />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          {Array.from({ length: 9 }).map((_, index) => (
+            <div key={index} className="space-y-4 p-4 border rounded-lg">
+              <Skeleton width="100%" height={200} />
+              <Skeleton width="80%" height={24} />
+              <Skeleton width="60%" height={20} />
+              <Skeleton width="40%" height={20} />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

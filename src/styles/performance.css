@@ -1,0 +1,281 @@
+/**
+ * Performance-focused CSS utilities
+ * Helps prevent CLS and improve rendering performance
+ */
+
+/* Prevent layout shift for images */
+.img-aspect-ratio {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.img-aspect-ratio::before {
+  content: '';
+  display: block;
+  padding-bottom: var(--aspect-ratio, 56.25%); /* Default 16:9 */
+}
+
+.img-aspect-ratio img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Prevent layout shift for loading content */
+.content-placeholder {
+  min-height: var(--min-height, 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Optimize font rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Prevent FOUT (Flash of Unstyled Text) */
+.font-loading {
+  visibility: hidden;
+}
+
+.font-loaded {
+  visibility: visible;
+}
+
+/* GPU acceleration for animations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Optimize scrolling performance */
+.smooth-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Contain layout for better performance */
+.layout-contained {
+  contain: layout;
+}
+
+.paint-contained {
+  contain: paint;
+}
+
+.strict-contained {
+  contain: strict;
+}
+
+/* Skeleton loading animations */
+@keyframes skeleton-loading {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(229, 231, 235, 1) 0%,
+    rgba(243, 244, 246, 1) 50%,
+    rgba(229, 231, 235, 1) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: 0.375rem;
+}
+
+.dark .skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(31, 41, 55, 1) 0%,
+    rgba(55, 65, 81, 1) 50%,
+    rgba(31, 41, 55, 1) 100%
+  );
+  background-size: 200% 100%;
+}
+
+/* Lazy loading fade-in */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.lazy-loaded {
+  animation: fade-in 0.3s ease-in;
+}
+
+/* Prevent layout shift for images */
+img[loading="lazy"] {
+  min-height: 1px; /* Prevent collapse */
+}
+
+/* Aspect ratio utilities */
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
+.aspect-4-3 {
+  aspect-ratio: 4 / 3;
+}
+
+.aspect-21-9 {
+  aspect-ratio: 21 / 9;
+}
+
+/* Optimize rendering for lists */
+.virtualized-list {
+  contain: strict;
+  overflow: auto;
+}
+
+.virtualized-list-item {
+  contain: layout style paint;
+}
+
+/* Reduce paint areas */
+.isolated {
+  isolation: isolate;
+}
+
+/* Optimize transforms */
+.transform-gpu {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Critical CSS - inline in head for above-the-fold content */
+.critical-content {
+  /* Add styles for above-the-fold content here */
+  /* These should be inlined in index.html for fastest LCP */
+  display: block;
+}
+
+/* Defer non-critical styles */
+.non-critical {
+  /* Styles that can be loaded after initial render */
+  display: block;
+}
+
+/* Prevent CLS for dynamic content */
+.dynamic-content-wrapper {
+  min-height: var(--expected-height, auto);
+  transition: min-height 0.3s ease;
+}
+
+/* Optimize button interactions for INP */
+button,
+a,
+[role="button"] {
+  touch-action: manipulation; /* Removes 300ms tap delay on mobile */
+}
+
+/* Reduce repaints on hover */
+.hover-optimized {
+  will-change: transform, opacity;
+}
+
+.hover-optimized:hover {
+  transform: translateY(-2px);
+}
+
+/* Optimize modal/dialog rendering */
+.modal-overlay {
+  contain: layout style paint;
+  backdrop-filter: blur(4px);
+}
+
+/* Prevent layout shift for ads/embeds */
+.embed-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+}
+
+.embed-container iframe,
+.embed-container object,
+.embed-container embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Optimize card grids */
+.card-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  contain: layout;
+}
+
+/* Prevent layout shift in navigation */
+.nav-container {
+  min-height: 64px; /* Fixed height for nav */
+}
+
+/* Optimize hero sections */
+.hero-section {
+  min-height: 400px;
+  contain: layout;
+}
+
+@media (min-width: 768px) {
+  .hero-section {
+    min-height: 500px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-section {
+    min-height: 600px;
+  }
+}
+
+/* Print optimization */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}
+
+/* Reduce motion for accessibility and performance */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

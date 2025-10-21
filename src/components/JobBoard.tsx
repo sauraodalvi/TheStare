@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Briefcase, MapPin, ArrowRight } from 'lucide-react';
+import { OptimizedImage } from '@/components/OptimizedImage';
 
 const JobBoard = () => {
   const jobs = [
@@ -59,7 +60,7 @@ const JobBoard = () => {
                 <div className="flex flex-col md:flex-row md:items-center gap-6 p-6">
                   <div className="flex-shrink-0">
                     <div className="h-14 w-14 bg-slate-100 rounded-lg flex items-center justify-center">
-                      <img src={job.logo} alt={job.company} className="h-10 w-10" />
+                      <OptimizedImage src={job.logo} alt={job.company} className="h-10 w-10" width={40} height={40} />
                     </div>
                   </div>
                   

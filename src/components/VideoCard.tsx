@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Play, ExternalLink } from 'lucide-react';
+import { OptimizedImage } from '@/components/OptimizedImage';
 
 interface VideoSession {
   id: number;
@@ -41,10 +42,12 @@ const VideoCard = ({ session, onClick }: VideoCardProps) => {
         {/* Video Thumbnail */}
         <div className="relative aspect-video bg-muted rounded-t-lg overflow-hidden">
           {thumbnailUrl ? (
-            <img 
+            <OptimizedImage 
               src={thumbnailUrl} 
               alt={session.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              width={480}
+              height={270}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-muted">

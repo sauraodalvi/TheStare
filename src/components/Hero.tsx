@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { OptimizedImage } from '@/components/OptimizedImage';
 
 const Hero = () => {
   return (
@@ -33,10 +34,13 @@ const Hero = () => {
           
           <div className="relative">
             <div className="absolute inset-0 -left-6 -right-6 -top-6 -bottom-6 bg-stare-teal/10 rounded-full blur-3xl"></div>
-            <img
+            <OptimizedImage
               src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop"
               alt="Product managers collaborating"
               className="relative z-10 w-full h-auto rounded-xl shadow-lg object-cover"
+              priority={true}
+              width={800}
+              height={533}
             />
           </div>
         </div>
