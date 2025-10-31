@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { SEO } from '@/components/SEO';
 import { useAuth } from '@/hooks/useAuth';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -20,22 +21,29 @@ const SignIn = () => {
     }
   }, [user, loading, navigate, searchParams]);
 
-  if (loading || user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <SignInForm />
-      </main>
-      <Footer />
-    </div>
+    <>
+      <SEO
+        title="Sign In - Stare"
+        description="Sign in to access product management resources, case studies, and premium features."
+        url="/signin"
+        noindex={true}
+        nofollow={true}
+      />
+      {loading || user ? (
+        <div className="flex items-center justify-center min-h-screen">
+          <LoadingSpinner size="lg" />
+        </div>
+      ) : (
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <SignInForm />
+          </main>
+          <Footer />
+        </div>
+      )}
+    </>
   );
 };
 

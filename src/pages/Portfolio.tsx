@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { SEO } from '@/components/SEO';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PortfolioCardNew from '@/components/PortfolioCardNew';
@@ -133,8 +134,15 @@ const Portfolio = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
+    <>
+      <SEO
+        title="Product Manager Portfolio Examples & Tools | Stare"
+        description="Explore real product manager portfolios and tools to build your own. Learn from successful PM portfolios and showcase your work effectively."
+        keywords="PM portfolio, product manager portfolio examples, portfolio builder, PM portfolio tools"
+        url="/portfolio"
+      />
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
 
       <main className="flex-1">
         {/* Header Section */}
@@ -284,6 +292,7 @@ const Portfolio = () => {
         onSubmit={handlePortfolioSubmit}
       />
     </div>
+    </>
   );
 };
 

@@ -16,6 +16,9 @@ const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/
 // Server-side API endpoint for Gemini API calls
 const GEMINI_API_ENDPOINT = '/api/gemini';
 
+// Storage key for API key
+const GEMINI_API_KEY_STORAGE_KEY = 'gemini_api_key';
+
 interface GeminiResponse {
   data: any;
   error?: string;
@@ -27,7 +30,79 @@ const CaseStudyReview: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [reviewData, setReviewData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState<string>('');
+  const [isVerified, setIsVerified] = useState<boolean>(false);
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const [rememberKey, setRememberKey] = useState<boolean>(false);
   const { toast } = useToast();
+
+  // Check for stored API key on mount
+  useEffect(() => {
+    const storedKey = localStorage.getItem(GEMINI_API_KEY_STORAGE_KEY) ||
+                      sessionStorage.getItem(GEMINI_API_KEY_STORAGE_KEY);
+    if (storedKey) {
+      setApiKey(storedKey);
+      setIsVerified(true);
+    }
+  }, []);
+
+  // Verify API key function
+  const verifyApiKey = async (key: string) => {
+    if (!key) return;
+
+    setIsVerifying(true);
+    try {
+      // Simple verification by making a test call
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: 'Hello' }]
+          }]
+        })
+      });
+
+      if (response.ok || response.status === 400) {
+        // 400 is ok because it means the API key is valid but the request format might be wrong
+        setIsVerified(true);
+
+        // Store the API key based on user preference
+        if (rememberKey) {
+          localStorage.setItem(GEMINI_API_KEY_STORAGE_KEY, key);
+        } else {
+          sessionStorage.setItem(GEMINI_API_KEY_STORAGE_KEY, key);
+        }
+
+        toast({
+          title: 'API Key Verified',
+          description: 'Your API key has been verified successfully!',
+        });
+      } else {
+        throw new Error('Invalid API key');
+      }
+    } catch (err) {
+      toast({
+        title: 'Verification Failed',
+        description: 'Could not verify your API key. Please check and try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  // Helper function to read file as base64
+  const readFileAsBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsText(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+    });
+  };
 
   // Get API key from environment variables
   const getApiKey = (): string => {
@@ -423,15 +498,6 @@ Provide the review in markdown format with clear sections.`;
     <div className="flex flex-col min-h-screen bg-background">
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
-        <Button
-          variant="ghost"
-          onClick={() => navigate(-1)}
-          className="mb-6 flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Resources
-        </Button>
-        
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight mb-2">Case Study Review</h1>
           <p className="text-muted-foreground">Get AI-powered feedback on your case studies</p>

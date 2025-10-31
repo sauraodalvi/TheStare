@@ -16,7 +16,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 interface NavItem {
   title: string;
@@ -89,16 +89,6 @@ const Navbar = () => {
       href: '/case-study-review',
       description: 'Get AI-powered feedback on your case studies'
     },
-    { 
-      title: 'About', 
-      href: '/about',
-      description: 'Learn more about our mission and team'
-    },
-    { 
-      title: 'Donate', 
-      href: 'https://saurao.gumroad.com/l/BuymeaCoffee', 
-      external: true 
-    },
   ];
 
   // Create a filtered list for the mobile menu (without descriptions)
@@ -109,14 +99,55 @@ const Navbar = () => {
     onClick
   }));
 
-  // Add sign out if user is logged in
-  if (user) {
-    mobileNavItems.push({ 
-      title: 'Sign Out', 
-      href: '#', 
-      onClick: handleSignOut,
+  // Add standalone menu items to mobile menu
+  mobileNavItems.push(
+    { 
+      title: 'Donate', 
+      href: 'https://saurao.gumroad.com/l/BuymeaCoffee', 
+      external: true
+    },
+    { 
+      title: 'About', 
+      href: '/about', 
       external: false
-    });
+    },
+    { 
+      title: 'Pricing', 
+      href: '/pricing', 
+      external: false
+    }
+  );
+
+  // Add authentication menu items
+  if (user) {
+    // When user is logged in, show Profile and Sign Out
+    mobileNavItems.push(
+      { 
+        title: 'Profile', 
+        href: '/profile', 
+        external: false
+      },
+      { 
+        title: 'Sign Out', 
+        href: '#', 
+        onClick: handleSignOut,
+        external: false
+      }
+    );
+  } else {
+    // When user is NOT logged in, show Sign In and Join Now
+    mobileNavItems.push(
+      { 
+        title: 'Sign In', 
+        href: '/sign-in', 
+        external: false
+      },
+      { 
+        title: 'Join Now', 
+        href: '/pricing', 
+        external: false
+      }
+    );
   }
 
   return (
@@ -142,12 +173,15 @@ const Navbar = () => {
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[280px] sm:w-[350px]">
+            <SheetContent side="right" className="w-[280px] sm:w-[350px] flex flex-col h-full">
               <SheetHeader>
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetDescription className="sr-only">
+                  Navigate through the site using the menu options below
+                </SheetDescription>
               </SheetHeader>
-              <nav className="flex flex-col h-full py-6">
-                <div className="space-y-2 flex-1">
+              <nav className="flex flex-col flex-1 overflow-y-auto py-6">
+                <div className="space-y-2 flex-1 min-h-0">
                   {mobileNavItems.map((item) => (
                     item.external ? (
                       <a
@@ -175,8 +209,8 @@ const Navbar = () => {
                   
                   {/* Mobile Auth Buttons */}
                   <div className="pt-4 border-t mt-4">
-                    <div className="px-4 py-2 flex items-center justify-between">
-                      <span className="text-sm font-medium">Theme</span>
+                    <div className="px-4 py-4 flex items-center justify-between min-h-[60px]">
+                      <span className="text-sm font-medium text-foreground">Theme</span>
                       <ThemeToggle />
                     </div>
                     
@@ -295,7 +329,7 @@ const Navbar = () => {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <a
+                <a 
                   href="https://saurao.gumroad.com/l/BuymeaCoffee"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -304,26 +338,17 @@ const Navbar = () => {
                   Donate
                 </a>
               </NavigationMenuItem>
+
               <NavigationMenuItem>
                 <Link to="/about" className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex">
                   About
                 </Link>
               </NavigationMenuItem>
+
               <NavigationMenuItem>
                 <Link to="/pricing" className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex">
                   Pricing
                 </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleSignOut}
-                  className="gap-2 hidden md:flex"
-                >
-                  <LogOut className="h-4 w-4" />
-                  Sign Out
-                </Button>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
@@ -368,3 +393,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
+

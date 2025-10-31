@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { SEO } from '@/components/SEO';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CourseCard from '@/components/CourseCard';
@@ -121,18 +122,25 @@ const Courses = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
+    <>
+      <SEO
+        title="Product Management Courses & Free PM Sessions | Stare"
+        description="Learn product management with beginner and intermediate courses, plus free expert sessions from top PMs. Master PM skills with structured learning paths."
+        keywords="PM courses, product management courses, PM training, product manager education, PM learning resources"
+        url="/courses"
+      />
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
 
-      {/* Hero Section */}
-      <section className="py-8 px-4">
-        <div className="container mx-auto max-w-7xl">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Courses</h1>
-            <p className="text-muted-foreground">Discover comprehensive courses and expert sessions to advance your product management skills</p>
+        {/* Hero Section */}
+        <section className="py-8 px-4">
+          <div className="container mx-auto max-w-7xl">
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-foreground mb-2">Courses</h1>
+              <p className="text-muted-foreground">Discover comprehensive courses and expert sessions to advance your product management skills</p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
       <main className="flex-1">
         <section className="py-8 px-4">
@@ -194,6 +202,7 @@ const Courses = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 

@@ -1,86 +1,83 @@
-import { defineConfig } from "vite";
+import { defineConfig, type UserConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  base: '/',
-  server: {
-    host: "localhost",
-    port: 3000,
-    strictPort: true,
-    open: true,
-    proxy: {
-      // Proxy API requests to the backend
-      '/api': {
-        target: 'http://localhost:3001',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '')
+export default defineConfig(({ mode }): UserConfig => {
+  const isProduction = mode === 'production';
+
+  return {
+    base: '/',
+    server: {
+      host: "localhost",
+      port: 3000,
+      strictPort: false,
+      open: true,
+      proxy: {
+        // Proxy API requests to the backend
+        '/api': {
+          target: 'http://localhost:3001',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path: string) => path.replace(/^\/api/, '')
+        }
       },
     },
-  },
-  plugins: [
-    react(),
-    // Temporarily disable lovable-tagger to test compatibility
-    // mode === 'development' &&
-    // componentTagger(),
-  ].filter(Boolean),
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  // Ensure proper static file serving
-  publicDir: "public",
-  build: {
-    // Enable minification
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: mode === 'production',
-        drop_debugger: mode === 'production',
+    plugins: [
+      react(),
+      // Temporarily disable lovable-tagger to test compatibility
+      // isProduction && componentTagger(),
+    ].filter(Boolean),
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
       },
     },
-    // Optimize chunk splitting
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          // Separate vendor chunks for better caching
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'ui-vendor': [
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-select',
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-accordion',
-          ],
-          'query-vendor': ['@tanstack/react-query'],
+    build: {
+      minify: isProduction ? 'terser' : false,
+      sourcemap: !isProduction,
+      chunkSizeWarningLimit: 1000,
+      cssCodeSplit: true,
+      assetsInlineLimit: 4096, // 4kb
+      rollupOptions: {
+        output: {
+          manualChunks: (id: string) => {
+            if (id.includes('node_modules')) {
+              // Split vendor chunks
+              if (id.includes('@radix-ui')) return 'vendor-radix';
+              if (id.includes('@tanstack')) return 'vendor-tanstack';
+              if (id.includes('react-dom') || id.includes('react-router-dom')) return 'vendor-react';
+              if (id.includes('lucide-react')) return 'vendor-lucide';
+              return 'vendor';
+            }
+          },
+          entryFileNames: 'assets/js/[name]-[hash].js',
+          chunkFileNames: 'assets/js/[name]-[hash].js',
+          assetFileNames: 'assets/[ext]/[name]-[hash][extname]',
         },
-        // Optimize asset file names
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js',
-        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
+        treeshake: true,
+      },
+      terserOptions: {
+        compress: {
+          drop_console: isProduction,
+          drop_debugger: isProduction,
+          pure_funcs: ['console.log', 'console.info'],
+          passes: 2,
+        },
       },
     },
-    // Increase chunk size warning limit
-    chunkSizeWarningLimit: 1000,
-    // Enable CSS code splitting
-    cssCodeSplit: true,
-    // Source maps only in development
-    sourcemap: mode === 'development',
-    // Optimize assets
-    assetsInlineLimit: 4096, // 4kb
-  },
-  // Performance optimizations
-  optimizeDeps: {
-    include: [
-      'react',
-      'react-dom',
-      'react-router-dom',
-      '@tanstack/react-query',
-      '@supabase/supabase-js',
-    ],
-  },
-}));
+    optimizeDeps: {
+      include: [
+        'react',
+        'react-dom',
+        'react-router-dom',
+        '@tanstack/react-query',
+        '@supabase/supabase-js',
+      ],
+      esbuildOptions: {
+        treeShaking: true,
+      },
+    },
+  };
+});

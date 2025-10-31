@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { SEO } from '@/components/SEO';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ResumeCard from '@/components/ResumeCard';
@@ -97,8 +98,15 @@ const Resume = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
+    <>
+      <SEO
+        title="Product Manager Resume Examples & Templates | Stare"
+        description="Get inspired by real product manager resumes from top companies. Download ATS-optimized PM resume templates and learn from successful examples."
+        keywords="PM resume, product manager resume examples, PM resume templates, ATS resume for product managers"
+        url="/resume"
+      />
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
       
       <main className="flex-1">
         {/* Header Section */}
@@ -164,6 +172,7 @@ const Resume = () => {
         onClose={() => setIsModalOpen(false)}
       />
     </div>
+    </>
   );
 };
 

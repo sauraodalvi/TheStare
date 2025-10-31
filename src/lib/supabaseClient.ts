@@ -1,20 +1,7 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase URL or Anon Key. Please check your environment variables.');
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true,
-    flowType: 'pkce', // Recommended for server-side rendering
-  },
-});
+// Re-export the supabase client from integrations to avoid multiple instances
+// This prevents the "Multiple GoTrueClient instances" warning
+import { supabase } from '@/integrations/supabase/client';
+export { supabase };
 
 // Helper function to get the current session
 export const getCurrentSession = async () => {
