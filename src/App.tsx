@@ -26,6 +26,7 @@ const SelfStudy = lazy(() => import("./pages/SelfStudy"));
 const Portfolio = lazy(() => import("./pages/Portfolio"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const AddYourWork = lazy(() => import("./pages/AddYourWork"));
+const InterviewQuestions = lazy(() => import("./pages/InterviewQuestions"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 // Commented out as it's not currently used
 // const PDFTestComponent = lazy(() => import("./pages/PDFTestComponent"));
@@ -136,6 +137,7 @@ const App: React.FC = () => {
                   <Route path="/self-study" element={<SelfStudy />} />
                   <Route path="/portfolio" element={<Portfolio />} />
                   <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/interview-questions" element={<InterviewQuestions />} />
                   <Route 
                     path="/add-your-work" 
                     element={

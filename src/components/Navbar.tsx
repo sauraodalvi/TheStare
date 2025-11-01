@@ -70,6 +70,11 @@ const Navbar = () => {
       description: 'Free video courses and sessions from top PMs'
     },
     { 
+      title: 'Interview Questions', 
+      href: '/interview-questions',
+      description: 'Common PM interview questions with detailed answers'
+    },
+    { 
       title: 'Participate', 
       href: '/resources/participate',
       description: 'Join case challenges to build your portfolio'

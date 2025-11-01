@@ -1,0 +1,108 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Product Strategy",
+      "description": "Questions about product vision, roadmap, and strategic thinking",
+      "icon": "target"
+    },
+    {
+      "id": 2,
+      "name": "Product Design",
+      "description": "Questions about user experience, design thinking, and product features",
+      "icon": "palette"
+    },
+    {
+      "id": 3,
+      "name": "Metrics & Analytics",
+      "description": "Questions about KPIs, data analysis, and measuring success",
+      "icon": "chart"
+    },
+    {
+      "id": 4,
+      "name": "Technical",
+      "description": "Questions about technical concepts, APIs, and system design",
+      "icon": "code"
+    },
+    {
+      "id": 5,
+      "name": "Behavioral",
+      "description": "Questions about leadership, teamwork, and past experiences",
+      "icon": "users"
+    },
+    {
+      "id": 6,
+      "name": "Estimation",
+      "description": "Market sizing and estimation questions",
+      "icon": "calculator"
+    }
+  ],
+  "questions": [
+    {
+      "id": 1,
+      "question": "How would you improve Instagram?",
+      "category": "Product Design",
+      "difficulty": "Medium",
+      "company": "Meta",
+      "answer": "To improve Instagram, I would follow a structured approach:\n\n1. **Clarify the Goal**: First, I'd ask what aspect we want to improve - user engagement, revenue, new user acquisition, or retention?\n\n2. **Identify User Segments**: Instagram serves multiple user segments - casual users, content creators, businesses, and advertisers.\n\n3. **Pain Points**: Key issues include:\n   - Content discovery becoming harder with algorithm changes\n   - Creators struggling with reach\n   - Increased competition from TikTok\n   - User fatigue from ads\n\n4. **Proposed Solutions**:\n   - **Enhanced Discovery**: Improve the Explore page with better personalization\n   - **Creator Tools**: Better analytics and monetization options\n   - **Authentic Connections**: Features to connect with close friends more meaningfully\n   - **Video Innovation**: Compete better with short-form video platforms\n\n5. **Prioritization**: I'd prioritize based on impact vs. effort, focusing on features that improve engagement while supporting creator economy.\n\n6. **Success Metrics**: DAU/MAU ratio, time spent, content creation rate, and user satisfaction scores.",
+      "tags": ["product improvement", "social media", "user engagement"],
+      "followUpQuestions": [
+        "How would you measure the success of your proposed improvements?",
+        "What would you do if engagement decreased after implementing these changes?"
+      ]
+    },
+    {
+      "id": 2,
+      "question": "Estimate the market size for electric vehicles in India by 2030",
+      "category": "Estimation",
+      "difficulty": "Hard",
+      "company": "Tesla",
+      "answer": "Let me break down this market sizing problem:\n\n**Approach**: Top-down and bottom-up estimation\n\n**Top-Down Approach**:\n1. India's population: ~1.4 billion\n2. Households: ~300 million\n3. Car ownership rate: ~7% currently, projected to reach ~15% by 2030\n4. Total cars by 2030: 300M × 15% = 45 million cars\n5. EV penetration by 2030: Assuming 30% (based on government targets and global trends)\n6. **EV market size: 45M × 30% = 13.5 million EVs**\n\n**Bottom-Up Approach**:\n1. Current annual car sales: ~3 million units\n2. Projected growth: 8% CAGR\n3. 2030 annual sales: ~5.5 million units\n4. EV share in new sales by 2030: ~40%\n5. Annual EV sales in 2030: 2.2 million units\n6. Cumulative EVs (2024-2030): ~10-12 million\n\n**Market Value**:\n- Average EV price: ₹15 lakhs ($18,000)\n- Total market value: 13.5M × ₹15L = ₹20 trillion (~$240 billion)\n\n**Key Assumptions**:\n- Government incentives continue\n- Charging infrastructure improves significantly\n- Battery costs decrease by 50%\n- Consumer awareness increases\n\n**Conclusion**: The Indian EV market could reach 10-15 million vehicles by 2030, representing a market value of $200-250 billion.",
+      "tags": ["market sizing", "estimation", "electric vehicles"],
+      "followUpQuestions": [
+        "What factors could accelerate or slow down this adoption?",
+        "How would you validate these assumptions?"
+      ]
+    },
+    {
+      "id": 3,
+      "question": "Design a product for elderly people",
+      "category": "Product Design",
+      "difficulty": "Medium",
+      "company": "Google",
+      "answer": "I'll design a comprehensive health and wellness companion app for elderly people.\n\n**1. User Research & Understanding**:\n- Primary users: People aged 65+\n- Key needs: Health monitoring, social connection, medication management, emergency assistance\n- Pain points: Complex interfaces, small text, fear of technology, isolation\n\n**2. Product Vision**:\n\"A simple, voice-first companion that helps elderly people stay healthy, connected, and independent.\"\n\n**3. Core Features**:\n\n**Health Monitoring**:\n- Medication reminders with voice confirmation\n- Integration with wearables for vitals tracking\n- Simple health logging (blood pressure, glucose, etc.)\n- Doctor appointment scheduling and reminders\n\n**Social Connection**:\n- One-tap video calls to family members\n- Voice messages to grandchildren\n- Community groups for local seniors\n- Photo sharing with automatic organization\n\n**Safety & Emergency**:\n- SOS button with automatic location sharing\n- Fall detection (if using wearable)\n- Daily check-in system\n- Emergency contact management\n\n**Daily Assistance**:\n- Voice-activated reminders\n- Weather updates and clothing suggestions\n- Simple news digest\n- Grocery list management\n\n**4. Design Principles**:\n- Large, high-contrast UI elements\n- Voice-first interaction\n- Minimal navigation (max 2 levels deep)\n- Consistent layout across screens\n- Haptic feedback for confirmations\n- Offline functionality for core features\n\n**5. Success Metrics**:\n- Daily active usage\n- Medication adherence rate\n- Emergency response time\n- User satisfaction (NPS)\n- Family member engagement\n\n**6. Go-to-Market**:\n- Partner with healthcare providers\n- Bundle with senior living communities\n- Family member referral program\n- Free tier with premium features",
+      "tags": ["product design", "elderly", "accessibility", "healthcare"],
+      "followUpQuestions": [
+        "How would you handle privacy concerns?",
+        "What would be your monetization strategy?"
+      ]
+    },
+    {
+      "id": 4,
+      "question": "What metrics would you track for YouTube?",
+      "category": "Metrics & Analytics",
+      "difficulty": "Medium",
+      "company": "Google",
+      "answer": "For YouTube, I'd organize metrics into a hierarchy aligned with business objectives:\n\n**North Star Metric**: **Watch Time** (total hours watched)\nThis best represents YouTube's core value: keeping users engaged with content.\n\n**Primary Metrics by Category**:\n\n**1. Engagement Metrics**:\n- Watch time per user\n- Average view duration\n- Click-through rate (CTR) on recommendations\n- Likes, comments, shares per video\n- Subscription rate\n- Notification opt-in rate\n\n**2. Content Health Metrics**:\n- Upload frequency\n- Content diversity (categories)\n- Creator retention rate\n- New creator growth\n- Content quality score (based on engagement + completion rate)\n\n**3. User Growth Metrics**:\n- Daily Active Users (DAU)\n- Monthly Active Users (MAU)\n- New user acquisition\n- User retention (D1, D7, D30)\n- Reactivation rate\n\n**4. Monetization Metrics**:\n- Ad revenue per user\n- Premium subscription rate\n- Super Chat/Thanks revenue\n- Channel membership revenue\n- Ad completion rate\n- CPM (Cost per thousand impressions)\n\n**5. Platform Health Metrics**:\n- Video load time\n- Buffering rate\n- App crash rate\n- Search success rate\n- Content policy violations\n\n**6. Creator Metrics**:\n- Revenue per creator\n- Creator satisfaction score\n- Time to first monetization\n- Creator churn rate\n\n**Metric Framework**:\n- **Leading indicators**: CTR, upload frequency, new creator signups\n- **Lagging indicators**: Total watch time, revenue, MAU\n\n**Segmentation**:\nTrack all metrics across:\n- User segments (new vs. returning, premium vs. free)\n- Content categories\n- Geographic regions\n- Device types\n- Creator tiers\n\n**Dashboard Priority**:\n1. **Executive**: Watch time, MAU, revenue\n2. **Product**: Engagement rate, retention, feature adoption\n3. **Creator Relations**: Creator earnings, upload frequency, satisfaction\n4. **Engineering**: Performance metrics, error rates",
+      "tags": ["metrics", "analytics", "KPIs", "YouTube"],
+      "followUpQuestions": [
+        "How would you measure content quality?",
+        "What would you do if watch time increased but user satisfaction decreased?"
+      ]
+    },
+    {
+      "id": 5,
+      "question": "Tell me about a time you had to make a difficult product decision",
+      "category": "Behavioral",
+      "difficulty": "Easy",
+      "company": "Amazon",
+      "answer": "**Situation**:\nAt my previous company, I was leading a mobile app redesign project. We had two competing priorities: implementing a highly requested feature that would take 3 months, or fixing critical UX issues affecting 40% of users that would take 1 month.\n\n**Task**:\nAs the PM, I needed to decide which direction to take, knowing that either choice would disappoint some stakeholders.\n\n**Action**:\n1. **Data Analysis**: I analyzed user feedback, support tickets, and usage data. The UX issues were causing a 25% drop-off rate in the checkout flow.\n\n2. **Impact Assessment**: \n   - New feature: Would attract new users but wouldn't help retention\n   - UX fixes: Would improve conversion by estimated 15-20%\n\n3. **Stakeholder Alignment**: I presented data to leadership showing:\n   - Current revenue loss from poor UX: $200K/month\n   - Potential gain from new feature: $50K/month (estimated)\n   - Risk of losing users to competitors due to poor experience\n\n4. **Decision**: I advocated for prioritizing UX fixes first, then the new feature.\n\n5. **Communication**: I created a clear roadmap showing:\n   - Month 1: UX fixes\n   - Months 2-4: New feature development\n   - Transparent updates to all stakeholders\n\n**Result**:\n- Checkout conversion improved by 18% within 6 weeks\n- Monthly revenue increased by $180K\n- User satisfaction score improved from 3.2 to 4.1\n- We delivered the new feature in Month 4 as promised\n- Built trust with stakeholders through transparent communication\n\n**Learning**:\n- Data-driven decisions are easier to defend\n- Short-term sacrifices can lead to long-term gains\n- Clear communication is crucial when making unpopular decisions\n- Always tie decisions back to business impact",
+      "tags": ["behavioral", "decision making", "prioritization", "leadership"],
+      "followUpQuestions": [
+        "How did you handle pushback from stakeholders?",
+        "What would you have done differently?"
+      ]
+    }
+  ]
+}
+
