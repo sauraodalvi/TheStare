@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { OptimizedImage } from '@/components/OptimizedImage';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Company {
   id: number;
@@ -50,36 +56,44 @@ const CompanyLogos = () => {
           </div>
 
           {/* Company Logos Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
-            {loading ? (
-              // Loading skeleton
-              Array.from({ length: 22 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="bg-card border border-border rounded-lg h-28 sm:h-32 md:h-36 flex items-center justify-center p-4 sm:p-5 md:p-6"
-                >
-                  <div className="w-full h-16 sm:h-20 md:h-24 bg-muted rounded animate-pulse"></div>
-                </div>
-              ))
-            ) : (
-              companies.map((company) => (
-                <div
-                  key={company.id}
-                  className="bg-card hover:shadow-lg transition-all duration-300 rounded-lg border border-border h-28 sm:h-32 md:h-36 flex items-center justify-center p-4 sm:p-5 md:p-6 group"
-                >
-                  <div className="relative w-full h-full flex items-center justify-center">
-                    <OptimizedImage
-                      src={company.logoUrl}
-                      alt={company.altText}
-                      className="w-full h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
-                      width={120}
-                      height={80}
-                    />
+          <TooltipProvider>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
+              {loading ? (
+                // Loading skeleton
+                Array.from({ length: 22 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="bg-card border border-border rounded-lg h-28 sm:h-32 md:h-36 flex items-center justify-center p-4 sm:p-5 md:p-6"
+                  >
+                    <div className="w-full h-16 sm:h-20 md:h-24 bg-muted rounded animate-pulse"></div>
                   </div>
-                </div>
-              ))
-            )}
-          </div>
+                ))
+              ) : (
+                companies.map((company) => (
+                  <Tooltip key={company.id} delayDuration={200}>
+                    <TooltipTrigger asChild>
+                      <div
+                        className="bg-card hover:shadow-lg transition-all duration-300 rounded-lg border border-border h-28 sm:h-32 md:h-36 flex items-center justify-center p-4 sm:p-5 md:p-6 group cursor-pointer"
+                      >
+                        <div className="relative w-full h-full flex items-center justify-center">
+                          <img
+                            src={company.logoUrl}
+                            alt={company.altText}
+                            loading="lazy"
+                            className="max-w-full max-h-full w-auto h-auto object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                            style={{ objectFit: 'contain' }}
+                          />
+                        </div>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="font-medium">{company.name}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ))
+              )}
+            </div>
+          </TooltipProvider>
 
           {/* Footer Text */}
           {!loading && companies.length > 0 && (
