@@ -1,4 +1,5 @@
 import React, { useState, Suspense, lazy } from "react";
+import { Helmet } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -6,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/components/theme-provider";
 import { useAuth } from './hooks/useAuth';
+import { GoogleVerification } from '@/components/GoogleVerification';
 
 // Lazy load page components
 const Index = lazy(() => import("./pages/Index"));
@@ -71,7 +73,11 @@ const App: React.FC = () => {
   }));
 
   return (
-    <AuthProvider>
+    <>
+      <Helmet>
+        <meta name="google-site-verification" content="Aq2KeQaMEZHba7S4pWnjzP6JSCweLvO2vQpmDQKym7Y" />
+      </Helmet>
+      <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter
           future={{
@@ -81,6 +87,7 @@ const App: React.FC = () => {
         >
           <ThemeProvider defaultTheme="system" storageKey="stare-ui-theme">
             <TooltipProvider>
+              <GoogleVerification />
               <Toaster />
               <Suspense fallback={<Loading />}>
                 <Routes>
