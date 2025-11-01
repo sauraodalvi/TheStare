@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { SEO } from '@/components/SEO';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -48,6 +49,7 @@ interface InterviewQuestionsData {
 }
 
 const InterviewQuestions = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState<InterviewQuestionsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -205,10 +207,10 @@ const InterviewQuestions = () => {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
                 {data.categories.map((category) => (
-                  <Card 
+                  <Card
                     key={category.id}
                     className="hover:shadow-lg transition-shadow cursor-pointer"
-                    onClick={() => setSelectedCategory(category.name)}
+                    onClick={() => navigate(`/interview-questions/practice?category=${encodeURIComponent(category.name)}`)}
                   >
                     <CardHeader>
                       <div className="flex items-center gap-3">
