@@ -54,26 +54,26 @@ const CompanyLogos = () => {
             {loading ? (
               // Loading skeleton
               Array.from({ length: 22 }).map((_, index) => (
-                <div 
-                  key={index} 
-                  className="bg-card border border-border rounded-lg overflow-hidden h-24 flex items-center justify-center p-4"
+                <div
+                  key={index}
+                  className="bg-card border border-border rounded-lg h-28 sm:h-32 md:h-36 flex items-center justify-center p-4 sm:p-5 md:p-6"
                 >
-                  <div className="w-full h-12 bg-muted rounded animate-pulse"></div>
+                  <div className="w-full h-16 sm:h-20 md:h-24 bg-muted rounded animate-pulse"></div>
                 </div>
               ))
             ) : (
               companies.map((company) => (
-                <div 
-                  key={company.id} 
-                  className="bg-card hover:shadow-lg transition-all duration-300 rounded-lg border border-border overflow-hidden h-24 flex items-center justify-center p-4 group"
+                <div
+                  key={company.id}
+                  className="bg-card hover:shadow-lg transition-all duration-300 rounded-lg border border-border h-28 sm:h-32 md:h-36 flex items-center justify-center p-4 sm:p-5 md:p-6 group"
                 >
                   <div className="relative w-full h-full flex items-center justify-center">
                     <OptimizedImage
                       src={company.logoUrl}
                       alt={company.altText}
-                      className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
-                      width={100}
-                      height={60}
+                      className="w-full h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                      width={120}
+                      height={80}
                     />
                   </div>
                 </div>
