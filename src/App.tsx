@@ -1,5 +1,4 @@
 import React, { useState, Suspense, lazy } from "react";
-import { Helmet } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -73,11 +72,7 @@ const App: React.FC = () => {
   }));
 
   return (
-    <>
-      <Helmet>
-        <meta name="google-site-verification" content="Aq2KeQaMEZHba7S4pWnjzP6JSCweLvO2vQpmDQKym7Y" />
-      </Helmet>
-      <AuthProvider>
+    <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter
           future={{
@@ -162,6 +157,7 @@ const App: React.FC = () => {
 };
 
 export default App;
+
 
 
 
