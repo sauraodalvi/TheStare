@@ -98,18 +98,46 @@ const InterviewQuestionsPractice: React.FC = () => {
     }
   }, []);
 
+  // Suppress message channel errors from browser extensions
+  useEffect(() => {
+    const handleError = (event: ErrorEvent) => {
+      // Suppress "message channel closed" errors from browser extensions
+      if (event.message && event.message.includes('message channel closed')) {
+        event.preventDefault();
+        return true;
+      }
+    };
+
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      // Suppress "message channel closed" errors from browser extensions
+      if (event.reason && event.reason.message && event.reason.message.includes('message channel closed')) {
+        event.preventDefault();
+        return true;
+      }
+    };
+
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+
+    return () => {
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
+  }, []);
+
   // Verify API key function
   const verifyApiKey = async (key: string, silent: boolean = false) => {
     if (!key) return;
 
     setIsVerifying(true);
     setError(null);
-    
+
     try {
       // Simple verification by making a test call
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
         method: 'POST',
         headers: {
+          'x-goog-api-key': key,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -137,17 +165,22 @@ const InterviewQuestionsPractice: React.FC = () => {
             description: 'Your API key has been verified successfully!',
           });
         }
+      } else if (response.status === 403) {
+        throw new Error('Invalid API key. Please check your API key and try again.');
+      } else if (response.status === 404) {
+        throw new Error('API endpoint not found. Please contact support.');
       } else {
-        throw new Error('Invalid API key');
+        throw new Error('Invalid API key or network error. Please try again.');
       }
     } catch (err) {
       setIsVerified(false);
       setShowApiKeyInput(true);
-      
+
       if (!silent) {
+        const errorMessage = err instanceof Error ? err.message : 'Could not verify your API key. Please check and try again.';
         toast({
           title: 'Verification Failed',
-          description: 'Could not verify your API key. Please check and try again.',
+          description: errorMessage,
           variant: 'destructive',
         });
       }
@@ -201,18 +234,39 @@ Question: ${question}
 
 Please provide a comprehensive, structured answer following this format:
 
-1. **Approach**: How to think about this question
-2. **Frameworks**: Relevant PM frameworks to apply (e.g., CIRCLES, AARM, STAR)
-3. **Example Answer**: A detailed sample response
-4. **Key Takeaways**: 3-5 bullet points summarizing the main points
-5. **Follow-up Questions**: 2-3 potential follow-up questions an interviewer might ask
+## Approach
+How to think about this question
 
-Make your answer clear, actionable, and easy to understand. Use markdown formatting for better readability.`;
+## Frameworks
+Relevant PM frameworks to apply (e.g., CIRCLES, AARM, STAR)
+
+## Example Answer
+A detailed sample response
+
+## Key Takeaways
+- Bullet point 1
+- Bullet point 2
+- Bullet point 3
+
+## Follow-up Questions
+1. Question 1
+2. Question 2
+3. Question 3
+
+**IMPORTANT**: Use proper markdown formatting:
+- Use ## for section headings
+- Use **bold** for emphasis
+- Use bullet points (-) for lists
+- Use numbered lists (1., 2., 3.) where appropriate
+- Add blank lines between sections for readability
+
+Make your answer clear, actionable, and easy to understand.`;
 
       // Call Gemini API
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent`, {
         method: 'POST',
         headers: {
+          'x-goog-api-key': apiKey,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -223,18 +277,21 @@ Make your answer clear, actionable, and easy to understand. Use markdown formatt
             temperature: 0.7,
             topK: 40,
             topP: 0.95,
-            maxOutputTokens: 2048,
+            maxOutputTokens: 8192,
           },
         })
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        
+        console.error('API Error Response:', errorData);
+
         if (response.status === 429) {
           throw new Error('Rate limit exceeded. Please try again later or upgrade your plan.');
         } else if (response.status === 401 || response.status === 403) {
           throw new Error('Invalid API key. Please check and try again.');
+        } else if (response.status === 404) {
+          throw new Error('API endpoint not found. Please contact support.');
         } else if (errorData?.error?.message) {
           throw new Error(errorData.error.message);
         } else {
@@ -243,10 +300,39 @@ Make your answer clear, actionable, and easy to understand. Use markdown formatt
       }
 
       const data = await response.json();
+      console.log('API Response:', data);
+      console.log('Candidates:', data.candidates);
+      console.log('First candidate:', data.candidates?.[0]);
+      console.log('Content:', data.candidates?.[0]?.content);
+      console.log('Parts:', data.candidates?.[0]?.content?.parts);
+      console.log('Text:', data.candidates?.[0]?.content?.parts?.[0]?.text);
+
+      // Check if the response was blocked or filtered
+      if (data.candidates?.[0]?.finishReason === 'SAFETY') {
+        throw new Error('Response was blocked due to safety filters. Please try rephrasing your question.');
+      }
+
+      if (data.candidates?.[0]?.finishReason === 'RECITATION') {
+        throw new Error('Response was blocked due to recitation. Please try a different question.');
+      }
+
+      // Check if response was truncated due to token limits
+      if (data.candidates?.[0]?.finishReason === 'MAX_TOKENS') {
+        console.warn('Response truncated due to MAX_TOKENS. Full response:', JSON.stringify(data, null, 2));
+        throw new Error('Response was truncated due to length limits. Please try a shorter question or simpler prompt.');
+      }
+
+      // Check if parts array is missing
+      if (!data.candidates?.[0]?.content?.parts) {
+        console.error('Missing parts array. Full response:', JSON.stringify(data, null, 2));
+        throw new Error('API returned an incomplete response. This may be due to token limits or content filtering. Please try again with a shorter question.');
+      }
+
       const generatedAnswer = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      
+
       if (!generatedAnswer) {
-        throw new Error('No answer generated. Please try again.');
+        console.error('No text found in response. Full response:', JSON.stringify(data, null, 2));
+        throw new Error('No answer generated. The API returned an empty response. Please try again.');
       }
 
       setAnswer(generatedAnswer);
@@ -498,7 +584,25 @@ Make your answer clear, actionable, and easy to understand. Use markdown formatt
                 </div>
                 
                 <div className="prose prose-sm dark:prose-invert max-w-none">
-                  <ReactMarkdown>{answer}</ReactMarkdown>
+                  <ReactMarkdown
+                    components={{
+                      h1: ({node, ...props}) => <h1 className="text-2xl font-bold mb-4 mt-6 text-foreground" {...props} />,
+                      h2: ({node, ...props}) => <h2 className="text-xl font-bold mb-3 mt-6 text-foreground" {...props} />,
+                      h3: ({node, ...props}) => <h3 className="text-lg font-semibold mb-2 mt-4 text-foreground" {...props} />,
+                      p: ({node, ...props}) => <p className="mb-4 leading-relaxed text-foreground/90" {...props} />,
+                      ul: ({node, ...props}) => <ul className="list-disc list-outside mb-4 space-y-2 ml-6" {...props} />,
+                      ol: ({node, ...props}) => <ol className="list-decimal list-outside mb-4 space-y-2 ml-6" {...props} />,
+                      li: ({node, ...props}) => <li className="ml-2 leading-relaxed" {...props} />,
+                      strong: ({node, ...props}) => <strong className="font-bold text-foreground" {...props} />,
+                      em: ({node, ...props}) => <em className="italic text-foreground/90" {...props} />,
+                      code: ({node, ...props}) => <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono" {...props} />,
+                      pre: ({node, ...props}) => <pre className="bg-muted p-4 rounded-lg overflow-x-auto mb-4" {...props} />,
+                      blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-primary pl-4 italic my-4" {...props} />,
+                      hr: ({node, ...props}) => <hr className="my-6 border-border" {...props} />,
+                    }}
+                  >
+                    {answer}
+                  </ReactMarkdown>
                 </div>
               </CardContent>
               <CardFooter className="bg-muted/30">

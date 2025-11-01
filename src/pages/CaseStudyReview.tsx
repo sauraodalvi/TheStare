@@ -53,9 +53,10 @@ const CaseStudyReview: React.FC = () => {
     setIsVerifying(true);
     try {
       // Simple verification by making a test call
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
         method: 'POST',
         headers: {
+          'x-goog-api-key': key,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -80,13 +81,18 @@ const CaseStudyReview: React.FC = () => {
           title: 'API Key Verified',
           description: 'Your API key has been verified successfully!',
         });
+      } else if (response.status === 403) {
+        throw new Error('Invalid API key. Please check your API key and try again.');
+      } else if (response.status === 404) {
+        throw new Error('API endpoint not found. Please contact support.');
       } else {
-        throw new Error('Invalid API key');
+        throw new Error('Invalid API key or network error. Please try again.');
       }
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Could not verify your API key. Please check and try again.';
       toast({
         title: 'Verification Failed',
-        description: 'Could not verify your API key. Please check and try again.',
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {
@@ -288,10 +294,11 @@ To see real analysis of your case studies, please upgrade your Google Cloud acco
 
 Provide the review in markdown format with clear sections.`;
 
-      // Call Gemini API with file upload using the Gemini 1.5 Flash model
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      // Call Gemini API with file upload using the Gemini 2.5 Flash model
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
         method: 'POST',
         headers: {
+          'x-goog-api-key': apiKey,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -310,7 +317,7 @@ Provide the review in markdown format with clear sections.`;
             temperature: 0.7,
             topK: 40,
             topP: 0.95,
-            maxOutputTokens: 2048,
+            maxOutputTokens: 8192,
           },
         })
       });
@@ -348,8 +355,41 @@ Provide the review in markdown format with clear sections.`;
       }
 
       const data = await response.json();
-      const feedback = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No feedback generated';
-      
+      console.log('API Response:', data);
+      console.log('Candidates:', data.candidates);
+      console.log('First candidate:', data.candidates?.[0]);
+      console.log('Content:', data.candidates?.[0]?.content);
+      console.log('Parts:', data.candidates?.[0]?.content?.parts);
+      console.log('Text:', data.candidates?.[0]?.content?.parts?.[0]?.text);
+
+      // Check if the response was blocked or filtered
+      if (data.candidates?.[0]?.finishReason === 'SAFETY') {
+        throw new Error('Response was blocked due to safety filters. Please try rephrasing your case study.');
+      }
+
+      if (data.candidates?.[0]?.finishReason === 'RECITATION') {
+        throw new Error('Response was blocked due to recitation. Please try a different case study.');
+      }
+
+      // Check if response was truncated due to token limits
+      if (data.candidates?.[0]?.finishReason === 'MAX_TOKENS') {
+        console.warn('Response truncated due to MAX_TOKENS. Full response:', JSON.stringify(data, null, 2));
+        throw new Error('Response was truncated due to length limits. Please try a shorter case study.');
+      }
+
+      // Check if parts array is missing
+      if (!data.candidates?.[0]?.content?.parts) {
+        console.error('Missing parts array. Full response:', JSON.stringify(data, null, 2));
+        throw new Error('API returned an incomplete response. This may be due to token limits or content filtering. Please try again with a shorter case study.');
+      }
+
+      const feedback = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!feedback) {
+        console.error('No text found in response. Full response:', JSON.stringify(data, null, 2));
+        throw new Error('No feedback generated. The API returned an empty response. Please try again.');
+      }
+
       // Generate dynamic evaluation based on the content
       const wordCount = feedback.split(/\s+/).length;
       const hasImages = /\b(figure|image|graph|chart|table)\b/i.test(feedback);
