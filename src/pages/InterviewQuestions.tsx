@@ -3,364 +3,214 @@ import { useNavigate } from 'react-router-dom';
 import { SEO } from '@/components/SEO';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  Target, 
-  Palette, 
-  BarChart3, 
-  Code, 
-  Users, 
-  Calculator,
-  ChevronDown,
-  ChevronUp,
-  Filter
-} from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useToast } from '@/components/ui/use-toast';
+import { Plus, Loader2 } from 'lucide-react';
+import { fetchQuestions } from '@/services/questionService';
 
-interface Category {
-  id: number;
-  name: string;
-  description: string;
-  icon: string;
-}
-
-interface Question {
-  id: number;
-  question: string;
+interface InterviewQuestion {
+  id?: number;
+  created_at?: string;
   category: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-  company: string;
-  answer: string;
-  tags: string[];
-  followUpQuestions: string[];
+  company: string[];
+  companies?: string[]; // Added companies to match the sample data
+  question: string;
+  answer: {
+    text: string;
+    generated_at: string;
+    model: string;
+    difficulty?: string;
+    category?: string;
+    companies?: string[];
+    tags?: string[];
+  } | null;
+  image: string | null;
+  difficulty?: string;
+  tags?: string[];
 }
 
-interface InterviewQuestionsData {
-  categories: Category[];
-  questions: Question[];
-}
+const CATEGORIES = [
+  { id: 1, name: 'Product Strategy', description: 'Questions about product vision, roadmap, and strategy', icon: 'target' },
+  { id: 2, name: 'Product Design', description: 'Questions about UX, UI, and product design', icon: 'palette' },
+  { id: 3, name: 'Metrics & Analytics', description: 'Questions about product metrics and data analysis', icon: 'bar-chart' },
+  { id: 4, name: 'Technical', description: 'Technical PM questions about APIs, architecture, etc.', icon: 'code' },
+  { id: 5, name: 'Behavioral', description: 'Behavioral and situational interview questions', icon: 'users' },
+  { id: 6, name: 'Estimation', description: 'Market sizing and estimation questions', icon: 'calculator' },
+  { id: 7, name: 'RCA', description: 'Root cause analysis and problem-solving', icon: 'search' },
+  { id: 8, name: 'Others', description: 'Miscellaneous PM interview questions', icon: 'grid' },
+];
 
-const InterviewQuestions = () => {
+const SAMPLE_QUESTIONS: InterviewQuestion[] = [
+  {
+    id: 1,
+    question: 'How would you improve our product?',
+    answer: {
+      text: 'To improve your product, I would first analyze user feedback and metrics to identify pain points and areas for enhancement. Then, I would prioritize features based on impact and feasibility.',
+      difficulty: 'Medium',
+      category: 'Product Strategy',
+      companies: ['Google', 'Microsoft'],
+      tags: ['strategy', 'improvement'],
+      generated_at: new Date().toISOString(),
+      model: 'gpt-4'
+    },
+    category: 'Product Strategy',
+    company: ['Google', 'Microsoft'],
+    difficulty: 'Medium',
+    tags: ['strategy', 'improvement'],
+    image: null
+  },
+  {
+    id: 2,
+    question: 'How would you design a new feature for our app?',
+    answer: {
+      text: 'To design a new feature, I would follow a structured approach: 1) Understand user needs through research, 2) Define clear requirements, 3) Create wireframes and prototypes, 4) Test with users, and 5) Iterate based on feedback.',
+      difficulty: 'Medium',
+      category: 'Product Design',
+      companies: ['Facebook', 'Apple'],
+      tags: ['design', 'feature'],
+      generated_at: new Date().toISOString(),
+      model: 'gpt-4'
+    },
+    category: 'Product Design',
+    company: ['Facebook', 'Apple'],
+    difficulty: 'Medium',
+    tags: ['design', 'feature'],
+    image: null
+  },
+  {
+    id: 3,
+    question: 'What metrics would you track to measure the success of a new feature?',
+    answer: {
+      text: 'Key metrics to track would include: 1) User engagement (DAU/WAU/MAU), 2) Feature adoption rate, 3) Retention rate, 4) Conversion rate (if applicable), 5) Time spent on feature, and 6) Impact on overall product metrics.',
+      difficulty: 'Hard',
+      category: 'Metrics & Analytics',
+      companies: ['Amazon', 'Netflix'],
+      tags: ['metrics', 'analytics'],
+      generated_at: new Date().toISOString(),
+      model: 'gpt-4'
+    },
+    category: 'Metrics & Analytics',
+    company: ['Amazon', 'Netflix'],
+    difficulty: 'Hard',
+    tags: ['metrics', 'analytics'],
+    image: null
+  }
+];
+
+const InterviewQuestions: React.FC = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState<InterviewQuestionsData | null>(null);
+  const { toast } = useToast();
+  
+  const [questions, setQuestions] = useState<InterviewQuestion[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
-  const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(new Set());
-
+  
+  // Load questions from Supabase
   useEffect(() => {
-    const fetchData = async () => {
+    const loadQuestions = async () => {
       try {
-        const response = await fetch('/data/interview-questions.json');
-        if (!response.ok) {
-          throw new Error('Failed to load interview questions');
-        }
-        const jsonData = await response.json();
-        setData(jsonData);
-      } catch (err) {
-        console.error('Error loading interview questions:', err);
-        setError('Failed to load interview questions. Please try again later.');
+        setLoading(true);
+        const data = await fetchQuestions({});
+        setQuestions(data);
+      } catch (error) {
+        console.error('Error loading questions:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load questions. Using sample data instead.',
+          variant: 'destructive',
+        });
+        setQuestions(SAMPLE_QUESTIONS);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    loadQuestions();
   }, []);
 
-  const toggleQuestion = (questionId: number) => {
-    setExpandedQuestions(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(questionId)) {
-        newSet.delete(questionId);
-      } else {
-        newSet.add(questionId);
-      }
-      return newSet;
-    });
-  };
-
-  const getIconComponent = (iconName: string) => {
-    const icons: { [key: string]: React.ReactNode } = {
-      target: <Target className="w-6 h-6" />,
-      palette: <Palette className="w-6 h-6" />,
-      chart: <BarChart3 className="w-6 h-6" />,
-      code: <Code className="w-6 h-6" />,
-      users: <Users className="w-6 h-6" />,
-      calculator: <Calculator className="w-6 h-6" />,
-    };
-    return icons[iconName] || <Target className="w-6 h-6" />;
-  };
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Easy':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'Medium':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-      case 'Hard':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-8 h-8 animate-spin" />
+        </div>
+      );
     }
-  };
 
-  const filteredQuestions = data?.questions.filter(question => {
-    const categoryMatch = selectedCategory === 'all' || question.category === selectedCategory;
-    const difficultyMatch = selectedDifficulty === 'all' || question.difficulty === selectedDifficulty;
-    return categoryMatch && difficultyMatch;
-  }) || [];
-
-  if (loading) {
     return (
-      <>
-        <SEO
-          title="PM Interview Questions | Stare"
-          description="Comprehensive collection of product management interview questions with detailed answers"
-          keywords="PM interview questions, product manager interview, PM interview prep"
-          url="/interview-questions"
-        />
-        <div className="flex flex-col min-h-screen bg-background">
-          <Navbar />
-          <main className="flex-1 flex items-center justify-center">
-            <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          </main>
-          <Footer />
-        </div>
-      </>
-    );
-  }
+      <div className="space-y-4">
 
-  if (error || !data) {
-    return (
-      <>
-        <SEO
-          title="PM Interview Questions | Stare"
-          description="Comprehensive collection of product management interview questions with detailed answers"
-          keywords="PM interview questions, product manager interview, PM interview prep"
-          url="/interview-questions"
-        />
-        <div className="flex flex-col min-h-screen bg-background">
-          <Navbar />
-          <main className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <p className="text-destructive text-lg">{error || 'Failed to load data'}</p>
+        <div className="space-y-4">
+          {questions.map((question) => (
+            <Card 
+              key={question.id} 
+              className="overflow-hidden hover:bg-accent/50 transition-colors cursor-pointer"
+              onClick={() => {
+                navigate('/interview-questions-practice', {
+                  state: { question }
+                });
+              }}
+            >
+              <CardHeader className="p-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-lg mb-2">{question.question}</CardTitle>
+                    <div className="flex flex-wrap gap-2">
+                      {question.difficulty && (
+                        <Badge variant="outline">
+                          {question.difficulty}
+                        </Badge>
+                      )}
+                      {question.category && (
+                        <Badge variant="outline">
+                          {question.category}
+                        </Badge>
+                      )}
+                      {question.company?.map((company) => (
+                        <Badge key={company} variant="secondary">
+                          {company}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="sm" className="ml-2">
+                    Practice
+                  </Button>
+                </div>
+              </CardHeader>
+            </Card>
+          ))}
+          
+          {questions.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No questions available.</p>
             </div>
-          </main>
-          <Footer />
+          )}
         </div>
-      </>
+      </div>
     );
-  }
+  };
 
   return (
     <>
       <SEO
         title="Product Manager Interview Questions & Answers | Stare"
-        description="Master PM interviews with our comprehensive collection of interview questions covering product strategy, design, metrics, technical concepts, and behavioral questions. Includes detailed answers from top companies like Google, Meta, and Amazon."
+        description="Master PM interviews with our comprehensive collection of interview questions covering product strategy, design, metrics, technical concepts, and behavioral questions."
         keywords="PM interview questions, product manager interview prep, product management interview, PM behavioral questions, product strategy questions, PM technical questions"
-        url="/interview-questions"
       />
       <div className="flex flex-col min-h-screen bg-background">
         <Navbar />
         <main className="flex-1 overflow-x-hidden">
-          {/* Hero Section */}
-          <section className="py-8 px-4 bg-gradient-to-r from-stare-navy/5 to-stare-teal/5">
-            <div className="container mx-auto max-w-7xl">
-              <div className="max-w-3xl mx-auto text-center">
-                <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Product Manager Interview Questions
-                </h1>
-                <p className="text-lg text-muted-foreground mb-6">
-                  Master your PM interviews with our curated collection of questions and detailed answers 
-                  from top companies like Google, Meta, Amazon, and more.
-                </p>
-                <div className="flex flex-wrap gap-2 justify-center">
-                  <Badge variant="secondary" className="text-sm">
-                    {data.questions.length} Questions
-                  </Badge>
-                  <Badge variant="secondary" className="text-sm">
-                    {data.categories.length} Categories
-                  </Badge>
-                  <Badge variant="secondary" className="text-sm">
-                    Detailed Answers
-                  </Badge>
-                </div>
-              </div>
+          <div className="container mx-auto px-4 py-8">
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold mb-2">Product Manager Interview Questions</h1>
+              <p className="text-muted-foreground">Practice with real interview questions from top tech companies</p>
             </div>
-          </section>
-
-          {/* Categories Section */}
-          <section className="py-8 px-4">
-            <div className="container mx-auto max-w-7xl">
-              <h2 className="text-2xl font-bold text-foreground mb-6 text-center">
-                Question Categories
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                {data.categories.map((category) => (
-                  <Card
-                    key={category.id}
-                    className="hover:shadow-lg transition-shadow cursor-pointer"
-                    onClick={() => navigate(`/interview-questions/practice?category=${encodeURIComponent(category.name)}`)}
-                  >
-                    <CardHeader>
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                          {getIconComponent(category.icon)}
-                        </div>
-                        <CardTitle className="text-lg">{category.name}</CardTitle>
-                      </div>
-                      <CardDescription className="mt-2">
-                        {category.description}
-                      </CardDescription>
-                    </CardHeader>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Filters Section */}
-          <section className="py-4 px-4 bg-muted/30">
-            <div className="container mx-auto max-w-7xl">
-              <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Filter className="w-5 h-5 text-muted-foreground" />
-                  <span className="text-sm font-medium">Filter Questions:</span>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                    <SelectTrigger className="w-full sm:w-[200px]">
-                      <SelectValue placeholder="All Categories" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
-                      {data.categories.map((cat) => (
-                        <SelectItem key={cat.id} value={cat.name}>
-                          {cat.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
-                    <SelectTrigger className="w-full sm:w-[200px]">
-                      <SelectValue placeholder="All Difficulties" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Difficulties</SelectItem>
-                      <SelectItem value="Easy">Easy</SelectItem>
-                      <SelectItem value="Medium">Medium</SelectItem>
-                      <SelectItem value="Hard">Hard</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Questions Section */}
-          <section className="py-8 px-4">
-            <div className="container mx-auto max-w-7xl">
-              <div className="mb-6">
-                <p className="text-muted-foreground">
-                  Showing {filteredQuestions.length} question{filteredQuestions.length !== 1 ? 's' : ''}
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {filteredQuestions.map((question) => {
-                  const isExpanded = expandedQuestions.has(question.id);
-                  
-                  return (
-                    <Card key={question.id} className="overflow-hidden">
-                      <CardHeader className="cursor-pointer" onClick={() => toggleQuestion(question.id)}>
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <div className="flex flex-wrap items-center gap-2 mb-2">
-                              <Badge className={getDifficultyColor(question.difficulty)}>
-                                {question.difficulty}
-                              </Badge>
-                              <Badge variant="outline">{question.category}</Badge>
-                              <Badge variant="secondary">{question.company}</Badge>
-                            </div>
-                            <CardTitle className="text-lg md:text-xl">
-                              {question.question}
-                            </CardTitle>
-                          </div>
-                          <Button variant="ghost" size="sm">
-                            {isExpanded ? (
-                              <ChevronUp className="w-5 h-5" />
-                            ) : (
-                              <ChevronDown className="w-5 h-5" />
-                            )}
-                          </Button>
-                        </div>
-                      </CardHeader>
-
-                      {isExpanded && (
-                        <CardContent className="pt-0">
-                          <div className="space-y-4">
-                            <div>
-                              <h4 className="font-semibold text-foreground mb-2">Answer:</h4>
-                              <div className="prose prose-sm dark:prose-invert max-w-none">
-                                <p className="text-muted-foreground whitespace-pre-line">
-                                  {question.answer}
-                                </p>
-                              </div>
-                            </div>
-
-                            {question.followUpQuestions && question.followUpQuestions.length > 0 && (
-                              <div>
-                                <h4 className="font-semibold text-foreground mb-2">Follow-up Questions:</h4>
-                                <ul className="list-disc list-inside space-y-1">
-                                  {question.followUpQuestions.map((followUp, index) => (
-                                    <li key={index} className="text-muted-foreground text-sm">
-                                      {followUp}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-
-                            {question.tags && question.tags.length > 0 && (
-                              <div>
-                                <h4 className="font-semibold text-foreground mb-2">Tags:</h4>
-                                <div className="flex flex-wrap gap-2">
-                                  {question.tags.map((tag, index) => (
-                                    <Badge key={index} variant="outline" className="text-xs">
-                                      {tag}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </CardContent>
-                      )}
-                    </Card>
-                  );
-                })}
-              </div>
-
-              {filteredQuestions.length === 0 && (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground text-lg">
-                    No questions found matching your filters. Try adjusting your selection.
-                  </p>
-                </div>
-              )}
-            </div>
-          </section>
+            
+            {/* Questions List */}
+            {renderContent()}
+          </div>
         </main>
         <Footer />
       </div>
@@ -369,4 +219,3 @@ const InterviewQuestions = () => {
 };
 
 export default InterviewQuestions;
-

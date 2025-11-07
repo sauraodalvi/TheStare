@@ -19,11 +19,14 @@ import {
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 interface NavItem {
+  id: string;
   title: string;
   href: string;
   description?: string;
   external?: boolean;
   onClick?: () => void;
+  type: 'main' | 'additional' | 'auth';
+  showInMobile: boolean;
 }
 
 const Navbar = () => {
@@ -52,108 +55,140 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Navigation items with descriptions for the desktop dropdown
-  const navItems: NavItem[] = [
+  // Define all navigation items with unique IDs and proper types
+  const navItems = [
     { 
+      id: 'nav-case-studies',
       title: 'Case Studies', 
       href: '/case-studies',
-      description: 'Real-world product management scenarios to learn from'
+      description: 'Real-world product management scenarios to learn from',
+      type: 'main',
+      showInMobile: true
     },
     { 
+      id: 'nav-self-study',
       title: 'Self Study', 
       href: '/resources/self-study',
-      description: 'Books, courses, and resources for independent learning'
+      description: 'Books, courses, and resources for independent learning',
+      type: 'main',
+      showInMobile: true
     },
     { 
+      id: 'nav-courses',
       title: 'Courses', 
       href: '/resources/courses',
-      description: 'Free video courses and sessions from top PMs'
+      description: 'Free video courses and sessions from top PMs',
+      type: 'main',
+      showInMobile: true
     },
     { 
+      id: 'nav-interview-questions',
       title: 'Interview Questions', 
       href: '/interview-questions',
-      description: 'Common PM interview questions with detailed answers'
+      description: 'Common PM interview questions with detailed answers',
+      type: 'main',
+      showInMobile: true
     },
     { 
+      id: 'nav-participate',
       title: 'Participate', 
       href: '/resources/participate',
-      description: 'Join case challenges to build your portfolio'
+      description: 'Join case challenges to build your portfolio',
+      type: 'main',
+      showInMobile: true
     },
     { 
+      id: 'nav-portfolio',
       title: 'Portfolio', 
       href: '/resources/portfolio',
-      description: 'Showcase your work effectively'
+      description: 'Showcase your work effectively',
+      type: 'main',
+      showInMobile: true
     },
     { 
+      id: 'nav-resume',
       title: 'Resume', 
       href: '/resources/resume',
-      description: 'Real PM resumes and templates'
+      description: 'Real PM resumes and templates',
+      type: 'main',
+      showInMobile: true
     },
     { 
+      id: 'nav-case-study-review',
       title: 'Case Study Review', 
       href: '/case-study-review',
-      description: 'Get AI-powered feedback on your case studies'
+      description: 'Get AI-powered feedback on your case studies',
+      type: 'main',
+      showInMobile: true
     },
-  ];
-
-  // Create a filtered list for the mobile menu (without descriptions)
-  const mobileNavItems = navItems.map(({ title, href, external, onClick }) => ({
-    title,
-    href,
-    external,
-    onClick
-  }));
-
-  // Add standalone menu items to mobile menu
-  mobileNavItems.push(
     { 
+      id: 'nav-donate',
       title: 'Donate', 
       href: 'https://saurao.gumroad.com/l/BuymeaCoffee', 
-      external: true
+      type: 'additional',
+      external: true,
+      showInMobile: true
     },
     { 
+      id: 'nav-about',
       title: 'About', 
-      href: '/about', 
-      external: false
+      href: '/about',
+      type: 'additional',
+      showInMobile: true
     },
     { 
+      id: 'nav-pricing',
       title: 'Pricing', 
-      href: '/pricing', 
-      external: false
+      href: '/pricing',
+      type: 'additional',
+      showInMobile: true
     }
-  );
+  ] as const;
 
-  // Add authentication menu items
-  if (user) {
-    // When user is logged in, show Profile and Sign Out
-    mobileNavItems.push(
-      { 
-        title: 'Profile', 
-        href: '/profile', 
-        external: false
-      },
-      { 
-        title: 'Sign Out', 
-        href: '#', 
-        onClick: handleSignOut,
-        external: false
-      }
-    );
-  } else {
-    // When user is NOT logged in, show Sign In and Join Now
-    mobileNavItems.push(
-      { 
-        title: 'Sign In', 
-        href: '/sign-in', 
-        external: false
-      },
-      { 
-        title: 'Join Now', 
-        href: '/pricing', 
-        external: false
-      }
-    );
-  }
+  // Auth-specific items
+  const authItems = user
+    ? [
+        { 
+          id: 'nav-profile',
+          title: 'Profile', 
+          href: '/profile',
+          type: 'auth',
+          showInMobile: true
+        },
+        { 
+          id: 'nav-signout',
+          title: 'Sign Out', 
+          href: '#', 
+          onClick: handleSignOut,
+          type: 'auth',
+          showInMobile: true
+        }
+      ]
+    : [
+        { 
+          id: 'nav-signin',
+          title: 'Sign In', 
+          href: '/sign-in',
+          type: 'auth',
+          showInMobile: true
+        },
+        { 
+          id: 'nav-join-now',
+          title: 'Join Now', 
+          href: '/pricing',
+          type: 'auth',
+          showInMobile: true
+        }
+      ];
+
+  // Combine all navigation items
+  const allNavItems = [...navItems, ...authItems];
+  
+  // Filter items for mobile menu
+  const mobileNavItems = allNavItems.filter(item => item.showInMobile);
+  
+  // Filter items for desktop dropdown (main nav items only)
+  const desktopMainNavItems = navItems.filter(item => item.type === 'main');
 
   return (
     <header className={cn(
@@ -187,30 +222,39 @@ const Navbar = () => {
               </SheetHeader>
               <nav className="flex flex-col flex-1 overflow-y-auto py-6">
                 <div className="space-y-2 flex-1 min-h-0">
-                  {mobileNavItems.map((item) => (
-                    item.external ? (
-                      <a
-                        key={item.href}
-                        href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-accent transition-colors"
-                      >
+                  {mobileNavItems.map((item) => {
+                    const navItem = (
+                      <div key={item.id} className="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-accent transition-colors">
                         <span>{item.title}</span>
                         <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                      </a>
-                    ) : (
+                      </div>
+                    );
+
+                    if (item.external) {
+                      return (
+                        <a
+                          key={item.id}
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block w-full"
+                        >
+                          {navItem}
+                        </a>
+                      );
+                    }
+
+                    return (
                       <Link
-                        key={item.href}
+                        key={item.id}
                         to={item.href}
                         onClick={item.onClick}
-                        className="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-accent transition-colors"
+                        className="block w-full"
                       >
-                        <span>{item.title}</span>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        {navItem}
                       </Link>
-                    )
-                  ))}
+                    );
+                  })}
                   
                   {/* Mobile Auth Buttons */}
                   <div className="pt-4 border-t mt-4">
@@ -294,67 +338,65 @@ const Navbar = () => {
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                    {navItems
-                      .filter(item => !item.external)
-                      .map((item, index) => (
-                        <li key={item.href} className={index === 0 ? 'row-span-3' : ''}>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              to={item.href}
-                              onClick={item.onClick}
-                              className={cn(
-                                'block h-full w-full select-none rounded-md p-3 no-underline outline-none transition-colors',
-                                index === 0 
-                                  ? 'flex flex-col justify-end bg-gradient-to-br from-stare-teal to-stare-navy p-6 text-white' 
-                                  : 'hover:bg-muted focus:bg-muted'
-                              )}
-                            >
-                              <div className={cn(
-                                'font-medium',
-                                index === 0 ? 'text-lg mb-2 mt-4' : 'text-sm'
-                              )}>
-                                {item.title}
-                              </div>
-                              {item.description && (
-                                <p className={cn(
-                                  'leading-snug',
-                                  index === 0 
-                                    ? 'text-sm text-white/90' 
-                                    : 'text-sm text-muted-foreground line-clamp-2'
-                                )}>
-                                  {item.description}
-                                </p>
-                              )}
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                      ))}
+                    {desktopMainNavItems.map((item, index) => (
+                    <li key={item.id} className={index === 0 ? 'row-span-3' : ''}>
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to={item.href}
+                          className={cn(
+                            'block h-full w-full select-none rounded-md p-3 no-underline outline-none transition-colors',
+                            index === 0 
+                              ? 'flex flex-col justify-end bg-gradient-to-br from-stare-teal to-stare-navy p-6 text-white' 
+                              : 'hover:bg-muted focus:bg-muted'
+                          )}
+                        >
+                          <div className={cn(
+                            'font-medium',
+                            index === 0 ? 'text-lg mb-2 mt-4' : 'text-sm'
+                          )}>
+                            {item.title}
+                          </div>
+                          {item.description && (
+                            <p className={cn(
+                              'leading-snug',
+                              index === 0 
+                                ? 'text-sm text-white/90' 
+                                : 'text-sm text-muted-foreground line-clamp-2'
+                            )}>
+                              {item.description}
+                            </p>
+                          )}
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                  ))}
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
 
-              <NavigationMenuItem>
-                <a 
-                  href="https://saurao.gumroad.com/l/BuymeaCoffee"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex"
-                >
-                  Donate
-                </a>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <Link to="/about" className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex">
-                  About
-                </Link>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <Link to="/pricing" className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex">
-                  Pricing
-                </Link>
-              </NavigationMenuItem>
+              {navItems
+                .filter(item => item.type === 'additional')
+                .map(item => (
+                  <NavigationMenuItem key={item.id}>
+                    {item.external ? (
+                      <a 
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex"
+                      >
+                        {item.title}
+                      </a>
+                    ) : (
+                      <Link 
+                        to={item.href} 
+                        className="text-muted-foreground hover:text-foreground font-medium transition-colors px-4 py-2 flex"
+                      >
+                        {item.title}
+                      </Link>
+                    )}
+                  </NavigationMenuItem>
+                ))}
             </NavigationMenuList>
           </NavigationMenu>
         </div>

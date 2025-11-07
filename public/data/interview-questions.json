@@ -2,15 +2,15 @@
   "categories": [
     {
       "id": 1,
-      "name": "Product Strategy",
-      "description": "Questions about product vision, roadmap, and strategic thinking",
-      "icon": "target"
+      "name": "Estimation",
+      "description": "Market sizing and estimation questions",
+      "icon": "calculator"
     },
     {
       "id": 2,
-      "name": "Product Design",
-      "description": "Questions about user experience, design thinking, and product features",
-      "icon": "palette"
+      "name": "Behavioral",
+      "description": "Questions about leadership, teamwork, and past experiences",
+      "icon": "users"
     },
     {
       "id": 3,
@@ -20,21 +20,33 @@
     },
     {
       "id": 4,
+      "name": "Product Design",
+      "description": "Questions about user experience, design thinking, and product features",
+      "icon": "palette"
+    },
+    {
+      "id": 5,
+      "name": "RCA",
+      "description": "Root cause analysis, debugging, and problem-solving questions",
+      "icon": "search"
+    },
+    {
+      "id": 6,
+      "name": "Product Strategy",
+      "description": "Questions about product vision, roadmap, and strategic thinking",
+      "icon": "target"
+    },
+    {
+      "id": 7,
       "name": "Technical",
       "description": "Questions about technical concepts, APIs, and system design",
       "icon": "code"
     },
     {
-      "id": 5,
-      "name": "Behavioral",
-      "description": "Questions about leadership, teamwork, and past experiences",
-      "icon": "users"
-    },
-    {
-      "id": 6,
-      "name": "Estimation",
-      "description": "Market sizing and estimation questions",
-      "icon": "calculator"
+      "id": 8,
+      "name": "Others",
+      "description": "Miscellaneous interview questions and general PM topics",
+      "icon": "grid"
     }
   ],
   "questions": [
