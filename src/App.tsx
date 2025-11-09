@@ -1,30 +1,46 @@
-import React, { useState, Suspense, lazy } from "react";
+import React, { useState, Suspense, lazy, useEffect } from "react";
+import { Loader2 } from 'lucide-react';
 import { Toaster } from "@/components/ui/toaster";
+import { toast } from 'sonner';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/components/theme-provider";
 import { useAuth } from './hooks/useAuth';
 import { GoogleVerification } from '@/components/GoogleVerification';
+import { AdminAuthService } from '@/services/adminAuthService.new';
+import { AdminRouteSimple } from './components/AdminRouteSimple';
 
-// Lazy load page components
-const Index = lazy(() => import("./pages/Index"));
-const About = lazy(() => import("./pages/About"));
-const Courses = lazy(() => import("./pages/Courses"));
-const CaseStudies = lazy(() => import("./pages/CaseStudies"));
-const CaseStudyReview = lazy(() => import("./pages/CaseStudyReview"));
-const Participate = lazy(() => import("./pages/Participate"));
-const Profile = lazy(() => import("./pages/Profile"));
-const Resume = lazy(() => import("./pages/Resume"));
-const SignIn = lazy(() => import("./pages/SignIn"));
-const SignUp = lazy(() => import("./pages/SignUp"));
-const Admin = lazy(() => import("./pages/Admin"));
-const AdminLogin = lazy(() => import("@/components/AdminLogin"));
-const Resources = lazy(() => import("./pages/Resources"));
-const SelfStudy = lazy(() => import("./pages/SelfStudy"));
-const Portfolio = lazy(() => import("./pages/Portfolio"));
-const Pricing = lazy(() => import("./pages/Pricing"));
+// Lazy load page components with error boundaries
+const lazyWithRetry = (componentImport: any) =>
+  lazy(async () => {
+    try {
+      return await componentImport();
+    } catch (error) {
+      console.error('Error loading component:', error);
+      // Retry once
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return componentImport();
+    }
+  });
+
+const Index = lazyWithRetry(() => import("./pages/Index"));
+const About = lazyWithRetry(() => import("./pages/About"));
+const Courses = lazyWithRetry(() => import("./pages/Courses"));
+const CaseStudies = lazyWithRetry(() => import("./pages/CaseStudies"));
+const CaseStudyReview = lazyWithRetry(() => import("./pages/CaseStudyReview"));
+const Participate = lazyWithRetry(() => import("./pages/Participate"));
+const Profile = lazyWithRetry(() => import("./pages/Profile"));
+const Resume = lazyWithRetry(() => import("./pages/Resume"));
+const SignIn = lazyWithRetry(() => import("./pages/SignIn"));
+const SignUp = lazyWithRetry(() => import("./pages/SignUp"));
+const AdminPanel = lazyWithRetry(() => import("./pages/AdminPanel"));
+const AdminLogin = lazyWithRetry(() => import("@/components/AdminLogin"));
+const Resources = lazyWithRetry(() => import("./pages/Resources"));
+const SelfStudy = lazyWithRetry(() => import("./pages/SelfStudy"));
+const Portfolio = lazyWithRetry(() => import("./pages/Portfolio"));
+const Pricing = lazyWithRetry(() => import("./pages/Pricing"));
 const AddYourWork = lazy(() => import("./pages/AddYourWork"));
 const InterviewQuestions = lazy(() => import("./pages/InterviewQuestions"));
 // Import the new component
@@ -50,7 +66,7 @@ const ProtectedRoute = ({ children, adminOnly = false, userOnly = false, redirec
   }
 
   if (!user) {
-    return <Navigate to="/sign-in" replace />;
+    return <Navigate to="/sign-in" state={{ from: window.location.pathname }} replace />;
   }
 
   if (adminOnly && user.role !== 'admin') {
@@ -63,6 +79,9 @@ const ProtectedRoute = ({ children, adminOnly = false, userOnly = false, redirec
 
   return children;
 };
+
+// Use the simplified admin route
+const AdminRoute = AdminRouteSimple;
 
 const App: React.FC = () => {
   // Create QueryClient inside the component to ensure proper React context
@@ -115,13 +134,14 @@ const App: React.FC = () => {
                   <Route path="/resume" element={<Resume />} />
                   <Route path="/sign-in" element={<SignIn />} />
                   <Route path="/sign-up" element={<SignUp />} />
-                  <Route 
-                    path="/admin" 
+                  {/* Admin Routes */}
+                  <Route
+                    path="/admin"
                     element={
-                      <ProtectedRoute adminOnly>
-                        <Admin />
-                      </ProtectedRoute>
-                    } 
+                      <Suspense fallback={<Loading />}>
+                        <AdminPanel />
+                      </Suspense>
+                    }
                   />
                   <Route 
                     path="/admin/login" 
