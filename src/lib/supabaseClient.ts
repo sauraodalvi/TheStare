@@ -1,17 +1,26 @@
-// Re-export the supabase client from integrations to avoid multiple instances
-// This prevents the "Multiple GoTrueClient instances" warning
-import { supabase } from '@/integrations/supabase/client';
+// Import the centralized Supabase client
+import { supabase } from './supabase';
+
+// Re-export the supabase client
 export { supabase };
 
 // Helper function to get the current session
 export const getCurrentSession = async () => {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session }, error } = await supabase.auth.getSession();
+  if (error) {
+    console.error('Error getting session:', error.message);
+    throw error;
+  }
   return session;
 };
 
 // Helper function to get the current user
 export const getCurrentUser = async () => {
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error) {
+    console.error('Error getting user:', error.message);
+    throw error;
+  }
   return user;
 };
 
@@ -24,5 +33,5 @@ export const signOut = async () => {
   }
 };
 
-// Export types for better TypeScript support
-export type { User, Session } from '@supabase/supabase-js';
+// Re-export types from our centralized client
+export type { User, Session } from './supabase';

@@ -1,5 +1,5 @@
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { CaseStudy } from '@/types/caseStudy';
 import { allCaseStudiesData, validateCaseStudiesData } from '@/data/caseStudiesData';
 
