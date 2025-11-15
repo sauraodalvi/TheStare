@@ -73,66 +73,9 @@ const Navbar = () => {
   // Navigation items - in the order they should appear in both desktop and mobile
   const navItems: NavItem[] = [
     { 
-      id: 'nav-case-studies',
-      title: 'Case Studies', 
-      href: '/case-studies',
-      description: 'Real-world product management scenarios',
-      type: 'main',
-      showInMobile: true
-    },
-    { 
-      id: 'nav-self-study',
-      title: 'Self Study', 
-      href: '/resources/self-study',
-      description: 'Learning resources and materials',
-      type: 'main',
-      showInMobile: true
-    },
-    { 
-      id: 'nav-courses',
-      title: 'Courses', 
-      href: '/resources/courses',
-      description: 'Video courses and sessions',
-      type: 'main',
-      showInMobile: true
-    },
-    { 
-      id: 'nav-interview-questions',
-      title: 'Interview Questions', 
-      href: '/interview-questions',
-      description: 'PM interview preparation',
-      type: 'main',
-      showInMobile: true
-    },
-    { 
-      id: 'nav-participate',
-      title: 'Participate', 
-      href: '/resources/participate',
-      description: 'Join case challenges',
-      type: 'main',
-      showInMobile: true
-    },
-    { 
-      id: 'nav-portfolio',
-      title: 'Portfolio', 
-      href: '/resources/portfolio',
-      description: 'Showcase your work',
-      type: 'main',
-      showInMobile: true
-    },
-    { 
-      id: 'nav-resume',
-      title: 'Resume', 
-      href: '/resources/resume',
-      description: 'Resume templates and tips',
-      type: 'main',
-      showInMobile: true
-    },
-    { 
-      id: 'nav-case-study-review',
-      title: 'Case Study Review', 
-      href: '/case-study-review',
-      description: 'Get feedback on case studies',
+      id: 'nav-resources',
+      title: 'Resources', 
+      href: '#',
       type: 'main',
       showInMobile: true
     },
@@ -157,6 +100,56 @@ const Navbar = () => {
       href: '/pricing',
       type: 'additional',
       showInMobile: true
+    },
+    // Resources dropdown items
+    { 
+      id: 'nav-case-studies',
+      title: 'Case Studies', 
+      href: '/case-studies',
+      type: 'main',
+      showInMobile: false
+    },
+    { 
+      id: 'nav-self-study',
+      title: 'Self Study', 
+      href: '/resources/self-study',
+      type: 'main',
+      showInMobile: false
+    },
+    { 
+      id: 'nav-courses',
+      title: 'Courses', 
+      href: '/resources/courses',
+      type: 'main',
+      showInMobile: false
+    },
+    { 
+      id: 'nav-participate',
+      title: 'Participate', 
+      href: '/resources/participate',
+      type: 'main',
+      showInMobile: false
+    },
+    { 
+      id: 'nav-portfolio',
+      title: 'Portfolio', 
+      href: '/resources/portfolio',
+      type: 'main',
+      showInMobile: false
+    },
+    { 
+      id: 'nav-resume',
+      title: 'Resume', 
+      href: '/resources/resume',
+      type: 'main',
+      showInMobile: false
+    },
+    { 
+      id: 'nav-case-study-review',
+      title: 'Case Study Review', 
+      href: '/case-study-review',
+      type: 'main',
+      showInMobile: false
     }
   ];
 
@@ -202,183 +195,232 @@ const Navbar = () => {
   // For desktop navigation, filter out auth items
   const desktopNavItems = allNavItems.filter(item => item.type !== 'auth');
 
-  // Render navigation item
-  const renderNavItem = (item: NavItem) => {
-    const navItem = (
-      <div className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-accent transition-colors text-sm">
-        <span>{item.title}</span>
-        {!item.external && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
-      </div>
-    );
+  // Get resources items for dropdown
+  const resourcesItems = navItems.filter(item => !['nav-resources', 'nav-donate', 'nav-about', 'nav-pricing'].includes(item.id));
 
+  // Navigation link component
+  const NavLink = ({ item }: { item: NavItem }) => {
     if (item.external) {
       return (
         <a
-          key={item.id}
           href={item.href}
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-full"
+          className="text-sm font-medium text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md"
         >
-          {navItem}
+          {item.title}
         </a>
       );
     }
-
+    
     return (
       <Link
-        key={item.id}
         to={item.href}
-        onClick={() => {
-          item.onClick?.();
-          setIsMenuOpen(false);
-        }}
-        className="block w-full"
+        className="text-sm font-medium text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md"
+        onClick={() => setIsMenuOpen(false)}
       >
-        {navItem}
+        {item.title}
       </Link>
     );
   };
 
-  return (
-    <header className={cn(
-      "sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all",
-      isScrolled && "shadow-sm"
-    )}>
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-6 md:gap-10">
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="font-bold inline-block">Stare</span>
-          </Link>
+  // Add padding to the body when mobile menu is open to prevent scrolling
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isMenuOpen]);
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">
-            <NavigationMenu>
-              <NavigationMenuList>
-                {desktopNavItems.map((item) => (
-                  <NavigationMenuItem key={item.id}>
-                    <Link to={item.href}>
-                      <Button variant="ghost" className="text-sm">
-                        {item.title}
-                      </Button>
-                    </Link>
-                  </NavigationMenuItem>
-                ))}
-              </NavigationMenuList>
-            </NavigationMenu>
-          </nav>
+  return (
+    <>
+      {/* Add padding to the top of the page to prevent content from being hidden behind the fixed navbar */}
+      <div className="h-16 md:h-20" />
+      
+      <header className={cn(
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-background border-b',
+        isMenuOpen ? 'h-screen md:h-auto' : 'h-auto'
+      )}>
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between bg-background">
+        {/* Logo */}
+        <Link to="/" className="flex items-center space-x-2">
+          <span className="font-display font-bold text-2xl text-stare-navy">The<span className="text-stare-teal">Stare</span></span>
+        </Link>
+
+      {/* Desktop Navigation */}
+      <nav className="hidden md:flex items-center space-x-6">
+        {/* Resources Dropdown */}
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                  {resourcesItems.map((item) => (
+                    <li key={item.id}>
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to={item.href}
+                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >
+                          <div className="text-sm font-medium leading-none">{item.title}</div>
+                          {item.description && (
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              {item.description}
+                            </p>
+                          )}
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                  ))}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+
+        {/* Other main nav items */}
+        {navItems
+          .filter(item => ['nav-donate', 'nav-about', 'nav-pricing'].includes(item.id))
+          .map((item) => (
+            <NavLink key={item.id} item={item} />
+          ))}
+      </nav>
+
+      {/* Right side - Auth and Theme Toggle */}
+      <div className="flex items-center space-x-2">
+        <ThemeToggle />
+        
+        {/* Desktop Auth Buttons */}
+        <div className="hidden md:flex items-center space-x-2">
+          {authItems.map((item) => (
+            <Button
+              key={item.id}
+              asChild={!item.onClick}
+              variant={item.id.includes('join') ? 'default' : 'outline'}
+              onClick={item.onClick}
+            >
+              {item.onClick ? (
+                <button>{item.title}</button>
+              ) : (
+                <Link to={item.href} target={item.external ? '_blank' : '_self'}>
+                  {item.title}
+                </Link>
+              )}
+            </Button>
+          ))}
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Desktop Auth Buttons */}
-          {!isMobile && (
-            <div className="hidden md:flex items-center gap-2">
-              {user ? (
-                <>
-                  <Button variant="outline" size="sm" onClick={handleSignOut}>
-                    Sign Out
-                  </Button>
-                  <Button size="sm" variant="brand" asChild>
-                    <Link to="/profile">
-                      Profile
-                    </Link>
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link to="/sign-in">
-                      Sign In
-                    </Link>
-                  </Button>
-                  <Button size="sm" variant="brand" asChild>
-                    <Link to="/pricing">
-                      Join Now
-                    </Link>
-                  </Button>
-                </>
-              )}
-            </div>
-          )}
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Toggle menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[280px] sm:w-[350px] flex flex-col h-full">
-                <SheetHeader>
-                  <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                  <SheetDescription className="sr-only">
-                    Main navigation menu with links to different sections of the website
-                  </SheetDescription>
-                </SheetHeader>
-                <nav className="flex flex-col flex-1 overflow-y-auto py-4">
-                  {/* Navigation Items */}
-                  <div className="space-y-1 px-4">
-                    {allNavItems.map(item => renderNavItem(item))}
-                  </div>
-                  
-                  {/* User Section */}
-                  <div className="mt-auto pt-4 border-t px-4 space-y-2">
-                    {/* Theme Toggle */}
-                    <div className="px-3 py-2.5 flex items-center justify-between rounded-lg hover:bg-accent transition-colors">
-                      <span className="text-sm">Theme</span>
-                      <div className="h-9 w-9 -mr-1.5 flex items-center justify-center">
-                        <div className="h-8 w-8 flex items-center justify-center overflow-hidden">
-                          <div className="scale-75">
-                            <ThemeToggle />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {user ? (
-                      <button
-                        onClick={handleSignOut}
-                        className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-accent transition-colors text-left"
-                      >
-                        <div className="flex items-center gap-2 text-destructive">
-                          <LogOut className="h-4 w-4" />
-                          <span>Sign Out</span>
-                        </div>
-                      </button>
-                    ) : (
-                      <div className="space-y-2">
-                        <Button 
-                          variant="outline" 
-                          className="w-full justify-start"
-                          onClick={() => {
-                            navigate('/sign-in');
-                            setIsMenuOpen(false);
-                          }}
-                        >
-                          Sign In
-                        </Button>
-                        <Button 
-                          variant="brand" 
-                          className="w-full"
-                          onClick={() => {
-                            navigate('/pricing');
-                            setIsMenuOpen(false);
-                          }}
-                        >
-                          Join Now
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </nav>
-              </SheetContent>
-            </Sheet>
+        {/* Mobile menu button */}
+        <div className="md:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <Menu className="h-6 w-6" />
+          </Button>
           </div>
         </div>
       </div>
-    </header>
+
+      {/* Mobile Menu Overlay */}
+      {isMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={() => setIsMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+      
+      {/* Mobile Menu - Bottom Sheet */}
+      <div
+        className={cn(
+          'md:hidden fixed bottom-0 left-0 right-0 z-40 transition-transform duration-300 ease-in-out transform',
+          'bg-background rounded-t-2xl shadow-2xl',
+          isMenuOpen ? 'translate-y-0' : 'translate-y-full',
+          'h-[85vh] max-h-[90vh] flex flex-col'
+        )}
+      >
+        {/* Handle */}
+        <div className="flex justify-center py-2">
+          <div className="w-12 h-1.5 bg-muted rounded-full" />
+        </div>
+        
+        {/* Menu Content */}
+        <div className="px-4 pb-6 flex-1 overflow-y-auto">
+        {/* Resources Section */}
+        <div className="mb-4">
+          <h3 className="px-4 mb-2 text-sm font-medium text-muted-foreground">Resources</h3>
+          <div className="space-y-1">
+            {resourcesItems.map((item) => (
+              <Button
+                key={item.id}
+                asChild
+                variant="ghost"
+                className="w-full justify-start text-left h-auto py-3 px-4 rounded-lg"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Link to={item.href} className="w-full">
+                  {item.title}
+                </Link>
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {/* Other Links */}
+        <div className="border-t pt-4">
+          {navItems
+            .filter(item => ['nav-donate', 'nav-about', 'nav-pricing'].includes(item.id))
+            .map((item) => (
+              <Button
+                key={item.id}
+                asChild
+                variant="ghost"
+                className="w-full justify-start text-left h-auto py-3 px-4 rounded-lg"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Link to={item.href} target={item.external ? '_blank' : '_self'} className="w-full">
+                  {item.title}
+                </Link>
+              </Button>
+            ))}
+        </div>
+
+        {/* Auth Buttons */}
+        <div className="border-t pt-4 mt-4">
+          {authItems.map((item) => (
+            <Button
+              key={item.id}
+              asChild={!item.onClick}
+              variant={item.id.includes('join') || item.id.includes('sign-up') ? 'default' : 'outline'}
+              className="w-full justify-start text-left h-auto py-3 px-4 rounded-lg mb-2"
+              onClick={() => {
+                if (item.onClick) item.onClick();
+                setIsMenuOpen(false);
+              }}
+            >
+              {item.onClick ? (
+                <button className="w-full text-left">{item.title}</button>
+              ) : (
+                <Link to={item.href} className="w-full">
+                  {item.title}
+                </Link>
+              )}
+            </Button>
+          ))}
+        </div>
+          </div>
+        </div>
+      </header>
+    </>
   );
 };
 

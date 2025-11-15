@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { Plus, Loader2 } from 'lucide-react';
+import { Plus, Loader2, ArrowRight } from 'lucide-react';
 import { fetchQuestions } from '@/services/questionService';
 
 interface InterviewQuestion {
@@ -129,6 +129,32 @@ const InterviewQuestions: React.FC = () => {
     loadQuestions();
   }, []);
 
+  const handleQuestionClick = (question: InterviewQuestion) => {
+    console.log('Question clicked:', { id: question.id, question: question.question });
+    
+    if (!question.id) {
+      console.error('Question ID is missing:', question);
+      // Fallback to just the question text if no ID is available
+      const encodedQuestion = encodeURIComponent(question.question);
+      navigate(`/interview-questions-practice?question=${encodedQuestion}`);
+      return;
+    }
+
+    // Create an object with the data we need, including the ID
+    const questionData = {
+      q: question.question,
+      c: question.category || '',
+      id: question.id  // Include the question ID
+    };
+    
+    // Convert to JSON and encode for URL
+    const encodedData = encodeURIComponent(JSON.stringify(questionData));
+    console.log('Navigating with data:', { questionData, encodedData });
+    
+    // Navigate with the encoded data
+    navigate(`/interview-questions-practice?data=${encodedData}`);
+  };
+
   const renderContent = () => {
     if (loading) {
       return (
@@ -140,17 +166,12 @@ const InterviewQuestions: React.FC = () => {
 
     return (
       <div className="space-y-4">
-
         <div className="space-y-4">
           {questions.map((question) => (
             <Card 
               key={question.id} 
               className="overflow-hidden hover:bg-accent/50 transition-colors cursor-pointer"
-              onClick={() => {
-                navigate('/interview-questions-practice', {
-                  state: { question }
-                });
-              }}
+              onClick={() => handleQuestionClick(question)}
             >
               <CardHeader className="p-4">
                 <div className="flex justify-between items-start">

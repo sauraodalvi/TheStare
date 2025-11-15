@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase';
 
 export interface InterviewQuestion {
-  id?: number;
+  id?: string | number;
   created_at?: string;
   category: string;
   company: string[];
@@ -107,10 +107,10 @@ export const addQuestion = async (question: Omit<InterviewQuestion, 'id' | 'crea
       image: question.image || null
     };
 
-    // Insert the new question
+    // Insert the new question with proper typing
     const { data, error: insertError } = await supabase
-      .from(QUESTIONS_TABLE)
-      .insert([questionData])
+      .from<InterviewQuestion, typeof QUESTIONS_TABLE>(QUESTIONS_TABLE)
+      .insert([questionData as any])
       .select()
       .single();
 
@@ -132,39 +132,106 @@ export const addQuestion = async (question: Omit<InterviewQuestion, 'id' | 'crea
   }
 };
 
-export const updateQuestionAnswer = async (id: number, answer: { text: string; model: string }) => {
-  try {
-    console.log(`Updating answer for question ${id}`);
-    
-    const answerData = {
-      text: answer.text,
-      generated_at: new Date().toISOString(),
-      model: answer.model,
-    };
+// Helper function to safely update a question answer with retries
+export const updateQuestionAnswer = async (id: string | number, answer: { text: string; model: string }) => {
+  const maxRetries = 3;
+  let lastError: Error | null = null;
+  const questionId = id.toString();
+  
+  // Prepare the answer data with timestamp
+  const answerData = {
+    text: answer.text,
+    generated_at: new Date().toISOString(),
+    model: answer.model,
+  };
 
-    const { data, error } = await supabase
-      .from(QUESTIONS_TABLE)
-      .update({ answer: answerData })
-      .eq('id', id)
-      .select()
-      .single();
+  // Log the update attempt
+  console.log('updateQuestionAnswer called:', { 
+    id: questionId,
+    answerLength: answer.text.length,
+    model: answer.model,
+    timestamp: new Date().toISOString()
+  });
 
-    if (error) {
-      console.error('Error updating question answer:', {
-        code: error.code,
-        message: error.message,
-        details: error.details,
-        hint: error.hint
-      });
-      throw new Error(`Failed to update answer: ${error.message}`);
+  // Try different update strategies
+  const updateStrategies = [
+    // Try with updated_at first
+    async () => {
+      const { data, error } = await supabase
+        .from(QUESTIONS_TABLE)
+        .update({ 
+          answer: answerData,
+          updated_at: new Date().toISOString()
+        } as any) // Type assertion to handle strict typing
+        .eq('id', questionId)
+        .select()
+        .single();
+      return { data, error, strategy: 'with_updated_at' };
+    },
+    // Try without updated_at if first attempt fails
+    async () => {
+      const { data, error } = await supabase
+        .from(QUESTIONS_TABLE)
+        .update({ answer: answerData } as any)
+        .eq('id', questionId)
+        .select()
+        .single();
+      return { data, error, strategy: 'without_updated_at' };
+    },
+    // Try with raw answer object if previous attempts fail
+    async () => {
+      const { data, error } = await supabase
+        .from(QUESTIONS_TABLE)
+        .update({ answer: JSON.stringify(answerData) } as any)
+        .eq('id', questionId)
+        .select()
+        .single();
+      return { data, error, strategy: 'with_stringified_answer' };
     }
+  ];
 
-    console.log('Successfully updated question answer:', data);
-    return data;
-  } catch (error) {
-    console.error('Error in updateQuestionAnswer:', error);
-    throw error;
+  // Try each strategy with retries
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    for (const strategy of updateStrategies) {
+      try {
+        console.log(`Attempt ${attempt + 1}: Trying update strategy...`);
+        const result = await strategy();
+        const { data, error, strategy: usedStrategy } = result;
+        
+        if (!error && data) {
+          console.log(`Successfully updated answer using strategy: ${usedStrategy}`, {
+            id: questionId,
+            answerLength: answer.text.length,
+            timestamp: new Date().toISOString()
+          });
+          return data;
+        }
+        
+        lastError = error || new Error('Unknown error during update');
+        console.warn(`Update attempt ${attempt + 1} failed with strategy ${usedStrategy}:`, error);
+      } catch (error) {
+        lastError = error as Error;
+        console.error(`Error in update attempt ${attempt + 1}:`, error);
+      }
+      
+      // Add a small delay between retries
+      if (attempt < maxRetries - 1) {
+        await new Promise(resolve => setTimeout(resolve, 500 * (attempt + 1)));
+      }
+    }
   }
+  
+  // If we get here, all attempts failed
+  const errorMessage = lastError?.message || 'Unknown error during update';
+  const errorDetails = {
+    id: questionId,
+    error: errorMessage,
+    timestamp: new Date().toISOString(),
+    answerLength: answer.text.length
+  };
+  
+  console.error('All update attempts failed:', errorDetails);
+  throw new Error(`Failed to update answer after ${maxRetries} attempts: ${errorMessage}`);
 };
 
 /**
