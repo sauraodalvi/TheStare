@@ -6,9 +6,8 @@ const DEBUG = import.meta.env.DEV;
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabaseServiceKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
+if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables. Please check your .env file.');
 }
 
@@ -33,7 +32,7 @@ function createSupabaseClient() {
     }
     return window[GLOBAL_SUPABASE_KEY];
   }
-  
+
   // On the server, we'll use a module-level variable
   if (!supabaseInstance) {
     supabaseInstance = _createClient();
@@ -50,7 +49,7 @@ function _createClient() {
   }
 
   const isBrowser = typeof window !== 'undefined';
-  
+
   return createClient<Database>(supabaseUrl, supabaseAnonKey, {
     auth: {
       persistSession: true,
@@ -67,31 +66,10 @@ function _createClient() {
   });
 }
 
-/**
- * Get the admin client (server-side only)
- */
-function createAdminClient() {
-  if (typeof window !== 'undefined') {
-    throw new Error('Admin client should only be used server-side');
-  }
 
-  if (!adminInstance) {
-    adminInstance = createClient<Database>(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    });
-  }
-
-  return adminInstance;
-}
 
 // Export the Supabase client
 export const supabase = createSupabaseClient();
-
-// Export the admin client (server-side only)
-export const getAdminClient = createAdminClient;
 
 // Type exports
 export type { User };
@@ -106,7 +84,7 @@ if (DEBUG) {
 if (import.meta.hot) {
   // Keep the existing client instance during HMR
   import.meta.hot.accept();
-  
+
   // Clean up when the module is disposed
   import.meta.hot.dispose(() => {
     // We don't clean up the client instance to maintain the single instance

@@ -3,9 +3,13 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+// Load environment variables from .env file
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // Get environment variables
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
@@ -73,7 +77,7 @@ async function generateSitemap() {
       console.log(`   Adding ${caseStudies.length} case study pages...`);
       caseStudies.forEach(study => {
         if (study.slug) {
-          const lastmod = study.updated_at 
+          const lastmod = study.updated_at
             ? new Date(study.updated_at).toISOString().split('T')[0]
             : new Date().toISOString().split('T')[0];
           sitemap += `  <url>

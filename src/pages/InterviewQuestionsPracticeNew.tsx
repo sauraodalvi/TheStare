@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabase';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ArrowLeft, Loader2, Sparkles, AlertCircle, Copy, RotateCcw } from 'lucide-react';
-import { updateQuestionAnswer } from '@/services/questionService';
+import { ArrowLeft, Loader2, Sparkles, AlertCircle, Copy, RotateCcw, Save } from 'lucide-react';
+import { updateQuestionAnswer, addQuestion } from '@/services/questionService';
 
 // Constants
 const GEMINI_API_KEY_STORAGE_KEY = 'gemini_api_key';
@@ -16,19 +16,19 @@ const INITIAL_RETRY_DELAY = 1000; // 1 second
  * Helper function to make API calls with retry logic
  */
 async function fetchWithRetry(
-  url: string, 
-  options: RequestInit, 
+  url: string,
+  options: RequestInit,
   retries = 0
 ): Promise<Response> {
   try {
     console.log(`Making API request to ${url} (attempt ${retries + 1}/${MAX_RETRIES + 1})`);
     const response = await fetch(url, options);
-    
+
     // If successful, return the response
     if (response.ok) {
       return response;
     }
-    
+
     // Get error details if available
     let errorDetails = '';
     try {
@@ -37,9 +37,9 @@ async function fetchWithRetry(
     } catch (e) {
       errorDetails = await response.text().catch(() => 'No error details available');
     }
-    
+
     console.error(`API Error [${response.status}]:`, errorDetails);
-    
+
     // If we get a 5xx error or 429 (rate limit) and have retries left, retry
     if ((response.status >= 500 || response.status === 429) && retries < MAX_RETRIES) {
       const delay = Math.min(INITIAL_RETRY_DELAY * Math.pow(2, retries), 30000); // Max 30s delay
@@ -47,7 +47,7 @@ async function fetchWithRetry(
       await new Promise(resolve => setTimeout(resolve, delay));
       return fetchWithRetry(url, options, retries + 1);
     }
-    
+
     // Special handling for common error statuses
     const errorMessages: Record<number, string> = {
       400: 'Invalid request. Please check your input and try again.',
@@ -60,14 +60,14 @@ async function fetchWithRetry(
       503: 'Service temporarily unavailable. The server is currently unable to handle the request.',
       504: 'Gateway timeout. The server took too long to respond.'
     };
-    
-    const errorMessage = errorMessages[response.status as keyof typeof errorMessages] || 
+
+    const errorMessage = errorMessages[response.status as keyof typeof errorMessages] ||
       `API request failed with status ${response.status}`;
-    
+
     const error = new Error(`${errorMessage}${errorDetails ? ` (${errorDetails})` : ''}`);
     (error as any).status = response.status;
     throw error;
-    
+
   } catch (error) {
     if (retries < MAX_RETRIES) {
       const delay = Math.min(INITIAL_RETRY_DELAY * Math.pow(2, retries), 30000); // Max 30s delay
@@ -75,7 +75,7 @@ async function fetchWithRetry(
       await new Promise(resolve => setTimeout(resolve, delay));
       return fetchWithRetry(url, options, retries + 1);
     }
-    
+
     // If we're out of retries, enhance the error message
     if (error instanceof Error) {
       if (error.message.includes('Failed to fetch')) {
@@ -84,7 +84,7 @@ async function fetchWithRetry(
         error.message = 'Invalid response format from the server. Please try again.';
       }
     }
-    
+
     throw error;
   }
 }
@@ -112,7 +112,7 @@ const InterviewQuestionsPractice: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
-  
+
   // State
   const [isLoading, setIsLoading] = useState(false);
   const [isPrefilled, setIsPrefilled] = useState(false);
@@ -127,20 +127,22 @@ const InterviewQuestionsPractice: React.FC = () => {
   const [rememberKey, setRememberKey] = useState<boolean>(false);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [questionId, setQuestionId] = useState<string | number | null>(null);
-  
+  const [companyInput, setCompanyInput] = useState<string>('');
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
   const CHARACTER_LIMIT = 1000;
 
   useEffect(() => {
     const params = Object.fromEntries(searchParams.entries());
     console.log('URL search params:', params);
-    
+
     // First check for the new data format
     const dataParam = searchParams.get('data');
     if (dataParam) {
       try {
         const decodedData = JSON.parse(decodeURIComponent(dataParam));
         console.log('Decoded data from URL:', decodedData);
-        
+
         if (decodedData && typeof decodedData === 'object') {
           // Set question and category from the data object
           if (decodedData.q) {
@@ -151,13 +153,50 @@ const InterviewQuestionsPractice: React.FC = () => {
             setSelectedCategory(decodedData.c);
             console.log('Set category from URL:', decodedData.c);
           }
-          
+          if (decodedData.co) {
+            setCompanyInput(decodedData.co);
+            console.log('Set company from URL:', decodedData.co);
+          } else if (decodedData.company) {
+            // Handle legacy or alternative key
+            setCompanyInput(decodedData.company);
+            console.log('Set company from URL (legacy):', decodedData.company);
+          }
+
+          // Handle existing answer
+          if (decodedData.a) {
+            console.log('Found existing answer in URL data');
+            // If it's an object (new format), format it
+            if (typeof decodedData.a === 'object') {
+              const formatted = `## 📝 Approach
+${decodedData.a.approach || ''}
+
+## 🧩 Frameworks & Methodologies
+${decodedData.a.frameworks?.map((f: string) => `- **${f.trim()}**`).join('\n') || 'N/A'}
+
+## 💡 Detailed Answer
+${decodedData.a.answer || ''}
+
+## 🎯 Key Takeaways
+${decodedData.a.keyTakeaways?.map((item: string, index: number) => `**${index + 1}.** ${item.trim()}`).join('\n\n') || 'N/A'}
+
+## ❓ Follow-up Questions
+${decodedData.a.followUpQuestions?.map((q: string, i: number) => `**${i + 1}.** ${q.trim()}`).join('\n\n') || 'N/A'}
+
+---
+<small>🔍 *AI-generated content. For educational purposes only. Always verify critical information.*</small>`;
+              setAnswer(formatted);
+            } else if (typeof decodedData.a === 'string') {
+              // Legacy string format
+              setAnswer(decodedData.a);
+            }
+          }
+
           // Handle question ID - support both numeric IDs and UUIDs
           if (decodedData.id !== undefined && decodedData.id !== null) {
             // Check if the ID is a valid UUID (v4)
             const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
             const id = decodedData.id.toString();
-            
+
             if (!isNaN(Number(id)) || uuidRegex.test(id)) {
               setQuestionId(id);
               console.log('Set questionId from URL:', id);
@@ -169,7 +208,7 @@ const InterviewQuestionsPractice: React.FC = () => {
           } else {
             console.warn('No question ID found in URL data:', decodedData);
           }
-          
+
           setIsPrefilled(true);
           return;
         }
@@ -177,18 +216,18 @@ const InterviewQuestionsPractice: React.FC = () => {
         console.error('Error parsing data parameter:', e);
       }
     }
-    
+
     // Fallback to old question parameter for backward compatibility
     const questionParam = searchParams.get('question');
     const idParam = searchParams.get('id');
-    
+
     if (questionParam) {
       const decodedQuestion = decodeURIComponent(questionParam);
       setQuestion(decodedQuestion);
       console.log('Set question from legacy URL param:', decodedQuestion);
       setIsPrefilled(true);
     }
-    
+
     if (idParam) {
       // Support both numeric IDs and UUIDs
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -212,10 +251,10 @@ const InterviewQuestionsPractice: React.FC = () => {
       { id: 3, name: 'Behavioral', description: 'Past experiences and teamwork', icon: '👥' },
       { id: 4, name: 'Case Study', description: 'Product case studies', icon: '📈' },
       { id: 5, name: 'Estimation', description: 'Market and metrics estimation', icon: '📊' },
-      { 
-        id: 6, 
-        name: 'RCA', 
-        description: 'Root Cause Analysis and problem-solving', 
+      {
+        id: 6,
+        name: 'RCA',
+        description: 'Root Cause Analysis and problem-solving',
         icon: '🔍',
         prompt: `You are an expert in Root Cause Analysis. For the following issue:
 "${question}"
@@ -254,10 +293,10 @@ Please provide a comprehensive RCA following this structure:
 
 Use markdown formatting with proper headings, bullet points, and code blocks where appropriate.`
       },
-      { 
-        id: 7, 
-        name: 'Others', 
-        description: 'General and miscellaneous questions', 
+      {
+        id: 7,
+        name: 'Others',
+        description: 'General and miscellaneous questions',
         icon: '✨',
         prompt: `You are an expert in analyzing and answering general questions. For the following:
 "${question}"
@@ -297,24 +336,24 @@ Please provide a comprehensive response with:
 Use markdown formatting with proper headings, bullet points, and code blocks where appropriate.`
       },
     ];
-    
+
     setCategories(exampleCategories);
-    
+
     // Set category from URL param if present
     const categoryParam = searchParams.get('category');
     if (categoryParam) {
       setSelectedCategory(decodeURIComponent(categoryParam));
     }
-    
+
     // Set question from URL param if present
     const questionParam = searchParams.get('question');
     if (questionParam) {
       setQuestion(decodeURIComponent(questionParam));
     }
-    
+
     // Load saved API key if exists
-    const savedApiKey = localStorage.getItem(GEMINI_API_KEY_STORAGE_KEY) || 
-                       sessionStorage.getItem(GEMINI_API_KEY_STORAGE_KEY);
+    const savedApiKey = localStorage.getItem(GEMINI_API_KEY_STORAGE_KEY) ||
+      sessionStorage.getItem(GEMINI_API_KEY_STORAGE_KEY);
     if (savedApiKey) {
       setApiKey(savedApiKey);
       setRememberKey(!!localStorage.getItem(GEMINI_API_KEY_STORAGE_KEY));
@@ -332,16 +371,16 @@ Use markdown formatting with proper headings, bullet points, and code blocks whe
     try {
       // Simulate API verification
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       setIsVerified(true);
       setShowApiKeyInput(false);
-      
+
       if (rememberKey) {
         localStorage.setItem(GEMINI_API_KEY_STORAGE_KEY, key);
       } else {
         sessionStorage.setItem(GEMINI_API_KEY_STORAGE_KEY, key);
       }
-      
+
       if (!silent) {
         toast({
           title: 'Success',
@@ -353,7 +392,7 @@ Use markdown formatting with proper headings, bullet points, and code blocks whe
       console.error('Error verifying API key:', err);
       setIsVerified(false);
       setShowApiKeyInput(true);
-      
+
       if (!silent) {
         toast({
           title: 'Error',
@@ -377,44 +416,91 @@ Use markdown formatting with proper headings, bullet points, and code blocks whe
     setQuestion('');
     setAnswer(null);
     setError(null);
+    setCompanyInput('');
+    setIsEditing(false);
+    setQuestionId(null);
+    setIsPrefilled(false);
   }, []);
+
+  const handleEditQuestion = useCallback(() => {
+    setIsEditing(true);
+    setQuestionId(null);
+    setIsPrefilled(false);
+    setAnswer(null);
+  }, []);
+
+  const handleAddToRepository = useCallback(async () => {
+    if (!question || !answer || !selectedCategory) return;
+
+    try {
+      setIsLoading(true);
+      await addQuestion({
+        question,
+        answer: {
+          text: answer,
+          generated_at: new Date().toISOString(),
+          model: 'gemini-2.5-flash'
+        },
+        category: selectedCategory,
+        company: companyInput ? [companyInput] : [],
+        image: null
+      });
+
+      toast({
+        title: 'Success',
+        description: 'Question added to repository successfully!',
+      });
+
+      // Reset state or navigate
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error adding question:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to add question to repository.',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [question, answer, selectedCategory, companyInput, toast]);
 
   // Handle asking the AI
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    console.log('Form submitted', { 
-      question: question.substring(0, 50) + (question.length > 50 ? '...' : ''), 
+
+    console.log('Form submitted', {
+      question: question.substring(0, 50) + (question.length > 50 ? '...' : ''),
       selectedCategory,
       isPrefilled,
       questionId, // Log the questionId
       hasExistingAnswer: !!answer
     });
-    
+
     if (!question.trim()) {
       setError('Please enter a question');
       return;
     }
-    
+
     if (!selectedCategory) {
       setError('Please select a category');
       return;
     }
-    
+
     // If form is prefilled and we already have an answer, ask for confirmation
     if (isPrefilled && answer && !confirm('Would you like to generate a new answer for this question?')) {
       console.log('User canceled regeneration');
       return;
     }
-    
+
     setIsLoading(true);
     setError(null);
     setAnswer(null);
 
     try {
-      const key = localStorage.getItem(GEMINI_API_KEY_STORAGE_KEY) || 
-                 sessionStorage.getItem(GEMINI_API_KEY_STORAGE_KEY);
-      
+      const key = localStorage.getItem(GEMINI_API_KEY_STORAGE_KEY) ||
+        sessionStorage.getItem(GEMINI_API_KEY_STORAGE_KEY);
+
       if (!key) {
         const errorMsg = 'No API key found. Please provide a Gemini API key.';
         console.error(errorMsg);
@@ -423,7 +509,7 @@ Use markdown formatting with proper headings, bullet points, and code blocks whe
 
       // Get the selected category's prompt or use default
       const selectedCategoryObj = categories.find(cat => cat.name === selectedCategory);
-      const categoryPrompt = selectedCategoryObj?.prompt || 
+      const categoryPrompt = selectedCategoryObj?.prompt ||
         `You are an experienced expert helping with interview preparation. 
         
         For the following ${selectedCategory} question:
@@ -444,8 +530,9 @@ Use markdown formatting with proper headings, bullet points, and code blocks whe
       // Using the working configuration from CaseStudyReview
       const modelName = 'gemini-2.5-flash';
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`;
-      
+
       console.log('Sending request to Gemini API with model:', modelName);
+
       const response = await fetchWithRetry(
         // Build the request URL with API key
         `${apiUrl}?key=${encodeURIComponent(key)}`,
@@ -459,19 +546,27 @@ Use markdown formatting with proper headings, bullet points, and code blocks whe
             contents: [{
               parts: [{
                 text: `You are an expert at generating structured interview question responses. 
-                Please provide a well-formatted JSON response for the following question:
+                Please provide a comprehensive response for the following question:
                 "${question}"
                 
-                Format your response as a JSON object with these exact keys:
-                {
-                  "approach": "How to think about this question",
-                  "frameworks": ["Relevant frameworks or methodologies"],
-                  "answer": "A detailed, structured response",
-                  "keyTakeaways": ["Key point 1", "Key point 2", "Key point 3"],
-                  "followUpQuestions": ["Question 1", "Question 2", "Question 3"]
-                }
+                Format your response using the following Markdown structure:
                 
-                Ensure the response is valid JSON that can be parsed with JSON.parse().`
+                ## 📝 Approach
+                (Explain how to think about this question)
+                
+                ## 🧩 Frameworks & Methodologies
+                (List relevant frameworks or methodologies)
+                
+                ## 💡 Detailed Answer
+                (Provide a detailed, structured response)
+                
+                ## 🎯 Key Takeaways
+                (List key points)
+                
+                ## ❓ Follow-up Questions
+                (List potential follow-up questions)
+                
+                Do not use JSON. Use standard Markdown.`
               }]
             }],
             generationConfig: {
@@ -479,7 +574,6 @@ Use markdown formatting with proper headings, bullet points, and code blocks whe
               topK: 40,
               topP: 0.95,
               maxOutputTokens: 2048,
-              responseMimeType: 'application/json'
             },
             safetySettings: [
               {
@@ -504,11 +598,12 @@ Use markdown formatting with proper headings, bullet points, and code blocks whe
       );
 
       const data = await response.json();
-      let responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
       console.log('Raw API response received, length:', responseText.length);
 
       if (!responseText) {
-        const errorMsg = 'No answer generated from the API. Response data: ' + JSON.stringify(data, null, 2);
+        const errorMsg = 'No answer generated from the API.';
         console.error(errorMsg);
         throw new Error('No answer generated. Please try again.');
       }
@@ -516,135 +611,29 @@ Use markdown formatting with proper headings, bullet points, and code blocks whe
       // Log first 200 chars of response for debugging
       console.log('Response preview:', responseText.substring(0, 200) + (responseText.length > 200 ? '...' : ''));
 
-      // Parse the JSON response with better error handling
-      let parsedResponse;
-      try {
-        // First, try to extract JSON from markdown code blocks if present
-        const jsonMatch = responseText.match(/```(?:json)?\n([\s\S]*?)\n```/);
-        if (jsonMatch) {
-          responseText = jsonMatch[1];
-        }
-        
-        // Try to parse the JSON directly first
-        try {
-          parsedResponse = JSON.parse(responseText);
-        } catch (e) {
-          // If direct parsing fails, try to fix common issues
-          console.log('Direct JSON parse failed, attempting to fix common issues...');
-          
-          // Make a copy of the original text for recovery
-          let fixedText = responseText;
-          
-          // 1. Try to fix truncated JSON (common with large responses)
-          if (fixedText.includes('...')) {
-            console.log('Detected potential truncation, attempting to fix...');
-            // Find the last complete object/array that ends properly
-            const lastBrace = Math.max(
-              fixedText.lastIndexOf('}'),
-              fixedText.lastIndexOf(']')
-            );
-            
-            if (lastBrace > 0) {
-              // Take everything up to the last complete brace
-              fixedText = fixedText.substring(0, lastBrace + 1);
-              
-              // If we have an unclosed string at the end, remove it
-              if ((fixedText.match(/"/g) || []).length % 2 !== 0) {
-                const lastQuote = fixedText.lastIndexOf('"');
-                if (lastQuote > fixedText.lastIndexOf(':')) {
-                  fixedText = fixedText.substring(0, lastQuote) + '"';
-                }
-              }
-              
-              // Try to parse the fixed text
-              try {
-                parsedResponse = JSON.parse(fixedText);
-                console.log('Successfully parsed after fixing truncation');
-                return parsedResponse;
-              } catch (e) {
-                console.log('Fixing truncation alone was not enough, trying additional fixes...');
-              }
-            }
-          }
-          
-          // 2. Try to fix common JSON syntax issues
-          try {
-            fixedText = fixedText
-              // Fix unescaped quotes in strings
-              .replace(/([^\\])\\([^"\\/bfnrtu])/g, '$1\\\\$2')
-              // Remove trailing commas
-              .replace(/,\s*([}\]])/g, '$1')
-              // Add quotes around unquoted keys
-              .replace(/([\{\,]\s*)([a-zA-Z0-9_]+?):/g, '$1"$2":')
-              // Fix single quotes to double quotes
-              .replace(/'/g, '"')
-              // Remove any control characters
-              .replace(/[\x00-\x1F\x7F-\x9F]/g, '');
-              
-            parsedResponse = JSON.parse(fixedText);
-            console.log('Successfully parsed after fixing syntax issues');
-          } catch (e) {
-            console.log('Could not parse as complete JSON, attempting to extract partial content...');
-            
-            // 3. Try to extract just the answer field as a last resort
-            const answerMatch = responseText.match(/"answer"\s*:\s*"([\s\S]*?)"/);
-            if (answerMatch && answerMatch[1]) {
-              console.log('Extracted partial answer from response');
-              parsedResponse = {
-                approach: 'The AI provided a response that could not be fully parsed.',
-                frameworks: [],
-                answer: answerMatch[1],
-                keyTakeaways: [],
-                followUpQuestions: []
-              };
-            } else {
-              throw new Error('Could not extract valid content from the response');
-            }
-          }
-        }
-        
-        console.log('Successfully parsed response with keys:', Object.keys(parsedResponse));
-      } catch (error) {
-        console.error('Error parsing JSON response. Error:', error, '\nRaw text:', responseText);
-        // If we have a response text but couldn't parse it, try to use it as a fallback
-        if (responseText.trim().length > 0) {
-          console.log('Using response text as fallback due to parsing error');
-          return {
-            approach: 'The AI provided a response that could not be fully parsed.',
-            frameworks: [],
-            answer: responseText,
-            keyTakeaways: [],
-            followUpQuestions: []
-          };
-        }
-        throw new Error('Failed to parse the AI response. Please try again.');
-      }
+      // Parse the Markdown response
+      let formattedResponse = responseText;
 
-      // Format the response with enhanced markdown styling
-      const formattedResponse = `## 📝 Approach
-${parsedResponse.approach}
-
-## 🧩 Frameworks & Methodologies
-${parsedResponse.frameworks?.map((f: string) => `- **${f.trim()}**`).join('\n') || 'N/A'}
+      // If the response doesn't have the expected headers, try to structure it
+      if (!responseText.includes('## 📝 Approach') && !responseText.includes('## 💡 Detailed Answer')) {
+        console.log('Response missing standard headers, wrapping in default structure');
+        formattedResponse = `## 📝 Approach
+The AI provided a direct answer.
 
 ## 💡 Detailed Answer
-${parsedResponse.answer}
-
-## 🎯 Key Takeaways
-${parsedResponse.keyTakeaways?.map((item: string, index: number) => 
-  `**${index + 1}.** ${item.trim()}`
-).join('\n\n') || 'N/A'}
-
-## ❓ Follow-up Questions
-${parsedResponse.followUpQuestions?.map((q: string, i: number) => 
-  `**${i + 1}.** ${q.trim()}`
-).join('\n\n') || 'N/A'}
+${responseText}
 
 ---
 <small>🔍 *AI-generated content. For educational purposes only. Always verify critical information.*</small>`;
+      } else {
+        // Ensure the footer exists
+        if (!formattedResponse.includes('AI-generated content')) {
+          formattedResponse += `\n\n---\n<small>🔍 *AI-generated content. For educational purposes only. Always verify critical information.*</small>`;
+        }
+      }
 
       setAnswer(formattedResponse);
-      
+
       // Auto-scroll to the answer
       setTimeout(() => {
         const answerElement = document.getElementById('ai-answer');
@@ -652,21 +641,21 @@ ${parsedResponse.followUpQuestions?.map((q: string, i: number) =>
           answerElement.scrollIntoView({ behavior: 'smooth' });
         }
       }, 100);
-      
+
       toast({
         title: '✨ Answer Ready',
         description: 'Your AI-powered response is ready to view!',
       });
-      
+
       // Save the generated answer to the database
       console.log('Saving answer to database...', { questionId, isPrefilled });
       let success = false;
       try {
-        if (isPrefilled && questionId) {
+        if (isPrefilled && questionId && !isEditing) {
           await saveAnswerToDatabase(formattedResponse, questionId);
           console.log('Answer saved successfully');
         } else {
-          console.log('Skipping database save - not a prefilled question or missing questionId');
+          console.log('Skipping database save - custom question or editing mode');
         }
         success = true;
       } catch (saveError) {
@@ -678,12 +667,12 @@ ${parsedResponse.followUpQuestions?.map((q: string, i: number) =>
       console.log('handleSubmit completed successfully:', success);
     } catch (err: any) {
       console.error('Error generating answer:', err);
-      const errorMessage = err.status === 503 
+      const errorMessage = err.status === 503
         ? 'The AI service is currently overloaded. Please try again in a moment.'
         : err.message || 'Failed to generate answer. Please try again.';
-      
+
       setError(errorMessage);
-      
+
       toast({
         title: err.status === 503 ? 'Service Busy' : 'Error',
         description: errorMessage,
@@ -756,8 +745,8 @@ ${parsedResponse.followUpQuestions?.map((q: string, i: number) =>
     // Use the passed questionIdParam if available, otherwise fall back to the component state
     const idToUse = questionIdParam !== undefined ? questionIdParam : questionId;
     const modelName = 'gemini-2.5-flash';
-    
-    console.log('saveAnswerToDatabase called with:', { 
+
+    console.log('saveAnswerToDatabase called with:', {
       answerLength: answerText?.length || 0,
       isPrefilled,
       questionId: idToUse,
@@ -767,25 +756,25 @@ ${parsedResponse.followUpQuestions?.map((q: string, i: number) =>
       currentState: { questionId, isPrefilled, selectedCategory },
       timestamp: new Date().toISOString()
     });
-    
+
     // Make sure we have a valid question ID and it's a prefilled question
-    if (!isPrefilled) {
-      console.log('Not saving to database: not a prefilled question');
+    if (!isPrefilled || isEditing) {
+      console.log('Not saving to database: not a prefilled question or in edit mode');
       return;
     }
-    
+
     if (!idToUse) {
       console.error('Cannot save answer: missing question ID');
       throw new Error('Cannot save answer: missing question ID');
     }
-    
+
     if (!answerText) {
       console.error('Cannot save empty answer');
       throw new Error('Cannot save empty answer');
     }
-    
+
     console.log('Checking if question exists in database before saving answer...');
-    
+
     try {
       // First, verify the question exists in the database
       const { data: questionData, error: fetchError } = await supabase
@@ -793,7 +782,7 @@ ${parsedResponse.followUpQuestions?.map((q: string, i: number) =>
         .select('id')
         .eq('id', idToUse.toString())
         .maybeSingle();
-      
+
       if (fetchError || !questionData) {
         console.log('Question not found in database, skipping save:', {
           id: idToUse,
@@ -802,9 +791,9 @@ ${parsedResponse.followUpQuestions?.map((q: string, i: number) =>
         });
         return; // Skip saving if question doesn't exist in the database
       }
-      
+
       console.log('Question found in database, proceeding with save. Question ID:', idToUse);
-      
+
       // Only proceed with saving if we found the question in the database
       console.log('Calling updateQuestionAnswer with:', {
         id: idToUse,
@@ -813,30 +802,30 @@ ${parsedResponse.followUpQuestions?.map((q: string, i: number) =>
           model: modelName
         }
       });
-      
+
       const result = await updateQuestionAnswer(idToUse, {
         text: answerText,
         model: modelName
       });
-      
+
       console.log('Successfully saved answer to existing question. Result:', {
         result,
         questionId: idToUse,
         answerLength: answerText.length,
         timestamp: new Date().toISOString()
       });
-      
+
       toast({
         title: 'Answer saved',
         description: 'The answer has been saved to the database.',
       });
-      
+
       return result;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.error('Detailed error saving answer to database:', {
         error: errorMessage,
-questionId: idToUse,
+        questionId: idToUse,
         answerLength: answerText.length,
         isPrefilled,
         question,
@@ -844,13 +833,13 @@ questionId: idToUse,
         timestamp: new Date().toISOString(),
         stack: error instanceof Error ? error.stack : undefined
       });
-      
+
       toast({
         title: 'Error',
         description: `Failed to save answer to database: ${errorMessage}`,
         variant: 'destructive',
       });
-      
+
       // Re-throw to allow error boundary to catch it
       throw error;
     }
@@ -859,20 +848,20 @@ questionId: idToUse,
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
+
       <main className="flex-1 container py-8">
         <div className="max-w-4xl mx-auto">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             className="mb-6"
             onClick={() => navigate(-1)}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Interview Questions
           </Button>
-          
+
           <h1 className="text-3xl font-bold mb-6">Interview Question Practice</h1>
-          
+
           {!isVerified ? (
             <Card>
               <CardHeader>
@@ -907,7 +896,7 @@ questionId: idToUse,
                 </div>
               </CardContent>
               <CardFooter>
-                <Button 
+                <Button
                   onClick={handleVerifyClick}
                   disabled={!apiKey || isVerifying}
                 >
@@ -923,15 +912,22 @@ questionId: idToUse,
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label>Category</Label>
-                <Select value={selectedCategory} onValueChange={setSelectedCategory} disabled={isPrefilled}>
-                  <SelectTrigger>
+                <Label htmlFor="category">Category</Label>
+                <Select
+                  value={selectedCategory}
+                  onValueChange={setSelectedCategory}
+                  disabled={isLoading || (isPrefilled && !isEditing)}
+                >
+                  <SelectTrigger id="category">
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.name}>
-                        {cat.name}
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.name}>
+                        <span className="flex items-center gap-2">
+                          <span>{category.icon}</span>
+                          <span>{category.name}</span>
+                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -939,72 +935,64 @@ questionId: idToUse,
               </div>
 
               <div className="space-y-2">
-                <div className="flex justify-between items-center mb-1">
-                  <Label htmlFor="question">Question</Label>
-                  {isPrefilled && (
-                    <Button 
-                      type="button" 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => {
-                        setIsPrefilled(false);
-                        setQuestion('');
-                        setSelectedCategory('');
-                      }}
-                    >
-                      Edit Question
-                    </Button>
-                  )}
-                </div>
-                {isPrefilled ? (
-                  <div className="p-3 border rounded-md bg-muted/50 min-h-[100px] flex items-center">
-                    <p className="text-foreground">{question}</p>
-                  </div>
-                ) : (
-                  <Textarea
-                    id="question"
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                    placeholder="Enter your interview question here..."
-                    className="min-h-[100px] resize-none"
-                    disabled={isLoading}
-                    maxLength={CHARACTER_LIMIT}
-                  />
-                )}
-                <div className="flex justify-between items-center text-sm">
-                  <span className={`text-muted-foreground ${question.length > CHARACTER_LIMIT ? 'text-destructive' : ''}`}>
-                    {question.length} / {CHARACTER_LIMIT} characters
+                <Label htmlFor="company">Company (Optional)</Label>
+                <Input
+                  id="company"
+                  placeholder="e.g. Google, Amazon, Startup"
+                  value={companyInput}
+                  onChange={(e) => setCompanyInput(e.target.value)}
+                  disabled={isLoading || (isPrefilled && !isEditing)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="question">Your Question</Label>
+                  <span className="text-xs text-muted-foreground">
+                    {question.length}/{CHARACTER_LIMIT}
                   </span>
                 </div>
+                <Textarea
+                  id="question"
+                  placeholder="Type your interview question here..."
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value.slice(0, CHARACTER_LIMIT))}
+                  className="min-h-[120px] resize-y"
+                  disabled={isLoading || (isPrefilled && !isEditing)}
+                />
               </div>
 
-              {error && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Error</AlertTitle>
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
+              {isPrefilled && !isEditing && (
+                <div className="flex justify-end">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleEditQuestion}
+                    className="gap-2"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    Edit Question
+                  </Button>
+                </div>
               )}
 
-              <div className="flex justify-end">
-                <Button 
-                  type="submit" 
-                  disabled={isLoading || !question.trim() || !selectedCategory}
-                  className="w-full sm:w-auto"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {isPrefilled && answer ? 'Updating...' : 'Generating...'}
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="mr-2 h-4 w-4" />
-                      {isPrefilled && answer ? 'Regenerate Answer' : 'Generate Answer'}
-                    </>
-                  )}
-                </Button>
-              </div>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isLoading || !question.trim() || !selectedCategory}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generating Answer...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Generate Answer
+                  </>
+                )}
+              </Button>
             </form>
           )}
 
@@ -1022,9 +1010,9 @@ questionId: idToUse,
                       Review the AI's response to your interview question
                     </CardDescription>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={copyAnswer}
                     className="gap-2"
                   >
@@ -1162,14 +1150,25 @@ questionId: idToUse,
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between border-t pt-4">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={askAnotherQuestion}
                   className="gap-2"
                 >
                   <RotateCcw className="h-4 w-4" />
                   Ask Another Question
                 </Button>
+
+                {!questionId && (
+                  <Button
+                    onClick={handleAddToRepository}
+                    className="gap-2"
+                    disabled={isLoading}
+                  >
+                    <Save className="h-4 w-4" />
+                    Add to Repository
+                  </Button>
+                )}
                 <div className="text-sm text-muted-foreground">
                   Powered by Gemini AI
                 </div>
@@ -1177,10 +1176,10 @@ questionId: idToUse,
             </Card>
           )}
         </div>
-      </main>
-      
+      </main >
+
       <Footer />
-    </div>
+    </div >
   );
 };
 

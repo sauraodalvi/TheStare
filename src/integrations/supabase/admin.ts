@@ -36,7 +36,7 @@ export const createAdminClient = () => {
 // Helper to check if admin client is properly configured
 export const isAdminConfigured = () => {
   return !!(
-    process.env.VITE_SUPABASE_URL && 
+    process.env.VITE_SUPABASE_URL &&
     process.env.VITE_SUPABASE_SERVICE_ROLE_KEY
   );
 };
@@ -46,6 +46,7 @@ export const getAdminClient = () => {
   if (typeof window !== 'undefined') {
     throw new Error('Admin client cannot be used in the browser');
   }
+  // This will fail at runtime if env vars are missing, which is good
   return createAdminClient();
 };
 
