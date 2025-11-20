@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SEO } from '@/components/SEO';
 import Navbar from '@/components/Navbar';
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Plus, Loader2 } from 'lucide-react';
 import { fetchQuestions } from '@/services/questionService';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface InterviewQuestion {
   id?: number;
@@ -102,10 +103,12 @@ const SAMPLE_QUESTIONS: InterviewQuestion[] = [
 const InterviewQuestions: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+
   const [questions, setQuestions] = useState<InterviewQuestion[]>([]);
   const [loading, setLoading] = useState(true);
-  
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCompany, setSelectedCompany] = useState<string>('all');
+
   // Load questions from Supabase
   useEffect(() => {
     const loadQuestions = async () => {
@@ -129,6 +132,33 @@ const InterviewQuestions: React.FC = () => {
     loadQuestions();
   }, []);
 
+  // Extract unique companies and categories from questions
+  const { companies, categories } = useMemo(() => {
+    const companiesSet = new Set<string>();
+    const categoriesSet = new Set<string>();
+
+    questions.forEach(q => {
+      if (q.category) categoriesSet.add(q.category);
+      if (q.company) {
+        q.company.forEach(c => companiesSet.add(c));
+      }
+    });
+
+    return {
+      companies: Array.from(companiesSet).sort(),
+      categories: Array.from(categoriesSet).sort()
+    };
+  }, [questions]);
+
+  // Filter questions based on selected filters
+  const filteredQuestions = useMemo(() => {
+    return questions.filter(q => {
+      const categoryMatch = selectedCategory === 'all' || q.category === selectedCategory;
+      const companyMatch = selectedCompany === 'all' || q.company?.includes(selectedCompany);
+      return categoryMatch && companyMatch;
+    });
+  }, [questions, selectedCategory, selectedCompany]);
+
   const renderContent = () => {
     if (loading) {
       return (
@@ -140,11 +170,10 @@ const InterviewQuestions: React.FC = () => {
 
     return (
       <div className="space-y-4">
-
         <div className="space-y-4">
-          {questions.map((question) => (
-            <Card 
-              key={question.id} 
+          {filteredQuestions.map((question) => (
+            <Card
+              key={question.id}
               className="overflow-hidden hover:bg-accent/50 transition-colors cursor-pointer"
               onClick={() => {
                 navigate('/interview-questions-practice', {
@@ -181,10 +210,20 @@ const InterviewQuestions: React.FC = () => {
               </CardHeader>
             </Card>
           ))}
-          
-          {questions.length === 0 && (
+
+          {filteredQuestions.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">No questions available.</p>
+              <p className="text-muted-foreground">No questions available with the selected filters.</p>
+              <Button
+                variant="outline"
+                className="mt-4"
+                onClick={() => {
+                  setSelectedCategory('all');
+                  setSelectedCompany('all');
+                }}
+              >
+                Clear Filters
+              </Button>
             </div>
           )}
         </div>
@@ -207,7 +246,55 @@ const InterviewQuestions: React.FC = () => {
               <h1 className="text-3xl font-bold mb-2">Product Manager Interview Questions</h1>
               <p className="text-muted-foreground">Practice with real interview questions from top tech companies</p>
             </div>
-            
+
+            {/* Filters and Custom Question Button */}
+            <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+              <div className="flex flex-col sm:flex-row gap-4 flex-1">
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger className="w-full sm:w-[200px]">
+                    <SelectValue placeholder="All Categories" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={selectedCompany} onValueChange={setSelectedCompany}>
+                  <SelectTrigger className="w-full sm:w-[200px]">
+                    <SelectValue placeholder="All Companies" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Companies</SelectItem>
+                    {companies.map((company) => (
+                      <SelectItem key={company} value={company}>
+                        {company}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button
+                onClick={() => navigate('/interview-questions-practice')}
+                className="gap-2 w-full sm:w-auto"
+              >
+                <Plus className="h-4 w-4" />
+                Custom Question
+              </Button>
+            </div>
+
+            {/* Results count */}
+            {!loading && (
+              <p className="text-sm text-muted-foreground mb-4">
+                Showing {filteredQuestions.length} of {questions.length} questions
+              </p>
+            )}
+
             {/* Questions List */}
             {renderContent()}
           </div>
