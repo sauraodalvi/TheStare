@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import ProfileCard from '@/components/ProfileCard';
 import EditProfileForm from '@/components/EditProfileForm';
 import LicenseVerification from '@/components/LicenseVerification';

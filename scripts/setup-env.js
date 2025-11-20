@@ -26,8 +26,7 @@ const questions = [
   { key: 'VITE_SUPABASE_URL', message: 'Enter your Supabase URL:' },
   { key: 'VITE_SUPABASE_ANON_KEY', message: 'Enter your Supabase Anon Key:' },
   { key: 'VITE_SUPABASE_SERVICE_ROLE_KEY', message: 'Enter your Supabase Service Role Key:' },
-  { key: 'VITE_GEMINI_API_KEY', message: 'Enter your Gemini API Key:' },
-  { key: 'VITE_XANO_API_KEY', message: 'Enter your Xano API Key (if applicable):' },
+  { key: 'VITE_GEMINI_API_KEY', message: 'Enter your Gemini API Key:' }
 ];
 
 const answers = {};

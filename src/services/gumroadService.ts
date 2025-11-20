@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 
 const GUMROAD_ACCESS_TOKEN = 'BEA6_TuCBnp6RYeVw7DqrrjayXpIipHu9oc8E2Gp37I';
 const GUMROAD_PRODUCT_ID = 'xJOrTEwAoiPTXXJpAutA9Q==';

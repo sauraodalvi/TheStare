@@ -3,7 +3,7 @@
  * Handles user profile management for admin dashboard via secure edge function
  */
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import {
   UserProfile,
   AdminUserSummary,
